@@ -14,6 +14,9 @@ import {
   ExternalLink,
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
+  ArrowLeft,
+  ArrowRight,
   Code2,
   Workflow,
   Factory,
@@ -39,44 +42,71 @@ const SectionHeading = ({ children, icon: Icon }: { children: React.ReactNode, i
   </div>
 );
 
-const ProjectCard = ({ title, description, tags, link, github, githubIcon: GithubIcon = Github }: any) => (
-  <motion.div 
-    whileHover={{ y: -5 }}
-    className="group relative bg-stone-900/40 border border-stone-800 rounded-2xl overflow-hidden hover:border-cyan-400/50 transition-all duration-500 backdrop-blur-sm"
-  >
-    {/* Browser-style top bar */}
-    <div className="bg-stone-900/80 px-4 py-3 border-b border-stone-800 flex items-center justify-between">
-      <div className="flex gap-1.5">
-        <div className="w-2.5 h-2.5 rounded-full bg-stone-800" />
-        <div className="w-2.5 h-2.5 rounded-full bg-stone-800" />
-        <div className="w-2.5 h-2.5 rounded-full bg-stone-800" />
-      </div>
-      <div className="flex gap-4">
-        {github && <a href={github} target="_blank" className="text-stone-500 hover:text-white transition-colors"><GithubIcon className="w-4 h-4" /></a>}
-        {link && <a href={link} target="_blank" className="text-stone-500 hover:text-cyan-400 transition-colors"><ExternalLink className="w-4 h-4" /></a>}
-      </div>
-    </div>
+const ProjectCard = ({ title, description, tags, link, github, githubIcon: GithubIcon = Github }: any) => {
+  const [isExpanded, setIsExpanded] = React.useState(false);
 
-    <div className="p-6">
-      <div className="flex items-center gap-3 mb-4">
-        <div className="p-2 bg-stone-800 rounded-lg group-hover:bg-cyan-400/10 transition-colors">
-          <Code2 className="text-stone-500 group-hover:text-cyan-400 w-5 h-5" />
+  return (
+    <motion.div 
+      whileHover={{ scale: 1.02 }}
+      className="group relative bg-stone-900/40 border border-stone-800 rounded-2xl overflow-hidden hover:border-cyan-400/50 transition-all duration-500 backdrop-blur-sm"
+    >
+      {/* Browser-style top bar */}
+      <div className="bg-stone-900/80 px-4 py-3 border-b border-stone-800 flex items-center justify-between">
+        <div className="flex gap-1.5">
+          <div className="w-2.5 h-2.5 rounded-full bg-stone-800" />
+          <div className="w-2.5 h-2.5 rounded-full bg-stone-800" />
+          <div className="w-2.5 h-2.5 rounded-full bg-stone-800" />
         </div>
-        <h3 className="text-lg font-bold text-white group-hover:text-cyan-400 transition-colors leading-tight">{title}</h3>
+        <div className="flex gap-4">
+          {github && <a href={github} target="_blank" className="text-stone-500 hover:text-white transition-colors"><GithubIcon className="w-4 h-4" /></a>}
+          {link && <a href={link} target="_blank" className="text-stone-500 hover:text-cyan-400 transition-colors"><ExternalLink className="w-4 h-4" /></a>}
+        </div>
       </div>
-      
-      <p className="text-stone-400 text-sm mb-6 leading-relaxed h-12 line-clamp-2">{description}</p>
-      
-      <div className="flex flex-wrap gap-2 mt-auto">
-        {tags.map((tag: string) => (
-          <span key={tag} className="text-[9px] uppercase font-mono tracking-widest px-2 py-1 bg-stone-950 text-stone-500 rounded border border-stone-800 group-hover:border-stone-700 transition-colors">
-            {tag}
-          </span>
-        ))}
+
+      <div className="p-6">
+        <div className="flex items-center justify-between gap-3 mb-4">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-stone-800 rounded-lg group-hover:bg-cyan-400/10 transition-colors">
+              <Code2 className="text-stone-500 group-hover:text-cyan-400 w-5 h-5" />
+            </div>
+            <h3 className="text-lg font-bold text-white group-hover:text-cyan-400 transition-colors leading-tight">{title}</h3>
+          </div>
+          <button 
+            onClick={() => setIsExpanded(!isExpanded)}
+            className="text-stone-600 hover:text-cyan-400 transition-colors"
+          >
+            <ChevronDown className={`w-5 h-5 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`} />
+          </button>
+        </div>
+        
+        <p className={`text-stone-400 text-sm mb-6 leading-relaxed transition-all duration-300 ${isExpanded ? '' : 'line-clamp-2'}`}>
+          {description}
+        </p>
+
+        {/* Expandable details with smooth height transition */}
+        <motion.div
+          initial={false}
+          animate={{ height: isExpanded ? 'auto' : 0, opacity: isExpanded ? 1 : 0 }}
+          className="overflow-hidden"
+        >
+          <div className="pt-2 pb-6 border-t border-stone-800/50 mt-4">
+            <p className="text-xs text-stone-500 font-mono leading-relaxed">
+              Focado em eficiência operacional, automação de processos complexos e geração de valor através de inteligência de dados aplicada.
+            </p>
+          </div>
+        </motion.div>
+        
+        <div className="flex flex-wrap gap-2 mt-auto">
+          {tags.map((tag: string) => (
+            <span key={tag} className="text-[9px] uppercase font-mono tracking-widest px-2 py-1 bg-stone-950 text-stone-500 rounded border border-stone-800 group-hover:border-stone-700 transition-colors">
+              {tag}
+            </span>
+          ))}
+        </div>
       </div>
-    </div>
-  </motion.div>
-);
+    </motion.div>
+  );
+};
 
 const ExperienceItem = ({ company, role, period, description, impact }: any) => (
   <div className="relative pl-8 border-l border-stone-800 pb-12 last:pb-0">
@@ -284,24 +314,28 @@ export default function Portfolio() {
             ))}
           </div>
 
-          <div className="mt-12 flex justify-between items-center border-t border-stone-800 pt-8">
-            <div className="text-xs font-mono text-stone-500 uppercase tracking-widest">
+          <div className="mt-12 flex flex-col md:flex-row justify-between items-center border-t border-stone-800 pt-8 gap-6">
+            <div className="text-xs font-mono text-stone-500 uppercase tracking-[0.2em] flex items-center gap-4 order-2 md:order-1">
+              <span className="w-8 h-px bg-stone-800" />
               Página {currentExpPage + 1} de {totalExpPages}
+              <span className="w-8 h-px bg-stone-800" />
             </div>
-            <div className="flex gap-4">
+            <div className="flex gap-3 order-1 md:order-2">
               <button 
                 onClick={() => setCurrentExpPage(p => Math.max(0, p - 1))}
                 disabled={currentExpPage === 0}
-                className="p-3 bg-stone-900 border border-stone-800 rounded-xl hover:border-cyan-400 transition-colors disabled:opacity-30 disabled:cursor-not-allowed group"
+                className="flex items-center gap-3 px-6 py-3 bg-stone-900 border border-stone-800 rounded-2xl hover:border-cyan-400 hover:bg-cyan-400/5 transition-all duration-300 disabled:opacity-20 disabled:cursor-not-allowed group active:scale-95"
               >
-                <ChevronLeft className="w-5 h-5 text-white group-hover:text-cyan-400" />
+                <ArrowLeft className="w-5 h-5 text-white group-hover:text-cyan-400 group-hover:-translate-x-1 transition-transform" />
+                <span className="text-xs font-bold uppercase tracking-widest text-stone-400 group-hover:text-white transition-colors">Anterior</span>
               </button>
               <button 
                 onClick={() => setCurrentExpPage(p => Math.min(totalExpPages - 1, p + 1))}
                 disabled={currentExpPage === totalExpPages - 1}
-                className="p-3 bg-stone-900 border border-stone-800 rounded-xl hover:border-cyan-400 transition-colors disabled:opacity-30 disabled:cursor-not-allowed group"
+                className="flex items-center gap-3 px-6 py-3 bg-stone-900 border border-stone-800 rounded-2xl hover:border-cyan-400 hover:bg-cyan-400/5 transition-all duration-300 disabled:opacity-20 disabled:cursor-not-allowed group active:scale-95"
               >
-                <ChevronRight className="w-5 h-5 text-white group-hover:text-cyan-400" />
+                <span className="text-xs font-bold uppercase tracking-widest text-stone-400 group-hover:text-white transition-colors">Próximo</span>
+                <ArrowRight className="w-5 h-5 text-white group-hover:text-cyan-400 group-hover:translate-x-1 transition-transform" />
               </button>
             </div>
           </div>
@@ -346,14 +380,14 @@ export default function Portfolio() {
               title="BI Operation Dashboard"
               description="Automação total de KPIs operacionais. Redução do tempo de reporte de horas de processos manuais para atualização em tempo real."
               tags={["Power BI", "SQL", "DAX", "Python"]}
-              github="https://www.linkedin.com/feed/update/urn:li:activity:7384978331571548160/"
+              github="https://www.linkedin.com/feed/update/urn:li:activity:7379670470251528192/"
               githubIcon={Linkedin}
             />
             <ProjectCard 
               title="Bot Suporte N1/N2"
               description="Automação de fluxos de comunicação para suporte técnico, garantindo centralização de registros e triagem inteligente de chamados."
               tags={["Power Automate", "Teams API", "Python Pipelines"]}
-              github="https://www.linkedin.com/feed/update/urn:li:activity:7379670470251528192/"
+              github="https://www.linkedin.com/feed/update/urn:li:activity:7384978331571548160/"
               githubIcon={Linkedin}
             />
           </div>
