@@ -241,6 +241,9 @@ export default function Portfolio() {
                   src="/ygor.jpg" 
                   alt="Ygor Teixeira" 
                   fill
+                  priority
+                  quality={100}
+                  sizes="(max-width: 768px) 256px, 320px"
                   className="object-cover transition-all duration-500"
                   referrerPolicy="no-referrer"
                 />
