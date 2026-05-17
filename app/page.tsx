@@ -42,16 +42,16 @@ const SectionHeading = ({ children, icon: Icon }: { children: React.ReactNode, i
   </div>
 );
 
-const ProjectCard = ({ title, description, tags, link, github, githubIcon: GithubIcon = Github }: any) => {
+const ProjectCard = ({ title, description, tags, link, github, image, githubIcon: GithubIcon = Github }: any) => {
   const [isExpanded, setIsExpanded] = React.useState(false);
 
   return (
     <motion.div 
       whileHover={{ scale: 1.02 }}
-      className="group relative bg-stone-900/40 border border-stone-800 rounded-2xl overflow-hidden hover:border-cyan-400/50 transition-all duration-500 backdrop-blur-sm"
+      className="group relative bg-stone-900/40 border border-stone-800 rounded-2xl overflow-hidden hover:border-cyan-400/50 transition-all duration-500 backdrop-blur-sm flex flex-col h-full"
     >
       {/* Browser-style top bar */}
-      <div className="bg-stone-900/80 px-4 py-3 border-b border-stone-800 flex items-center justify-between">
+      <div className="bg-stone-900/80 px-4 py-3 border-b border-stone-800 flex items-center justify-between z-10 relative">
         <div className="flex gap-1.5">
           <div className="w-2.5 h-2.5 rounded-full bg-stone-800" />
           <div className="w-2.5 h-2.5 rounded-full bg-stone-800" />
@@ -63,7 +63,22 @@ const ProjectCard = ({ title, description, tags, link, github, githubIcon: Githu
         </div>
       </div>
 
-      <div className="p-6">
+      {image && (
+        <div className="relative h-48 w-full border-b border-stone-800 overflow-hidden bg-stone-900/50">
+          <Image 
+            src={image} 
+            alt={title} 
+            fill 
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            quality={95}
+            className="object-cover group-hover:scale-105 transition-transform duration-700 opacity-80 group-hover:opacity-100" 
+            referrerPolicy="no-referrer"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-stone-900/80 to-transparent" />
+        </div>
+      )}
+
+      <div className="p-6 flex flex-col flex-1">
         <div className="flex items-center justify-between gap-3 mb-4">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-stone-800 rounded-lg group-hover:bg-cyan-400/10 transition-colors">
@@ -132,29 +147,65 @@ const experiences = [
     period: "Dez/2025 – Atualmente",
     company: "Livrarias Curitiba",
     role: "Analista de Sistemas Pleno",
-    description: "Customização de regras de negócio em ERP Senior (LSP/SGI), relatórios e telas SGI. Desenvolvimento de fluxos de integração via Web Services e APIs. Gestão técnica de sistemas PDV em ambiente Linux.",
-    impact: ["Manutenção ERP Senior", "Integrações via APIs"]
+    description: "Atuação direta na arquitetura e customização avançada de regras de negócio no ERP Senior (LSP/SGI), incluindo relatórios e interfaces customizadas. Responsável por desenvolver e manter fluxos de integração escaláveis via Web Services e APIs (REST/SOAP). Além disso, gerencio tecnicamente a infraestrutura de sistemas PDV em ambiente Linux, focando em estabilidade e suporte N3 para operações críticas da rede.",
+    impact: ["Arquitetura de Integrações ERP", "Alta Disponibilidade PDVs (Linux)"]
   },
   {
     period: "Abr/2025 – Dez/2025",
     company: "Hepta Tecnologia",
     role: "Ticket Operations Manager / BI Analyst",
-    description: "Desenvolvimento de dashboards em Power BI para monitoramento de SLAs e KPIs de clientes estratégicos. Otimização do processo de gestão de tickets resultando em 20% de redução em chamados recorrentes.",
-    impact: ["15% melhoria resoluções", "98% cumprimento SLA"]
+    description: "Liderança técnica em Business Intelligence desenvolvendo soluções analíticas com Power BI para monitoramento de SLAs e KPIs operacionais. Engenharia de dados envolvendo modelagem, DAX e consultas SQL complexas. O mapeamento visual das métricas impulsionou a tomada de decisões logísticas, otimização de rotas de atendimento e reduziu substancialmente o volume de chamados de reincidência.",
+    impact: ["15% melhoria em resoluções", "Geração de Insights Logísticos"]
   },
   {
     period: "Ago/2023 – Abr/2025",
     company: "Cadmus",
     role: "Ticket Operations Manager",
-    description: "Gestão e resolução de tickets complexos, garantindo comunicação transparente. Implementação de melhorias de fluxo utilizando Jira Software e Active Directory.",
-    impact: ["Eficiência em Tickets", "Gestão de Active Directory"]
+    description: "Orquestração e resolução ágil de incidentes complexos de infraestrutura e sistemas corporativos. Implementei fluxos de automação de triagem e mapeamento de problemas utilizando Jira Software, incluindo automações em JQL e integrações de processos. Administração e governança de acessos via Microsoft Active Directory (AD), reduzindo o MTTR (Mean Time to Repair) geral da central de serviços.",
+    impact: ["Automação de Triagem via Jira", "Redução de MTTR Global"]
   },
   {
     period: "Maio/2019 – Mar/2023",
     company: "Mercedes-Benz",
     role: "Operador de Produção (Qualidade)",
-    description: "Transição de carreira fundamental. Visão industrial baseada no Método Kaizen para melhoria contínua. Supervisão de montagem e conferência de qualidade de motores para exportação.",
-    impact: ["Mentalidade Kaizen", "Foco em Qualidade"]
+    description: "Construção de uma base sólida em metodologias ágeis e processos escaláveis através da cultura Kaizen de melhoria contínua. Foco rigoroso na garantia de qualidade global da montagem de motores para exportação. A visão sistêmica, o detalhismo de inspeção e o raciocínio em identificar pontos de falha no pipeline logístico se tornaram os alicerces da minha transição estratégica para a análise de sistemas e desenvolvimento tech.",
+    impact: ["Cultura Kaizen / Lean", "Raciocínio Sistêmico em Escala"]
+  }
+];
+
+const techStack = [
+  {
+    category: "Automação",
+    icon: Workflow,
+    color: "text-cyan-400",
+    skills: [
+      { name: "Python", details: "Selenium, BeautifulSoup, PyAutoGUI, Requests" },
+      { name: "Power Automate", details: "Desktop (RPA), Cloud Flows, Integrações" },
+      { name: "N8N & Make", details: "Workflows, Webhooks, API Integrations" },
+      { name: "Desenvolvimento de Bots", details: "Teams API, Discord Bots, Automação N1/N2" }
+    ]
+  },
+  {
+    category: "Dados & BI",
+    icon: Database,
+    color: "text-violet-400",
+    skills: [
+      { name: "Power BI", details: "DAX, Power Query, Modelagem de Dados e Dashboards" },
+      { name: "SQL & Relacionais", details: "Oracle PL/SQL, PostgreSQL, MySQL/MariaDB" },
+      { name: "Python Data Stack", details: "Pandas, NumPy, PIPELINES e Processos ETL" },
+      { name: "Análise de Métricas", details: "SLA Monitoring, KPI Tracking, Data Viz" }
+    ]
+  },
+  {
+    category: "Infra & Desenvolvimento",
+    icon: Terminal,
+    color: "text-emerald-400",
+    skills: [
+      { name: "ERP Senior", details: "SGI, LSP, Customizações de Interface e Regras" },
+      { name: "Linux & Servidores", details: "Ubuntu Server, Shell/Bash Scripting, Cron jobs" },
+      { name: "Dev Web & APIs", details: "RESTful APIs, TypeScript, Node.js, Next.js" },
+      { name: "Ferramentas Corporativas", details: "Git, Jira Software, Active Directory" }
+    ]
   }
 ];
 
@@ -353,45 +404,51 @@ export default function Portfolio() {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             <ProjectCard 
               title="AuraDocs"
-              description="IA de síntese inteligente de documentação. Centraliza e resume documentos complexos utilizando Gemini Pro para consultas técnicas instantâneas."
+              description="Acelerador de produtividade que aborda a busca lenta em sistemas de documentação complexos. Utiliza IA (Gemini) para sintetizar manuais extensos, entregando respostas técnicas instantâneas aos usuários."
               tags={["Gemini Pro", "Supabase", "TypeScript", "AI Analysis"]}
               link="https://docu-aura-spark.lovable.app"
               github="https://docu-aura-spark.lovable.app"
+              image="/auradocs-preview-real.png"
             />
             <ProjectCard 
               title="DivCom"
-              description="Plataforma de gestão de comunicação e divulgação. Sistema robusto com autenticação e fluxos de trabalho para centralização de avisos."
+              description="Descomplica a rotina de profissionais comissionados em salões de beleza. O web app simplifica o registro de serviços, realiza o cálculo automático de comissões e estrutura perfis de clientes (frequência e preferências), gerando relatórios de faturamento precisos."
               tags={["Next.js", "PostgreSQL", "Auth", "Tailwind"]}
               link="https://divcom-101.vercel.app/login"
               github="https://github.com/Ygor-Silva/DivCom"
+              image="/DivCom_preview.png"
             />
             <ProjectCard 
               title="CondoFlow"
-              description="Sistema de gestão de fluxos para condomínios. Automação de processos administrativos e monitoramento de atividades em tempo real."
+              description="Resolve a gestão ineficiente e baseada em papel. O sistema centraliza fluxos operacionais de condomínios, automatizando rotinas administrativas cruciais e garantindo auditoria e monitoramento em tempo real."
               tags={["React", "Firebase", "State Management", "UI/UX"]}
               link="https://condo-flow-eta.vercel.app"
               github="https://github.com/Ygor-Silva/CondoFlow"
+              image="/CondoFlow_preview.png"
             />
             <ProjectCard 
               title="NexoFin"
-              description="Dashboard financeiro com foco em análise de dados e autenticação segura. Interface intuitiva para controle de métricas e KPIs financeiros."
+              description="Combate a falta de visibilidade financeira. Dashboard analítico robusto que consolida streams de dados para oferecer controle direto sobre KPIs vitais e apoiar a rápida tomada de decisão."
               tags={["Data Viz", "Node.js", "Financial API", "Auth"]}
               link="https://nexo-fin.vercel.app/auth"
               github="https://github.com/Ygor-Silva/NexoFin"
+              image="/NexoFin_preview.png"
             />
             <ProjectCard 
               title="BI Operation Dashboard"
-              description="Automação total de KPIs operacionais. Redução do tempo de reporte de horas de processos manuais para atualização em tempo real."
+              description="Reduziu um overhead massivo de horas analíticas empregadas em relatórios manuais. A automação completa disponibilizou painéis operacionais fluídos e KPIs de alta precisão em tempo real."
               tags={["Power BI", "SQL", "DAX", "Python"]}
               github="https://www.linkedin.com/feed/update/urn:li:activity:7379670470251528192/"
               githubIcon={Linkedin}
+              image="/BI_preview.png"
             />
             <ProjectCard 
               title="Bot Suporte N1/N2"
-              description="Automação de fluxos de comunicação para suporte técnico, garantindo centralização de registros e triagem inteligente de chamados."
+              description="Supera gargalos de triagem inicial. Robô de atendimento que centraliza e qualifica incidentes de forma inteligente, diminuindo o TME e o MTTR ao rotear chamados com eficiência cirúrgica."
               tags={["Power Automate", "Teams API", "Python Pipelines"]}
               github="https://www.linkedin.com/feed/update/urn:li:activity:7384978331571548160/"
               githubIcon={Linkedin}
+              image="/Bot_preview.png"
             />
           </div>
         </div>
@@ -403,42 +460,28 @@ export default function Portfolio() {
           <SectionHeading icon={Cpu}>Stack Tecnológica</SectionHeading>
           
           <div className="grid md:grid-cols-3 gap-12">
-            <div>
-              <h3 className="text-white font-mono text-sm uppercase tracking-tighter mb-6 flex items-center gap-2">
-                <Workflow className="w-4 h-4 text-cyan-400" /> Automação
-              </h3>
-              <ul className="space-y-4">
-                {['Power Automate', 'Python (Scripts/Bots)', 'N8N', 'Selenium'].map(s => (
-                  <li key={s} className="flex justify-between items-center text-stone-400 bg-stone-900/40 p-3 rounded-lg border border-white/5">
-                    {s} <ChevronRight className="w-3 h-3" />
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-white font-mono text-sm uppercase tracking-tighter mb-6 flex items-center gap-2">
-                <Database className="w-4 h-4 text-violet-400" /> Dados
-              </h3>
-              <ul className="space-y-4">
-                {['SQL (Oracle/PL/SQL)', 'Power BI (DAX)', 'Pandas/NumPy', 'ETL Processes'].map(s => (
-                  <li key={s} className="flex justify-between items-center text-stone-400 bg-stone-900/40 p-3 rounded-lg border border-white/5">
-                    {s} <ChevronRight className="w-3 h-3" />
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-white font-mono text-sm uppercase tracking-tighter mb-6 flex items-center gap-2">
-                <Terminal className="w-4 h-4 text-accent" /> Infra & ERP
-              </h3>
-              <ul className="space-y-4">
-                {['Linux Server', 'Senior Sistemas (LSP)', 'RESTful APIs', 'Shell Scripting'].map(s => (
-                  <li key={s} className="flex justify-between items-center text-stone-400 bg-stone-900/40 p-3 rounded-lg border border-white/5">
-                    {s} <ChevronRight className="w-3 h-3" />
-                  </li>
-                ))}
-              </ul>
-            </div>
+            {techStack.map((section, idx) => {
+              const Icon = section.icon;
+              return (
+                <div key={idx}>
+                  <h3 className="text-white font-mono text-sm uppercase tracking-tighter mb-6 flex items-center gap-2">
+                    <Icon className={`w-5 h-5 ${section.color}`} /> {section.category}
+                  </h3>
+                  <ul className="space-y-4">
+                    {section.skills.map(s => (
+                      <li key={s.name} className="flex flex-col gap-1.5 text-stone-400 bg-stone-900/40 p-4 rounded-xl border border-white/5 hover:border-white/10 hover:bg-stone-900/80 transition-all duration-300">
+                        <div className="flex justify-between items-center text-stone-200 font-bold text-sm">
+                          {s.name}
+                        </div>
+                        <div className="text-xs font-mono text-stone-500 leading-relaxed uppercase tracking-wide">
+                          {s.details}
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
