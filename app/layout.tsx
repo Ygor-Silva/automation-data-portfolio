@@ -1,5 +1,6 @@
 import type {Metadata} from 'next';
 import { Inter, JetBrains_Mono } from 'next/font/google';
+import { Analytics } from '@vercel/analytics/next';
 import './globals.css'; // Global styles
 
 const inter = Inter({
@@ -20,7 +21,10 @@ export const metadata: Metadata = {
 export default function RootLayout({children}: {children: React.ReactNode}) {
   return (
     <html lang="pt-BR" className={`${inter.variable} ${jetbrainsMono.variable} scroll-smooth`}>
-      <body suppressHydrationWarning className="font-sans antialiased">{children}</body>
+      <body suppressHydrationWarning className="font-sans antialiased">
+        {children}
+        <Analytics />
+      </body>
     </html>
   );
 }
