@@ -342,11 +342,11 @@ const projects = [
     github: "https://www.linkedin.com/in/ygor-silva-developer/",
     githubIcon: Linkedin,
     images: [
-      "/relatorio_gerencial/dash_1.png",
-      "/relatorio_gerencial/dash_2.png",
-      "/relatorio_gerencial/dash_3.png",
-      "/relatorio_gerencial/dash_4.png",
-      "/relatorio_gerencial/dash_5.png"
+      "/relatorio-gerencial/dash1.png",
+      "/relatorio-gerencial/dash2.png",
+      "/relatorio-gerencial/dash3.png",
+      "/relatorio-gerencial/dash4.png",
+      "/relatorio-gerencial/dash5.png"
     ]
   },
   {
