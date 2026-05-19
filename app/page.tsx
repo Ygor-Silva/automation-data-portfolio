@@ -123,12 +123,22 @@ const ProjectCard = ({ title, description, tags, link, github, image, githubIcon
   );
 };
 
-const ExperienceItem = ({ company, role, period, description, impact }: any) => (
+const ExperienceItem = ({ company, role, period, description, impact, logo }: any) => (
   <div className="relative pl-8 border-l border-stone-800 pb-12 last:pb-0">
     <div className="absolute left-[-5px] top-0 w-[9px] h-[9px] rounded-full bg-cyan-400 ring-4 ring-cyan-400/20" />
     <span className="text-xs font-mono text-cyan-400 uppercase tracking-widest mb-2 block">{period}</span>
-    <h3 className="text-xl font-bold text-white">{role} @ <span className="text-stone-400">{company}</span></h3>
-    <p className="text-stone-400 mt-4 text-sm leading-relaxed max-w-2xl">{description}</p>
+    <div className="flex items-center gap-4 mb-4">
+      {logo && (
+        <div className="w-20 h-20 rounded-xl bg-white border border-stone-800 overflow-hidden flex items-center justify-center p-3 group-hover:border-cyan-400/50 transition-colors shrink-0 shadow-lg shadow-white/5">
+          <Image src={logo} alt={company} width={80} height={80} className="object-contain transition-all duration-300" referrerPolicy="no-referrer" />
+        </div>
+      )}
+      <h3 className="text-xl font-bold text-white leading-tight">
+        {role} <br />
+        <span className="text-stone-400 text-lg">@ {company}</span>
+      </h3>
+    </div>
+    <p className="text-stone-400 text-sm leading-relaxed max-w-2xl">{description}</p>
     {impact && (
       <div className="mt-4 flex flex-wrap gap-4">
         {impact.map((item: string, i: number) => (
@@ -147,6 +157,7 @@ const experiences = [
     period: "Dez/2025 – Atualmente",
     company: "Livrarias Curitiba",
     role: "Analista de Sistemas Pleno",
+    logo: "/livrarias-curitiba.png",
     description: "Atuação direta na arquitetura e customização avançada de regras de negócio no ERP Senior (LSP/SGI), incluindo relatórios e interfaces customizadas. Responsável por desenvolver e manter fluxos de integração escaláveis via Web Services e APIs (REST/SOAP). Além disso, gerencio tecnicamente a infraestrutura de sistemas PDV em ambiente Linux, focando em estabilidade e suporte N3 para operações críticas da rede.",
     impact: ["Arquitetura de Integrações ERP", "Alta Disponibilidade PDVs (Linux)"]
   },
@@ -154,6 +165,7 @@ const experiences = [
     period: "Abr/2025 – Dez/2025",
     company: "Hepta Tecnologia",
     role: "Ticket Operations Manager / BI Analyst",
+    logo: "/Logo-hepta.png",
     description: "Liderança técnica em Business Intelligence desenvolvendo soluções analíticas com Power BI para monitoramento de SLAs e KPIs operacionais. Engenharia de dados envolvendo modelagem, DAX e consultas SQL complexas. O mapeamento visual das métricas impulsionou a tomada de decisões logísticas, otimização de rotas de atendimento e reduziu substancialmente o volume de chamados de reincidência.",
     impact: ["15% melhoria em resoluções", "Geração de Insights Logísticos"]
   },
@@ -161,6 +173,7 @@ const experiences = [
     period: "Ago/2023 – Abr/2025",
     company: "Cadmus",
     role: "Ticket Operations Manager",
+    logo: "/logo-cadmus.png",
     description: "Orquestração e resolução ágil de incidentes complexos de infraestrutura e sistemas corporativos. Implementei fluxos de automação de triagem e mapeamento de problemas utilizando Jira Software, incluindo automações em JQL e integrações de processos. Administração e governança de acessos via Microsoft Active Directory (AD), reduzindo o MTTR (Mean Time to Repair) geral da central de serviços.",
     impact: ["Automação de Triagem via Jira", "Redução de MTTR Global"]
   },
@@ -168,6 +181,7 @@ const experiences = [
     period: "Maio/2019 – Mar/2023",
     company: "Mercedes-Benz",
     role: "Operador de Produção (Qualidade)",
+    logo: "/mercedes_logo.png",
     description: "Construção de uma base sólida em metodologias ágeis e processos escaláveis através da cultura Kaizen de melhoria contínua. Foco rigoroso na garantia de qualidade global da montagem de motores para exportação. A visão sistêmica, o detalhismo de inspeção e o raciocínio em identificar pontos de falha no pipeline logístico se tornaram os alicerces da minha transição estratégica para a análise de sistemas e desenvolvimento tech.",
     impact: ["Cultura Kaizen / Lean", "Raciocínio Sistêmico em Escala"]
   }
@@ -362,6 +376,7 @@ export default function Portfolio() {
                 period={exp.period}
                 company={exp.company}
                 role={exp.role}
+                logo={exp.logo}
                 description={exp.description}
                 impact={exp.impact}
               />
@@ -459,7 +474,7 @@ export default function Portfolio() {
         <div className="max-w-6xl mx-auto">
           <SectionHeading icon={Cpu}>Stack Tecnológica</SectionHeading>
           
-          <div className="grid md:grid-cols-3 gap-12">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-12">
             {techStack.map((section, idx) => {
               const Icon = section.icon;
               return (
