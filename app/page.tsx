@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { motion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 import Image from 'next/image';
 import { 
   Terminal, 
@@ -22,7 +22,9 @@ import {
   Factory,
   Trophy,
   ArrowUpRight,
-  User
+  User,
+  Filter,
+  LayoutGrid
 } from 'lucide-react';
 
 const colors = {
@@ -42,12 +44,28 @@ const SectionHeading = ({ children, icon: Icon }: { children: React.ReactNode, i
   </div>
 );
 
-const ProjectCard = ({ title, description, tags, link, github, image, githubIcon: GithubIcon = Github }: any) => {
+const ProjectCard = ({ title, description, tags, link, github, image, images, githubIcon: GithubIcon = Github }: any) => {
   const [isExpanded, setIsExpanded] = React.useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = React.useState(0);
+  const [isHovered, setIsHovered] = React.useState(false);
+
+  React.useEffect(() => {
+    if (!isHovered || !images || images.length <= 1) return;
+
+    const interval = setInterval(() => {
+      setCurrentImageIndex((prev) => (prev + 1) % images.length);
+    }, 1500);
+    return () => clearInterval(interval);
+  }, [isHovered, images]);
+
+  const activeIndex = isHovered ? currentImageIndex : 0;
+  const displayImage = images && images.length > 0 ? images[activeIndex] : image;
 
   return (
     <motion.div 
       whileHover={{ scale: 1.02 }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
       className="group relative bg-stone-900/40 border border-stone-800 rounded-2xl overflow-hidden hover:border-cyan-400/50 transition-all duration-500 backdrop-blur-sm flex flex-col h-full"
     >
       {/* Browser-style top bar */}
@@ -58,23 +76,61 @@ const ProjectCard = ({ title, description, tags, link, github, image, githubIcon
           <div className="w-2.5 h-2.5 rounded-full bg-stone-800" />
         </div>
         <div className="flex gap-4">
-          {github && <a href={github} target="_blank" className="text-stone-500 hover:text-white transition-colors"><GithubIcon className="w-4 h-4" /></a>}
-          {link && <a href={link} target="_blank" className="text-stone-500 hover:text-cyan-400 transition-colors"><ExternalLink className="w-4 h-4" /></a>}
+          {github && (
+            <motion.a 
+              href={github} 
+              target="_blank" 
+              whileTap={{ scale: 0.9, opacity: 0.8 }}
+              className="text-stone-500 hover:text-white transition-colors"
+            >
+              <GithubIcon className="w-4 h-4" />
+            </motion.a>
+          )}
+          {link && (
+            <motion.a 
+              href={link} 
+              target="_blank" 
+              whileTap={{ scale: 0.9, opacity: 0.8 }}
+              className="text-stone-500 hover:text-cyan-400 transition-colors"
+            >
+              <ExternalLink className="w-4 h-4" />
+            </motion.a>
+          )}
         </div>
       </div>
 
-      {image && (
-        <div className="relative h-48 w-full border-b border-stone-800 overflow-hidden bg-stone-900/50">
-          <Image 
-            src={image} 
-            alt={title} 
-            fill 
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-            quality={95}
-            className="object-cover group-hover:scale-105 transition-transform duration-700 opacity-80 group-hover:opacity-100" 
-            referrerPolicy="no-referrer"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-stone-900/80 to-transparent" />
+      {(displayImage || images) && (
+        <div className="relative aspect-[16/10] sm:aspect-video w-full border-b border-stone-800 overflow-hidden bg-stone-900/50">
+          <motion.div
+            key={activeIndex}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.4 }}
+            className="w-full h-full"
+          >
+            <Image 
+              src={displayImage} 
+              alt={title} 
+              fill 
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+              quality={95}
+              className="object-cover group-hover:scale-105 transition-transform duration-700 opacity-80 group-hover:opacity-100" 
+              referrerPolicy="no-referrer"
+            />
+          </motion.div>
+          
+          {images && images.length > 1 && (
+            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1 z-20">
+              {images.map((_: any, i: number) => (
+                <div 
+                  key={i} 
+                  className={`h-1 rounded-full transition-all duration-300 ${i === activeIndex ? 'w-4 bg-cyan-400' : 'w-1.5 bg-white/20'}`} 
+                />
+              ))}
+            </div>
+          )}
+
+          <div className="absolute inset-0 bg-gradient-to-t from-stone-900/90 to-transparent pointer-events-none" />
         </div>
       )}
 
@@ -129,7 +185,7 @@ const ExperienceItem = ({ company, role, period, description, impact, logo }: an
     <span className="text-xs font-mono text-cyan-400 uppercase tracking-widest mb-2 block">{period}</span>
     <div className="flex items-center gap-4 mb-4">
       {logo && (
-        <div className="w-20 h-20 rounded-xl bg-white border border-stone-800 overflow-hidden flex items-center justify-center p-3 group-hover:border-cyan-400/50 transition-colors shrink-0 shadow-lg shadow-white/5">
+        <div className="w-16 h-16 md:w-20 md:h-20 rounded-xl bg-white border border-stone-800 overflow-hidden flex items-center justify-center p-2.5 md:p-3 group-hover:border-cyan-400/50 transition-colors shrink-0 shadow-lg shadow-white/5">
           <Image src={logo} alt={company} width={80} height={80} className="object-contain transition-all duration-300" referrerPolicy="no-referrer" />
         </div>
       )}
@@ -223,8 +279,103 @@ const techStack = [
   }
 ];
 
+const projects = [
+  {
+    category: "Sistemas",
+    title: "AuraDocs",
+    description: "Acelerador de produtividade que aborda a busca lenta em sistemas de documentação complexos. Utiliza IA (Gemini) para sintetizar manuais extensos.",
+    tags: ["Gemini Pro", "Supabase", "TypeScript", "AI Analysis"],
+    link: "https://docu-aura-spark.lovable.app",
+    github: "https://docu-aura-spark.lovable.app",
+    image: "/auradocs-preview-real.png"
+  },
+  {
+    category: "Sistemas",
+    title: "DivCom",
+    description: "Descomplica a rotina de profissionais comissionados em salões de beleza. Cálculo automático de comissões e relatórios de faturamento.",
+    tags: ["Next.js", "PostgreSQL", "Auth", "Tailwind"],
+    link: "https://divcom-101.vercel.app/login",
+    github: "https://github.com/Ygor-Silva/DivCom",
+    image: "/DivCom_preview.png"
+  },
+  {
+    category: "Sistemas",
+    title: "CondoFlow",
+    description: "Resolve a gestão ineficiente e baseada em papel. Centraliza fluxos operacionais de condomínios, automatizando rotinas administrativas.",
+    tags: ["React", "Firebase", "State Management", "UI/UX"],
+    link: "https://condo-flow-eta.vercel.app",
+    github: "https://github.com/Ygor-Silva/CondoFlow",
+    image: "/CondoFlow_preview.png"
+  },
+  {
+    category: "Sistemas",
+    title: "NexoFin",
+    description: "Dashboard analítico robusto que consolida streams de dados para oferecer controle direto sobre KPIs vitais e apoiar a rápida tomada de decisão.",
+    tags: ["Data Viz", "Node.js", "Financial API", "Auth"],
+    link: "https://nexo-fin.vercel.app/auth",
+    github: "https://github.com/Ygor-Silva/NexoFin",
+    image: "/NexoFin_preview.png"
+  },
+  {
+    category: "Dashboards",
+    title: "BI Operation Dashboard",
+    description: "Reduziu um overhead massivo de relatórios manuais. Automação completa de painéis operacionais fluídos e KPIs em tempo real.",
+    tags: ["Power BI", "SQL", "DAX", "Python"],
+    github: "https://www.linkedin.com/feed/update/urn:li:activity:7379670470251528192/",
+    githubIcon: Linkedin,
+    image: "/BI_preview.png"
+  },
+  {
+    category: "Automação",
+    title: "Bot Suporte N1/N2",
+    description: "Supera gargalos de triagem inicial. Robô de atendimento que centraliza e qualifica incidentes, diminuindo o TME e o MTTR.",
+    tags: ["Power Automate", "Teams API", "Python"],
+    github: "https://www.linkedin.com/feed/update/urn:li:activity:7384978331571548160/",
+    githubIcon: Linkedin,
+    image: "/Bot_preview.png"
+  },
+  {
+    category: "Dashboards",
+    title: "Relatório Gerencial Servicedesk N1",
+    description: "Análise anual detalhada da operação de servicedesk N1, com extração automatizada via Jira API. Visão holística da produtividade e ISPs.",
+    tags: ["Jira API", "Data Analytics", "Dashboards", "JQL"],
+    github: "https://www.linkedin.com/in/ygor-silva-developer/",
+    githubIcon: Linkedin,
+    images: [
+      "/relatorio_gerencial/dash_1.png",
+      "/relatorio_gerencial/dash_2.png",
+      "/relatorio_gerencial/dash_3.png",
+      "/relatorio_gerencial/dash_4.png",
+      "/relatorio_gerencial/dash_5.png"
+    ]
+  },
+  {
+    category: "Dashboards",
+    title: "Monitoramento SLA Teams (N1)",
+    description: "Dash operacional estratégico para monitoramento de SLAs em canais do Microsoft Teams. Focado em garantir resposta rápida em menos de 1h.",
+    tags: ["Jira", "MS Teams", "Real-time Monitoring", "SLA"],
+    github: "https://www.linkedin.com/in/ygor-silva-developer/",
+    githubIcon: Linkedin,
+    image: "/dash-teams/dash-teams.jpeg"
+  },
+  {
+    category: "Dashboards",
+    title: "Gestão de Saúde Operacional N1",
+    description: "Dashboard estratégico conectado via API ao Jira, utilizando JQL. Apresenta ranking de chamados e filtros dinâmicos atualizados a cada 15 min.",
+    tags: ["Jira API", "JQL", "Operational Health", "Management"],
+    github: "https://www.linkedin.com/in/ygor-silva-developer/",
+    githubIcon: Linkedin,
+    images: [
+      "/dash-gestao/dash-gestao.jpeg",
+      "/dash-gestao/dash-gestao-2.jpeg"
+    ]
+  }
+];
+
 export default function Portfolio() {
   const [currentExpPage, setCurrentExpPage] = React.useState(0);
+  const [activeCategory, setActiveCategory] = React.useState("Todos");
+  
   const experiencesPerPage = 2;
   const totalExpPages = Math.ceil(experiences.length / experiencesPerPage);
   
@@ -232,6 +383,12 @@ export default function Portfolio() {
     currentExpPage * experiencesPerPage, 
     (currentExpPage + 1) * experiencesPerPage
   );
+  
+  const categories = ["Todos", "Dashboards", "Automação", "Sistemas"];
+  
+  const filteredProjects = activeCategory === "Todos" 
+    ? projects 
+    : projects.filter(p => p.category === activeCategory);
 
   return (
     <main className="bg-[#050505] min-h-screen text-stone-200 selection:bg-cyan-500/30 selection:text-cyan-200">
@@ -283,12 +440,22 @@ export default function Portfolio() {
                 <ArrowUpRight className="w-5 h-5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
               </a>
               <div className="flex gap-4 items-center pl-4">
-                <a href="https://github.com/Ygor-Silva" target="_blank" className="p-3 bg-stone-900 border border-stone-800 rounded-full hover:border-cyan-400 transition-colors">
+                <motion.a 
+                  href="https://github.com/Ygor-Silva" 
+                  target="_blank" 
+                  whileTap={{ scale: 0.9, opacity: 0.8 }}
+                  className="p-3 bg-stone-900 border border-stone-800 rounded-full hover:border-cyan-400 transition-colors"
+                >
                   <Github className="w-6 h-6" />
-                </a>
-                <a href="https://www.linkedin.com/in/ygor-silva-developer/" target="_blank" className="p-3 bg-stone-900 border border-stone-800 rounded-full hover:border-violet-400 transition-colors">
+                </motion.a>
+                <motion.a 
+                  href="https://www.linkedin.com/in/ygor-silva-developer/" 
+                  target="_blank" 
+                  whileTap={{ scale: 0.9, opacity: 0.8 }}
+                  className="p-3 bg-stone-900 border border-stone-800 rounded-full hover:border-violet-400 transition-colors"
+                >
                   <Linkedin className="w-6 h-6" />
-                </a>
+                </motion.a>
               </div>
             </div>
           </motion.div>
@@ -326,7 +493,14 @@ export default function Portfolio() {
       </section>
 
       {/* About Section - Contextual Narrative */}
-      <section id="about" className="py-24 px-6 bg-stone-950/50">
+      <motion.section 
+        id="about" 
+        className="py-24 px-6 bg-stone-950/50 scroll-mt-24"
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-100px" }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+      >
         <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-16 items-center">
           <SectionHeading icon={Workflow}>A Jornada</SectionHeading>
           <div className="col-span-full md:col-span-1">
@@ -362,10 +536,17 @@ export default function Portfolio() {
             </div>
           </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* Experience Section */}
-      <section id="experience" className="py-24 px-6 overflow-hidden">
+      <motion.section 
+        id="experience" 
+        className="py-24 px-6 overflow-hidden scroll-mt-24"
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-100px" }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+      >
         <div className="max-w-4xl mx-auto">
           <SectionHeading icon={BarChart3}>Experiência & Resultados</SectionHeading>
           
@@ -409,68 +590,92 @@ export default function Portfolio() {
             </div>
           </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* Projects Showcase */}
-      <section id="projects" className="py-24 px-6 bg-stone-950/20">
+      <motion.section 
+        id="projects" 
+        className="py-24 px-6 bg-stone-950/20 scroll-mt-24"
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-100px" }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+      >
         <div className="max-w-6xl mx-auto">
-          <SectionHeading icon={Terminal}>Projetos de Inovação</SectionHeading>
-          
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <ProjectCard 
-              title="AuraDocs"
-              description="Acelerador de produtividade que aborda a busca lenta em sistemas de documentação complexos. Utiliza IA (Gemini) para sintetizar manuais extensos, entregando respostas técnicas instantâneas aos usuários."
-              tags={["Gemini Pro", "Supabase", "TypeScript", "AI Analysis"]}
-              link="https://docu-aura-spark.lovable.app"
-              github="https://docu-aura-spark.lovable.app"
-              image="/auradocs-preview-real.png"
-            />
-            <ProjectCard 
-              title="DivCom"
-              description="Descomplica a rotina de profissionais comissionados em salões de beleza. O web app simplifica o registro de serviços, realiza o cálculo automático de comissões e estrutura perfis de clientes (frequência e preferências), gerando relatórios de faturamento precisos."
-              tags={["Next.js", "PostgreSQL", "Auth", "Tailwind"]}
-              link="https://divcom-101.vercel.app/login"
-              github="https://github.com/Ygor-Silva/DivCom"
-              image="/DivCom_preview.png"
-            />
-            <ProjectCard 
-              title="CondoFlow"
-              description="Resolve a gestão ineficiente e baseada em papel. O sistema centraliza fluxos operacionais de condomínios, automatizando rotinas administrativas cruciais e garantindo auditoria e monitoramento em tempo real."
-              tags={["React", "Firebase", "State Management", "UI/UX"]}
-              link="https://condo-flow-eta.vercel.app"
-              github="https://github.com/Ygor-Silva/CondoFlow"
-              image="/CondoFlow_preview.png"
-            />
-            <ProjectCard 
-              title="NexoFin"
-              description="Combate a falta de visibilidade financeira. Dashboard analítico robusto que consolida streams de dados para oferecer controle direto sobre KPIs vitais e apoiar a rápida tomada de decisão."
-              tags={["Data Viz", "Node.js", "Financial API", "Auth"]}
-              link="https://nexo-fin.vercel.app/auth"
-              github="https://github.com/Ygor-Silva/NexoFin"
-              image="/NexoFin_preview.png"
-            />
-            <ProjectCard 
-              title="BI Operation Dashboard"
-              description="Reduziu um overhead massivo de horas analíticas empregadas em relatórios manuais. A automação completa disponibilizou painéis operacionais fluídos e KPIs de alta precisão em tempo real."
-              tags={["Power BI", "SQL", "DAX", "Python"]}
-              github="https://www.linkedin.com/feed/update/urn:li:activity:7379670470251528192/"
-              githubIcon={Linkedin}
-              image="/BI_preview.png"
-            />
-            <ProjectCard 
-              title="Bot Suporte N1/N2"
-              description="Supera gargalos de triagem inicial. Robô de atendimento que centraliza e qualifica incidentes de forma inteligente, diminuindo o TME e o MTTR ao rotear chamados com eficiência cirúrgica."
-              tags={["Power Automate", "Teams API", "Python Pipelines"]}
-              github="https://www.linkedin.com/feed/update/urn:li:activity:7384978331571548160/"
-              githubIcon={Linkedin}
-              image="/Bot_preview.png"
-            />
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-12">
+            <div className="flex-1">
+              <SectionHeading icon={LayoutGrid}>Projetos de Inovação</SectionHeading>
+              <div className="flex flex-col gap-1 -mt-8">
+                <p className="text-stone-500 text-sm max-w-xl font-mono uppercase tracking-wider">
+                  Explorando a intersecção entre dados e automação
+                </p>
+                <p className="text-xs text-stone-600 italic font-mono flex items-center gap-1.5 leading-relaxed">
+                  <span className="w-1 h-1 rounded-full bg-cyan-500/50" />
+                  Nota: Todos os dados exibidos nos dashboards são fictícios e anonimizados para fins de demonstração (Compliance LGPD).
+                </p>
+              </div>
+            </div>
+            
+            {/* Filter Bar */}
+            <div className="flex overflow-x-auto no-scrollbar pb-1 md:pb-0 gap-2 bg-stone-900/50 p-1.5 rounded-2xl border border-stone-800 backdrop-blur-sm self-start max-w-full">
+              {categories.map(cat => (
+                <button
+                  key={cat}
+                  onClick={() => setActiveCategory(cat)}
+                  className={`px-4 md:px-5 py-2 md:py-2.5 rounded-xl text-[9px] md:text-[10px] font-bold uppercase tracking-[0.2em] transition-all duration-500 relative whitespace-nowrap ${
+                    activeCategory === cat ? 'text-white' : 'text-stone-500 hover:text-stone-300'
+                  }`}
+                >
+                  <span className="relative z-10">{cat}</span>
+                  {activeCategory === cat && (
+                    <motion.div 
+                      layoutId="activeFilter"
+                      className="absolute inset-0 bg-cyan-500/20 border border-cyan-400/30 rounded-xl"
+                      transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                    />
+                  )}
+                </button>
+              ))}
+            </div>
           </div>
+          
+          <motion.div 
+            layout
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+          >
+            <AnimatePresence mode="popLayout">
+              {filteredProjects.map((project) => (
+                <motion.div
+                  key={project.title}
+                  layout
+                  initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.9, y: 10 }}
+                  transition={{ duration: 0.5, ease: "circOut" }}
+                >
+                  <ProjectCard {...project} />
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </motion.div>
+
+          {filteredProjects.length === 0 && (
+            <div className="py-20 text-center text-stone-600 font-mono italic">
+              Nenhum projeto encontrado nesta categoria.
+            </div>
+          )}
         </div>
-      </section>
+      </motion.section>
 
       {/* Skills Radar */}
-      <section id="skills" className="py-24 px-6">
+      <motion.section 
+        id="skills" 
+        className="py-24 px-6 scroll-mt-24"
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-100px" }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+      >
         <div className="max-w-6xl mx-auto">
           <SectionHeading icon={Cpu}>Stack Tecnológica</SectionHeading>
           
@@ -499,10 +704,17 @@ export default function Portfolio() {
             })}
           </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* Footer / Contact */}
-      <footer id="contact" className="py-32 px-6 border-t border-white/5">
+      <motion.footer 
+        id="contact" 
+        className="py-32 px-6 border-t border-white/5 scroll-mt-24"
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-100px" }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+      >
         <div className="max-w-6xl mx-auto text-center">
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
@@ -513,7 +725,11 @@ export default function Portfolio() {
               VAMOS OTIMIZAR <br /> <span className="text-cyan-400 italic">SEU NEGÓCIO?</span>
             </h2>
             <div className="flex flex-col md:flex-row justify-center items-center gap-8 md:gap-12 mt-12">
-              <a href="mailto:ygor-1996@hotmail.com" className="flex items-center gap-3 text-stone-400 hover:text-white transition-colors group">
+              <motion.a 
+                href="mailto:ygor-1996@hotmail.com" 
+                whileTap={{ scale: 0.95, opacity: 0.9 }}
+                className="flex items-center gap-3 text-stone-400 hover:text-white transition-colors group"
+              >
                 <div className="p-4 bg-stone-900 rounded-full group-hover:bg-cyan-500/20 transition-colors">
                   <Mail className="w-8 h-8" />
                 </div>
@@ -521,8 +737,13 @@ export default function Portfolio() {
                   <span className="text-[10px] uppercase tracking-widest block text-stone-500 font-mono">E-mail</span>
                   <span className="text-lg">ygor-1996@hotmail.com</span>
                 </div>
-              </a>
-              <a href="https://www.linkedin.com/in/ygor-silva-developer/" target="_blank" className="flex items-center gap-3 text-stone-400 hover:text-white transition-colors group">
+              </motion.a>
+              <motion.a 
+                href="https://www.linkedin.com/in/ygor-silva-developer/" 
+                target="_blank" 
+                whileTap={{ scale: 0.95, opacity: 0.9 }}
+                className="flex items-center gap-3 text-stone-400 hover:text-white transition-colors group"
+              >
                 <div className="p-4 bg-stone-900 rounded-full group-hover:bg-violet-500/20 transition-colors">
                   <Linkedin className="w-8 h-8" />
                 </div>
@@ -530,7 +751,7 @@ export default function Portfolio() {
                   <span className="text-[10px] uppercase tracking-widest block text-stone-500 font-mono">LinkedIn</span>
                   <span className="text-lg">/in/ygor-silva-developer</span>
                 </div>
-              </a>
+              </motion.a>
             </div>
           </motion.div>
           
@@ -538,7 +759,7 @@ export default function Portfolio() {
             © 2026 Ygor Teixeira • Built with precision & code
           </div>
         </div>
-      </footer>
+      </motion.footer>
     </main>
   );
 }
