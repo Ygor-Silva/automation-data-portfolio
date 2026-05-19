@@ -180,14 +180,26 @@ const ProjectCard = ({ title, description, tags, link, github, image, images, gi
 };
 
 const ExperienceItem = ({ company, role, period, description, impact, logo }: any) => (
-  <div className="relative pl-8 border-l border-stone-800 pb-12 last:pb-0">
+  <motion.div 
+    initial={{ opacity: 0, y: 20 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    viewport={{ once: true, margin: "-100px" }}
+    transition={{ duration: 0.6, ease: "easeOut" }}
+    className="relative pl-8 border-l border-stone-800 pb-12 last:pb-0"
+  >
     <div className="absolute left-[-5px] top-0 w-[9px] h-[9px] rounded-full bg-cyan-400 ring-4 ring-cyan-400/20" />
     <span className="text-xs font-mono text-cyan-400 uppercase tracking-widest mb-2 block">{period}</span>
     <div className="flex items-center gap-4 mb-4">
       {logo && (
-        <div className="w-16 h-16 md:w-20 md:h-20 rounded-xl bg-white border border-stone-800 overflow-hidden flex items-center justify-center p-2.5 md:p-3 group-hover:border-cyan-400/50 transition-colors shrink-0 shadow-lg shadow-white/5">
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.95 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+          className="w-16 h-16 md:w-20 md:h-20 rounded-xl bg-white border border-stone-800 overflow-hidden flex items-center justify-center p-2.5 md:p-3 transition-colors shrink-0 shadow-lg shadow-white/5"
+        >
           <Image src={logo} alt={company} width={80} height={80} className="object-contain transition-all duration-300" referrerPolicy="no-referrer" />
-        </div>
+        </motion.div>
       )}
       <h3 className="text-xl font-bold text-white leading-tight">
         {role} <br />
@@ -198,14 +210,21 @@ const ExperienceItem = ({ company, role, period, description, impact, logo }: an
     {impact && (
       <div className="mt-4 flex flex-wrap gap-4">
         {impact.map((item: string, i: number) => (
-          <div key={i} className="flex items-center text-emerald-400 text-xs font-medium bg-emerald-400/5 px-3 py-1.5 rounded-full border border-emerald-400/10">
+          <motion.div 
+            key={i} 
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.4, delay: i * 0.05 }}
+            className="flex items-center text-emerald-400 text-xs font-medium bg-emerald-400/5 px-3 py-1.5 rounded-full border border-emerald-400/10"
+          >
             <Trophy className="w-3 h-3 mr-2" />
             {item}
-          </div>
+          </motion.div>
         ))}
       </div>
     )}
-  </div>
+  </motion.div>
 );
 
 const experiences = [
@@ -504,36 +523,64 @@ export default function Portfolio() {
         <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-16 items-center">
           <SectionHeading icon={Workflow}>A Jornada</SectionHeading>
           <div className="col-span-full md:col-span-1">
-            <motion.div 
-               initial={{ opacity: 0 }}
-               whileInView={{ opacity: 1 }}
-               viewport={{ once: true }}
-               className="space-y-6 text-stone-400 text-lg leading-relaxed"
-            >
-              <p>
+            <div className="space-y-6 text-stone-400 text-lg leading-relaxed">
+              <motion.p
+                initial={{ opacity: 0, y: 15 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+              >
                 Minha base não começou diante de uma tela, mas na linha de frente industrial. Passei <span className="text-white font-semibold">5 anos na linha de produção e inspeção de qualidade na Mercedes-Benz</span>.
-              </p>
-              <p>
+              </motion.p>
+              <motion.p
+                initial={{ opacity: 0, y: 15 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+              >
                 Essa experiência moldou minha visão analítica aguçada sob o <span className="text-cyan-400 font-mono italic">Método Kaizen</span>. Aprendi que a eficiência não é apenas sobre rapidez, mas sobre a eliminação constante de desperdícios e a busca pela melhoria contínua.
-              </p>
-              <p>
+              </motion.p>
+              <motion.p
+                initial={{ opacity: 0, y: 15 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+              >
                 Hoje, como <span className="text-white font-semibold">Analista de Sistemas Pleno</span>, aplico essa mesma filosofia de precisão industrial ao mundo do software e dados. Onde outros veem &quot;bugs&quot;, eu vejo gargalos de processo prontos para serem automatizados.
-              </p>
-            </motion.div>
+              </motion.p>
+            </div>
           </div>
           <div className="grid grid-cols-2 gap-4">
-            <div className="bg-stone-900 p-8 rounded-2xl border border-stone-800 flex flex-col items-center justify-center text-center">
+            <motion.div 
+              initial={{ opacity: 0, y: 15 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="bg-stone-900 p-8 rounded-2xl border border-stone-800 flex flex-col items-center justify-center text-center"
+            >
               <span className="text-4xl font-bold text-cyan-400 mb-2">5+</span>
               <span className="text-xs uppercase font-mono tracking-widest text-stone-500">Anos Industrial</span>
-            </div>
-            <div className="bg-stone-900 p-8 rounded-2xl border border-stone-800 flex flex-col items-center justify-center text-center">
+            </motion.div>
+            <motion.div 
+              initial={{ opacity: 0, y: 15 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              className="bg-stone-900 p-8 rounded-2xl border border-stone-800 flex flex-col items-center justify-center text-center"
+            >
               <span className="text-4xl font-bold text-violet-500 mb-2">100%</span>
               <span className="text-xs uppercase font-mono tracking-widest text-stone-500">Foco em Dados</span>
-            </div>
-            <div className="col-span-2 bg-stone-900 p-8 rounded-2xl border border-stone-800 flex items-center gap-6">
+            </motion.div>
+            <motion.div 
+              initial={{ opacity: 0, y: 15 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+              className="col-span-2 bg-stone-900 p-8 rounded-2xl border border-stone-800 flex items-center gap-6"
+            >
               <Factory className="w-12 h-12 text-stone-700" />
               <p className="text-sm italic text-stone-500">&quot;A qualidade deve ser construída no processo, não apenas inspecionada.&quot;</p>
-            </div>
+            </motion.div>
           </div>
         </div>
       </motion.section>
@@ -683,23 +730,36 @@ export default function Portfolio() {
             {techStack.map((section, idx) => {
               const Icon = section.icon;
               return (
-                <div key={idx}>
+                <motion.div 
+                  key={idx}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-50px" }}
+                  transition={{ duration: 0.6, delay: idx * 0.15 }}
+                >
                   <h3 className="text-white font-mono text-sm uppercase tracking-tighter mb-6 flex items-center gap-2">
                     <Icon className={`w-5 h-5 ${section.color}`} /> {section.category}
                   </h3>
                   <ul className="space-y-4">
-                    {section.skills.map(s => (
-                      <li key={s.name} className="flex flex-col gap-1.5 text-stone-400 bg-stone-900/40 p-4 rounded-xl border border-white/5 hover:border-white/10 hover:bg-stone-900/80 transition-all duration-300">
+                    {section.skills.map((s, sIdx) => (
+                      <motion.li 
+                        key={s.name}
+                        initial={{ opacity: 0, y: 12 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.4, delay: idx * 0.1 + sIdx * 0.05 }}
+                        className="flex flex-col gap-1.5 text-stone-400 bg-stone-900/40 p-4 rounded-xl border border-white/5 hover:border-white/10 hover:bg-stone-900/80 transition-all duration-300"
+                      >
                         <div className="flex justify-between items-center text-stone-200 font-bold text-sm">
                           {s.name}
                         </div>
                         <div className="text-xs font-mono text-stone-500 leading-relaxed uppercase tracking-wide">
                           {s.details}
                         </div>
-                      </li>
+                      </motion.li>
                     ))}
                   </ul>
-                </div>
+                </motion.div>
               );
             })}
           </div>
