@@ -113,8 +113,8 @@ const ProjectCard = ({ title, description, tags, link, github, image, images, gi
               alt={title} 
               fill 
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-              quality={95}
-              className="object-cover group-hover:scale-105 transition-transform duration-700 opacity-80 group-hover:opacity-100" 
+              quality={100}
+              className="object-cover group-hover:scale-105 transition-transform duration-700 group-hover:opacity-100" 
               referrerPolicy="no-referrer"
             />
           </motion.div>
@@ -342,11 +342,11 @@ const projects = [
     github: "https://www.linkedin.com/in/ygor-silva-developer/",
     githubIcon: Linkedin,
     images: [
-      "/relatorio-gerencial/dash1.png",
-      "/relatorio-gerencial/dash2.png",
-      "/relatorio-gerencial/dash3.png",
-      "/relatorio-gerencial/dash4.png",
-      "/relatorio-gerencial/dash5.png"
+      "/relatorio_gerencial/dash_1.png",
+      "/relatorio_gerencial/dash_2.png",
+      "/relatorio_gerencial/dash_3.png",
+      "/relatorio_gerencial/dash_4.png",
+      "/relatorio_gerencial/dash_5.png"
     ]
   },
   {
