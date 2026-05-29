@@ -779,8 +779,15 @@ export default function Portfolio() {
                   viewport={{ once: true, margin: "-50px" }}
                   transition={{ duration: 0.6, delay: idx * 0.15 }}
                 >
-                  <h3 className="text-white font-mono text-sm uppercase tracking-tighter mb-6 flex items-center gap-2">
-                    <Icon className={`w-5 h-5 ${section.color}`} /> {section.category}
+                  <h3 className="text-white font-mono text-sm uppercase tracking-tighter mb-6 flex items-center gap-3">
+                    <motion.div 
+                      whileHover={{ scale: 1.2, rotate: [0, -10, 10, -10, 0] }} 
+                      transition={{ duration: 0.4 }}
+                      className="cursor-pointer"
+                    >
+                      <Icon className={`w-6 h-6 ${section.color}`} />
+                    </motion.div>
+                    {section.category}
                   </h3>
                   <ul className="space-y-4">
                     {section.skills.map((s, sIdx) => (
@@ -788,14 +795,15 @@ export default function Portfolio() {
                         key={s.name}
                         initial={{ opacity: 0, y: 12 }}
                         whileInView={{ opacity: 1, y: 0 }}
+                        whileHover={{ scale: 1.02, y: -2 }}
                         viewport={{ once: true }}
                         transition={{ duration: 0.4, delay: idx * 0.1 + sIdx * 0.05 }}
-                        className="flex flex-col gap-1.5 text-stone-400 bg-stone-900/40 p-4 rounded-xl border border-white/5 hover:border-white/10 hover:bg-stone-900/80 transition-all duration-300"
+                        className="flex flex-col gap-1.5 text-stone-400 bg-stone-900/40 p-4 rounded-xl border border-white/5 hover:border-cyan-500/20 hover:bg-stone-800/80 transition-all duration-300 cursor-pointer shadow-lg shadow-transparent hover:shadow-cyan-500/5 group"
                       >
-                        <div className="flex justify-between items-center text-stone-200 font-bold text-sm">
+                        <div className="flex justify-between items-center text-stone-200 font-bold text-sm group-hover:text-cyan-400 transition-colors">
                           {s.name}
                         </div>
-                        <div className="text-xs font-mono text-stone-500 leading-relaxed uppercase tracking-wide">
+                        <div className="text-xs font-mono text-stone-500 leading-relaxed uppercase tracking-wide group-hover:text-stone-300 transition-colors">
                           {s.details}
                         </div>
                       </motion.li>
