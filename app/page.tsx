@@ -28,6 +28,50 @@ import {
   ArrowUp
 } from 'lucide-react';
 
+const InteractiveBackground = () => {
+  const [mousePosition, setMousePosition] = React.useState({ x: 0, y: 0 });
+  const [isClient, setIsClient] = React.useState(false);
+
+  React.useEffect(() => {
+    setIsClient(true);
+    const handleMouseMove = (e: MouseEvent) => {
+      setMousePosition({ x: e.clientX, y: e.clientY });
+    };
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, []);
+
+  if (!isClient) return null;
+
+  return (
+    <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-cyan-500/20 blur-[120px] rounded-full" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-violet-500/20 blur-[120px] rounded-full" />
+      
+      {/* Interactive mouse follow glow */}
+      <motion.div
+        className="absolute top-0 left-0 w-[500px] h-[500px] bg-cyan-400/10 rounded-full blur-[100px] mix-blend-screen"
+        animate={{
+          x: mousePosition.x - 250,
+          y: mousePosition.y - 250,
+        }}
+        transition={{ type: "tween", ease: "linear", duration: 0.1 }}
+      />
+      <motion.div
+        className="absolute top-0 left-0 w-[300px] h-[300px] bg-violet-400/10 rounded-full blur-[80px] mix-blend-screen"
+        animate={{
+          x: mousePosition.x - 150,
+          y: mousePosition.y - 150,
+        }}
+        transition={{ type: "tween", ease: "linear", duration: 0.3 }}
+      />
+      
+      {/* Grain overlay */}
+      <div className="absolute inset-0 opacity-[0.015] bg-[url('https://upload.wikimedia.org/wikipedia/commons/7/76/1k_Dissolve_Noise_Texture.png')] bg-repeat mix-blend-overlay"></div>
+    </div>
+  );
+};
+
 const ScrollToTop = () => {
   const [isVisible, setIsVisible] = React.useState(false);
 
@@ -453,11 +497,7 @@ export default function Portfolio() {
 
   return (
     <main className="bg-[#050505] min-h-screen text-stone-200 selection:bg-cyan-500/30 selection:text-cyan-200">
-      {/* Background decoration */}
-      <div className="fixed inset-0 pointer-events-none opacity-20">
-        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-cyan-500/20 blur-[120px] rounded-full" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-violet-500/20 blur-[120px] rounded-full" />
-      </div>
+      <InteractiveBackground />
 
       {/* Navigation */}
       <nav className="fixed top-0 w-full z-50 px-6 py-8 flex justify-between items-center backdrop-blur-md bg-stone-950/20 border-b border-white/5">
