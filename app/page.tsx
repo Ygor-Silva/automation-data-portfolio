@@ -24,8 +24,50 @@ import {
   ArrowUpRight,
   User,
   Filter,
-  LayoutGrid
+  LayoutGrid,
+  ArrowUp
 } from 'lucide-react';
+
+const ScrollToTop = () => {
+  const [isVisible, setIsVisible] = React.useState(false);
+
+  React.useEffect(() => {
+    const toggleVisibility = () => {
+      if (window.scrollY > 300) {
+        setIsVisible(true);
+      } else {
+        setIsVisible(false);
+      }
+    };
+
+    window.addEventListener("scroll", toggleVisibility);
+    return () => window.removeEventListener("scroll", toggleVisibility);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+  };
+
+  return (
+    <AnimatePresence>
+      {isVisible && (
+        <motion.button
+          initial={{ opacity: 0, scale: 0.8, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.8, y: 20 }}
+          onClick={scrollToTop}
+          className="fixed bottom-8 right-8 md:bottom-12 md:right-12 p-3 md:p-4 bg-stone-800 border border-stone-700 hover:border-cyan-400 text-cyan-400 rounded-full shadow-xl shadow-cyan-500/10 z-50 transition-colors group"
+          aria-label="Voltar ao topo"
+        >
+          <ArrowUp className="w-5 h-5 md:w-6 md:h-6 group-hover:-translate-y-1 transition-transform" />
+        </motion.button>
+      )}
+    </AnimatePresence>
+  );
+};
 
 const colors = {
   primary: 'cyan-400',
@@ -820,6 +862,8 @@ export default function Portfolio() {
           </div>
         </div>
       </motion.footer>
+
+      <ScrollToTop />
     </main>
   );
 }
