@@ -28,11 +28,14 @@ import {
   ArrowUp
 } from 'lucide-react';
 
+import FloatingChat from '../components/FloatingChat';
+
 const InteractiveBackground = () => {
   const [mousePosition, setMousePosition] = React.useState({ x: 0, y: 0 });
   const [isClient, setIsClient] = React.useState(false);
 
   React.useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsClient(true);
     const handleMouseMove = (e: MouseEvent) => {
       setMousePosition({ x: e.clientX, y: e.clientY });
@@ -911,6 +914,7 @@ export default function Portfolio() {
         </div>
       </motion.footer>
 
+      <FloatingChat />
       <ScrollToTop />
     </main>
   );
