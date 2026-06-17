@@ -622,6 +622,7 @@ const getTechStack = (lang: 'pt' | 'en') => [
 export default function Portfolio() {
   const [lang, setLang] = React.useState<'pt' | 'en'>('pt');
   const [currentExpPage, setCurrentExpPage] = React.useState(0);
+  const [toastMsg, setToastMsg] = React.useState<string | null>(null);
   
   const t = translations[lang];
   
@@ -652,6 +653,20 @@ export default function Portfolio() {
     <main className="bg-[#050505] min-h-screen text-stone-200 selection:bg-cyan-500/30 selection:text-cyan-200">
       <InteractiveBackground />
 
+      <AnimatePresence>
+        {toastMsg && (
+          <motion.div
+            initial={{ opacity: 0, y: -20, x: '-50%' }}
+            animate={{ opacity: 1, y: 0, x: '-50%' }}
+            exit={{ opacity: 0, y: -20, x: '-50%' }}
+            className="fixed top-24 left-1/2 z-[100] bg-stone-900 border border-stone-800 text-stone-200 px-4 py-2 rounded-full text-xs font-mono shadow-2xl flex items-center gap-2"
+          >
+            <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+            {toastMsg}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Navigation */}
       <nav className="fixed top-0 w-full z-50 px-4 md:px-6 py-4 md:py-8 flex justify-between items-center backdrop-blur-md bg-stone-950/40 border-b border-white/5">
         <div className="text-xl md:text-2xl font-bold tracking-tighter text-white">
@@ -671,6 +686,8 @@ export default function Portfolio() {
               setLang(nextLang);
               setCurrentExpPage(0);
               setActiveCategory(translations[nextLang].projects.all);
+              setToastMsg(nextLang === 'en' ? 'Language switched to English' : 'Idioma alterado para Português');
+              setTimeout(() => setToastMsg(null), 3000);
             }}
             className="flex items-center justify-center p-2 rounded-lg bg-stone-900 border border-stone-800 text-stone-400 hover:text-cyan-400 hover:border-cyan-400/50 transition-colors cursor-pointer text-xs font-mono font-bold"
             aria-label="Toggle language"
