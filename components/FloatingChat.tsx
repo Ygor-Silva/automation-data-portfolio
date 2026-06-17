@@ -12,14 +12,70 @@ interface ChatMessage {
   isTyping?: boolean;
 }
 
-export default function FloatingChat() {
+export default function FloatingChat({ lang = 'pt' }: { lang?: 'pt' | 'en' }) {
+  const t = {
+    pt: {
+      welcome: 'Olá! Sou o assistente virtual do portfólio. Como posso ajudar você a conhecer mais sobre a experiência profissional e os projetos descritos aqui?',
+      empty: 'A mensagem não pode estar vazia.',
+      tooLong: 'A mensagem é muito longa. Por favor, resuma em poucas palavras.',
+      loadingErr: 'O servidor está iniciando ou reconectando. Por favor, aguarde alguns segundos e tente novamente.',
+      fetchErr: 'Erro ao buscar a resposta. Tente novamente mais tarde.',
+      defaultErr: 'Desculpe, ocorreu um erro.',
+      questions: [
+        "Qual sua maior experiência com RPA?",
+        "Como você utiliza dados para tomada de decisão?",
+        "Quais tecnologias você mais utiliza?",
+        "Como entrar em contato para consultoria?"
+      ],
+      inputPlaceholder: "Pergunte sobre meus projetos...",
+      askAssistant: "Assistente IA",
+      closeChat: "Fechar chat",
+      openChat: "Abrir chat",
+      statusProcessing: "Processando... (~3s)",
+      statusOnline: "Online"
+    },
+    en: {
+      welcome: 'Hello! I am the portfolio virtual assistant. How can I help you learn more about the professional experience and projects described here?',
+      empty: 'The message cannot be empty.',
+      tooLong: 'The message is too long. Please summarize in a few words.',
+      loadingErr: 'The server is starting or reconnecting. Please wait a few seconds and try again.',
+      fetchErr: 'Error fetching the response. Please try again later.',
+      defaultErr: 'Sorry, an error occurred.',
+      questions: [
+        "What is your biggest experience with RPA?",
+        "How do you use data for decision making?",
+        "What technologies do you use the most?",
+        "How to contact for consulting?"
+      ],
+      inputPlaceholder: "Ask about my projects...",
+      askAssistant: "AI Assistant",
+      closeChat: "Close chat",
+      openChat: "Open chat",
+      statusProcessing: "Processing... (~3s)",
+      statusOnline: "Online"
+    }
+  };
+
+  const currentT = t[lang];
+
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([{
     id: 'welcome',
     role: 'assistant',
-    text: 'Olá! Sou o assistente virtual do portfólio. Como posso ajudar você a conhecer mais sobre a experiência profissional e os projetos descritos aqui?',
+    text: currentT.welcome,
     isTyping: false
   }]);
+  
+  // Re-translate first message if it's the only one when languge changes
+  useEffect(() => {
+    setMessages(prev => {
+      if (prev.length === 1 && prev[0].id === 'welcome') {
+        return [{...prev[0], text: currentT.welcome}];
+      }
+      return prev;
+    });
+  }, [lang, currentT.welcome]);
+
   const [input, setInput] = useState('');
   const [inputError, setInputError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -41,12 +97,12 @@ export default function FloatingChat() {
     const textToSend = overrideText || input;
     
     if (!textToSend.trim()) {
-      setInputError('A mensagem não pode estar vazia.');
+      setInputError(currentT.empty);
       return;
     }
     
     if (textToSend.trim().length > 200) {
-      setInputError('A mensagem é muito longa. Por favor, resuma em poucas palavras.');
+      setInputError(currentT.tooLong);
       return;
     }
 
@@ -73,11 +129,11 @@ export default function FloatingChat() {
 
       const contentType = response.headers.get('content-type');
       if (contentType && contentType.includes('text/html')) {
-        throw new Error("O servidor está iniciando ou reconectando. Por favor, aguarde alguns segundos e tente novamente.");
+        throw new Error(currentT.loadingErr);
       }
 
       if (!response.ok) {
-        let errText = "Erro ao buscar a resposta. Tente novamente mais tarde.";
+        let errText = currentT.fetchErr;
         try {
           const errData = await response.json();
           if (errData.text) errText = errData.text;
@@ -121,7 +177,7 @@ export default function FloatingChat() {
       setMessages((prev) => 
          prev.map(msg => 
            msg.id === initialAssistantMsgId 
-           ? { ...msg, text: error.message || 'Desculpe, ocorreu um erro.', isTyping: false } 
+           ? { ...msg, text: error.message || currentT.defaultErr, isTyping: false } 
            : msg
          )
       );
@@ -137,12 +193,7 @@ export default function FloatingChat() {
   };
 
   const renderSuggestedQuestions = () => {
-    const questions = [
-      "Qual sua maior experiência com RPA?",
-      "Como você utiliza dados para tomada de decisão?",
-      "Quais tecnologias você mais utiliza?",
-      "Como entrar em contato para consultoria?"
-    ];
+    const questions = currentT.questions;
 
     if (messages.length > 1) return null;
 
@@ -178,7 +229,7 @@ export default function FloatingChat() {
             exit={{ opacity: 0, scale: 0.8, y: 20 }}
             onClick={() => setIsOpen(true)}
             className="fixed bottom-24 right-8 md:bottom-28 md:right-12 p-3 md:p-4 bg-cyan-500 border border-cyan-400 text-stone-950 rounded-full shadow-xl shadow-cyan-500/20 z-50 transition-colors hover:bg-cyan-400 group"
-            aria-label="Abrir chat"
+            aria-label={currentT.openChat}
           >
             <Bot className="w-6 h-6" />
           </motion.button>
@@ -205,7 +256,7 @@ export default function FloatingChat() {
               <button
                 onClick={() => setIsOpen(false)}
                 className="text-stone-400 hover:text-white transition-colors"
-                aria-label="Fechar chat"
+                aria-label={currentT.closeChat}
               >
                 <X className="w-5 h-5" />
               </button>
@@ -255,12 +306,12 @@ export default function FloatingChat() {
               {isLoading ? (
                 <span className="flex items-center gap-1.5 text-cyan-400">
                   <span className="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-ping" />
-                  Processando... (~3s)
+                  {currentT.statusProcessing}
                 </span>
               ) : (
                 <span className="flex items-center gap-1.5 text-stone-500">
                   <span className="w-1.5 h-1.5 bg-stone-500 rounded-full" />
-                  Online
+                  {currentT.statusOnline}
                 </span>
               )}
             </div>
@@ -289,7 +340,7 @@ export default function FloatingChat() {
                     setInput(e.target.value);
                     if (inputError) setInputError(null);
                   }}
-                  placeholder="Pergunte sobre meus projetos..."
+                  placeholder={currentT.inputPlaceholder}
                   className="flex-1 bg-stone-900 border border-stone-700 text-stone-200 text-sm rounded-xl px-4 py-2 focus:outline-none focus:border-cyan-400 transition-colors"
                 />
                 <button

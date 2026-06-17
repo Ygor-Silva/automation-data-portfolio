@@ -316,109 +316,202 @@ const ExperienceItem = ({ company, role, period, description, impact, logo }: an
   </motion.div>
 );
 
-const experiences = [
-  {
-    period: "Dez/2025 – Atualmente",
-    company: "Livrarias Curitiba",
-    role: "Analista de Sistemas Pleno",
-    logo: "/livrarias-curitiba.png",
-    description: "Atuação direta na arquitetura e customização avançada de regras de negócio no ERP Senior (LSP/SGI), incluindo relatórios e interfaces customizadas. Responsável por desenvolver e manter fluxos de integração escaláveis via Web Services e APIs (REST/SOAP). Além disso, gerencio tecnicamente a infraestrutura de sistemas PDV em ambiente Linux, focando em estabilidade e suporte N3 para operações críticas da rede.",
-    impact: ["Arquitetura de Integrações ERP", "Alta Disponibilidade PDVs (Linux)"]
+const translations = {
+  pt: {
+    nav: { about: "Sobre", experience: "Carreira", projects: "Projetos", tech: "Dev", contact: "Contato", lang: "EN" },
+    hero: {
+      availability: "Disponível para novos desafios",
+      specialist: "Especialista em",
+      rpa: "Automação RPA",
+      and: "e",
+      dataInsight: "Inteligência de Dados",
+      description: "Transformando processos complexos em eficiência mensurável.",
+      viewProjects: "Ver Projetos",
+      badge: ["Em constante", "evolução"]
+    },
+    about: {
+      title: "A Jornada",
+      p1: "Minha base não começou diante de uma tela, mas na linha de frente industrial. Passei",
+      p1_bold: "5 anos na linha de produção e inspeção de qualidade na Mercedes-Benz",
+      p2: "Essa experiência moldou minha visão analítica aguçada sob o",
+      p2_italic: "Método Kaizen",
+      p2_rest: ". Aprendi que a eficiência não é apenas sobre rapidez, mas sobre a eliminação constante de desperdícios e a busca pela melhoria contínua.",
+      p3: "Hoje, como",
+      p3_bold: "Analista de Sistemas Pleno",
+      p3_rest: ", aplico essa mesma filosofia de precisão industrial ao mundo do software e dados. Onde outros veem \"bugs\", eu vejo gargalos de processo prontos para serem automatizados.",
+      stat1: "Anos Industrial",
+      stat2: "Foco em Dados",
+      quote: "\"A qualidade deve ser construída no processo, não apenas inspecionada.\""
+    },
+    experience: {
+      title: "Experiência & Resultados",
+      page: "Página",
+      of: "de",
+      prev: "Anterior",
+      next: "Próximo"
+    },
+    projects: {
+      title: "Projetos de Inovação",
+      subtitle: "Explorando a intersecção entre dados e automação",
+      note: "Nota: Todos os dados exibidos nos dashboards são fictícios e anonimizados para fins de demonstração (Compliance LGPD).",
+      empty: "Nenhum projeto encontrado nesta categoria.",
+      all: "Todos"
+    },
+    skills: {
+      title: "Stack Tecnológica"
+    },
+    contact: {
+      title_1: "VAMOS OTIMIZAR",
+      title_2: "SEU NEGÓCIO?",
+      email: "E-mail",
+      footer: "© 2026 Ygor Teixeira • Built with precision & code"
+    }
   },
-  {
-    period: "Abr/2025 – Dez/2025",
-    company: "Hepta Tecnologia",
-    role: "Ticket Operations Manager / BI Analyst",
-    logo: "/Logo-hepta.png",
-    description: "Liderança técnica em Business Intelligence desenvolvendo soluções analíticas com Power BI para monitoramento de SLAs e KPIs operacionais. Engenharia de dados envolvendo modelagem, DAX e consultas SQL complexas. O mapeamento visual das métricas impulsionou a tomada de decisões logísticas, otimização de rotas de atendimento e reduziu substancialmente o volume de chamados de reincidência.",
-    impact: ["15% melhoria em resoluções", "Geração de Insights Logísticos"]
-  },
-  {
-    period: "Ago/2023 – Abr/2025",
-    company: "Cadmus",
-    role: "Ticket Operations Manager",
-    logo: "/logo-cadmus.png",
-    description: "Orquestração e resolução ágil de incidentes complexos de infraestrutura e sistemas corporativos. Implementei fluxos de automação de triagem e mapeamento de problemas utilizando Jira Software, incluindo automações em JQL e integrações de processos. Administração e governança de acessos via Microsoft Active Directory (AD), reduzindo o MTTR (Mean Time to Repair) geral da central de serviços.",
-    impact: ["Automação de Triagem via Jira", "Redução de MTTR Global"]
-  },
-  {
-    period: "Maio/2019 – Mar/2023",
-    company: "Mercedes-Benz",
-    role: "Operador de Produção (Qualidade)",
-    logo: "/mercedes_logo.png",
-    description: "Construção de uma base sólida em metodologias ágeis e processos escaláveis através da cultura Kaizen de melhoria contínua. Foco rigoroso na garantia de qualidade global da montagem de motores para exportação. A visão sistêmica, o detalhismo de inspeção e o raciocínio em identificar pontos de falha no pipeline logístico se tornaram os alicerces da minha transição estratégica para a análise de sistemas e desenvolvimento tech.",
-    impact: ["Cultura Kaizen / Lean", "Raciocínio Sistêmico em Escala"]
+  en: {
+    nav: { about: "About", experience: "Career", projects: "Projects", tech: "Tech", contact: "Contact", lang: "PT" },
+    hero: {
+      availability: "Available for new challenges",
+      specialist: "Specialist in",
+      rpa: "RPA Automation",
+      and: "and",
+      dataInsight: "Data Intelligence",
+      description: "Transforming complex processes into measurable efficiency.",
+      viewProjects: "View Projects",
+      badge: ["Constantly", "evolving"]
+    },
+    about: {
+      title: "The Journey",
+      p1: "My foundation didn't start in front of a screen, but on the industrial frontline. I spent",
+      p1_bold: "5 years on the production and quality inspection line at Mercedes-Benz",
+      p2: "This experience shaped my sharp analytical vision under the",
+      p2_italic: "Kaizen Method",
+      p2_rest: ". I learned that efficiency isn't just about speed, but the constant elimination of waste and the pursuit of continuous improvement.",
+      p3: "Today, as a",
+      p3_bold: "Mid-level Systems Analyst",
+      p3_rest: ", I apply this same philosophy of industrial precision to the world of software and data. Where others see \"bugs\", I see process bottlenecks ready to be automated.",
+      stat1: "Years Industrial",
+      stat2: "Data Focus",
+      quote: "\"Quality must be built into the process, not just inspected.\""
+    },
+    experience: {
+      title: "Experience & Results",
+      page: "Page",
+      of: "of",
+      prev: "Previous",
+      next: "Next"
+    },
+    projects: {
+      title: "Innovation Projects",
+      subtitle: "Exploring the intersection of data and automation",
+      note: "Note: All data displayed in dashboards are fictitious and anonymized for demonstration purposes (LGPD Compliance).",
+      empty: "No projects found in this category.",
+      all: "All"
+    },
+    skills: {
+      title: "Tech Stack"
+    },
+    contact: {
+      title_1: "LET'S OPTIMIZE",
+      title_2: "YOUR BUSINESS?",
+      email: "Email",
+      footer: "© 2026 Ygor Teixeira • Built with precision & code"
+    }
   }
-];
+};
 
-const techStack = [
-  {
-    category: "Automação",
-    icon: Workflow,
-    color: "text-cyan-400",
-    skills: [
-      { name: "Python", details: "Selenium, BeautifulSoup, PyAutoGUI, Requests" },
-      { name: "Power Automate", details: "Desktop (RPA), Cloud Flows, Integrações" },
-      { name: "N8N & Make", details: "Workflows, Webhooks, API Integrations" },
-      { name: "Desenvolvimento de Bots", details: "Teams API, Discord Bots, Automação N1/N2" }
-    ]
-  },
-  {
-    category: "Dados & BI",
-    icon: Database,
-    color: "text-violet-400",
-    skills: [
-      { name: "Power BI", details: "DAX, Power Query, Modelagem de Dados e Dashboards" },
-      { name: "SQL & Relacionais", details: "Oracle PL/SQL, PostgreSQL, MySQL/MariaDB" },
-      { name: "Python Data Stack", details: "Pandas, NumPy, PIPELINES e Processos ETL" },
-      { name: "Análise de Métricas", details: "SLA Monitoring, KPI Tracking, Data Viz" }
-    ]
-  },
-  {
-    category: "Infra & Desenvolvimento",
-    icon: Terminal,
-    color: "text-emerald-400",
-    skills: [
-      { name: "ERP Senior", details: "SGI, LSP, Customizações de Interface e Regras" },
-      { name: "Linux & Servidores", details: "Ubuntu Server, Shell/Bash Scripting, Cron jobs" },
-      { name: "Dev Web & APIs", details: "RESTful APIs, TypeScript, Node.js, Next.js" },
-      { name: "Ferramentas Corporativas", details: "Git, Jira Software, Active Directory" }
-    ]
-  }
-];
+const getExperiences = (lang: 'pt' | 'en') => {
+  return [
+    {
+      period: lang === 'pt' ? "Dez/2025 – Atualmente" : "Dec/2025 – Present",
+      company: "Livrarias Curitiba",
+      role: lang === 'pt' ? "Analista de Sistemas Pleno" : "Mid-level Systems Analyst",
+      logo: "/livrarias-curitiba.png",
+      description: lang === 'pt' 
+        ? "Atuação direta na arquitetura e customização avançada de regras de negócio no ERP Senior (LSP/SGI), incluindo relatórios e interfaces customizadas. Responsável por desenvolver e manter fluxos de integração escaláveis via Web Services e APIs (REST/SOAP). Além disso, gerencio tecnicamente a infraestrutura de sistemas PDV em ambiente Linux, focando em estabilidade e suporte N3 para operações críticas da rede."
+        : "Direct involvement in the architecture and advanced customization of business rules in Senior ERP (LSP/SGI), including customized reports and interfaces. Responsible for developing and maintaining scalable integration flows via Web Services and APIs (REST/SOAP). Additionally, I technically manage the POS systems infrastructure in a Linux environment, focusing on stability and L3 support for critical network operations.",
+      impact: lang === 'pt' 
+        ? ["Arquitetura de Integrações ERP", "Alta Disponibilidade PDVs (Linux)"]
+        : ["ERP Integrations Architecture", "High Availability POS (Linux)"]
+    },
+    {
+      period: lang === 'pt' ? "Abr/2025 – Dez/2025" : "Apr/2025 – Dec/2025",
+      company: "Hepta Tecnologia",
+      role: "Ticket Operations Manager / BI Analyst",
+      logo: "/Logo-hepta.png",
+      description: lang === 'pt'
+        ? "Liderança técnica em Business Intelligence desenvolvendo soluções analíticas com Power BI para monitoramento de SLAs e KPIs operacionais. Engenharia de dados envolvendo modelagem, DAX e consultas SQL complexas. O mapeamento visual das métricas impulsionou a tomada de decisões logísticas, otimização de rotas de atendimento e reduziu substancialmente o volume de chamados de reincidência."
+        : "Technical leadership in Business Intelligence developing analytical solutions with Power BI to monitor SLAs and operational KPIs. Data engineering involving modeling, DAX and complex SQL queries. Visual mapping of metrics drove logistical decision-making, optimized service routes and substantially reduced the volume of recurrent support tickets.",
+      impact: lang === 'pt'
+        ? ["15% melhoria em resoluções", "Geração de Insights Logísticos"]
+        : ["15% improvement in resolutions", "Logistics Insights Generation"]
+    },
+    {
+      period: lang === 'pt' ? "Ago/2023 – Abr/2025" : "Aug/2023 – Apr/2025",
+      company: "Cadmus",
+      role: "Ticket Operations Manager",
+      logo: "/logo-cadmus.png",
+      description: lang === 'pt'
+        ? "Orquestração e resolução ágil de incidentes complexos de infraestrutura e sistemas corporativos. Implementei fluxos de automação de triagem e mapeamento de problemas utilizando Jira Software, incluindo automações em JQL e integrações de processos. Administração e governança de acessos via Microsoft Active Directory (AD), reduzindo o MTTR (Mean Time to Repair) geral da central de serviços."
+        : "Orchestration and agile resolution of complex corporate infrastructure and systems incidents. I implemented screening automation workflows and problem mapping using Jira Software, including JQL automations and process integrations. Access administration and governance via Microsoft Active Directory (AD), reducing the overall MTTR (Mean Time to Repair) of the service desk.",
+      impact: lang === 'pt'
+        ? ["Automação de Triagem via Jira", "Redução de MTTR Global"]
+        : ["Triage Automation via Jira", "Global MTTR Reduction"]
+    },
+    {
+      period: lang === 'pt' ? "Maio/2019 – Mar/2023" : "May/2019 – Mar/2023",
+      company: "Mercedes-Benz",
+      role: lang === 'pt' ? "Operador de Produção (Qualidade)" : "Production Operator (Quality)",
+      logo: "/mercedes_logo.png",
+      description: lang === 'pt'
+        ? "Construção de uma base sólida em metodologias ágeis e processos escaláveis através da cultura Kaizen de melhoria contínua. Foco rigoroso na garantia de qualidade global da montagem de motores para exportação. A visão sistêmica, o detalhismo de inspeção e o raciocínio em identificar pontos de falha no pipeline logístico se tornaram os alicerces da minha transição estratégica para a análise de sistemas e desenvolvimento tech."
+        : "Building a solid foundation in agile methodologies and scalable processes through the Kaizen culture of continuous improvement. Strict focus on global quality assurance of engine assembly for export. The systemic vision, detailed inspection and reasoning in identifying points of failure in the logistics pipeline became the foundation of my strategic transition to systems analysis and tech development.",
+      impact: lang === 'pt'
+        ? ["Cultura Kaizen / Lean", "Raciocínio Sistêmico em Escala"]
+        : ["Kaizen / Lean Culture", "Systemic Reasoning at Scale"]
+    }
+  ];
+};
 
-const projects = [
+const getProjects = (lang: 'pt' | 'en') => [
   {
-    category: "Sistemas",
+    category: lang === 'pt' ? "Sistemas" : "Systems",
     title: "AuraDocs",
-    description: "Acelerador de produtividade que aborda a busca lenta em sistemas de documentação complexos. Utiliza IA (Gemini) para sintetizar manuais extensos.",
+    description: lang === 'pt' 
+      ? "Acelerador de produtividade que aborda a busca lenta em sistemas de documentação complexos. Utiliza IA (Gemini) para sintetizar manuais extensos."
+      : "Productivity accelerator that addresses slow searches in complex documentation systems. Uses AI (Gemini) to synthesize extensive manuals.",
     tags: ["Gemini Pro", "Supabase", "TypeScript", "AI Analysis"],
     link: "https://docu-aura-spark.lovable.app",
     github: "https://docu-aura-spark.lovable.app",
     image: "/auradocs-preview-real.png"
   },
   {
-    category: "Sistemas",
+    category: lang === 'pt' ? "Sistemas" : "Systems",
     title: "DivCom",
-    description: "Descomplica a rotina de profissionais comissionados em salões de beleza. Cálculo automático de comissões e relatórios de faturamento.",
+    description: lang === 'pt'
+      ? "Descomplica a rotina de profissionais comissionados em salões de beleza. Cálculo automático de comissões e relatórios de faturamento."
+      : "Simplifies the routine of commissioned professionals in beauty salons. Automatic calculation of commissions and billing reports.",
     tags: ["Next.js", "PostgreSQL", "Auth", "Tailwind"],
     link: "https://divcom-101.vercel.app/login",
     github: "https://github.com/Ygor-Silva/DivCom",
     image: "/DivCom_preview.png"
   },
   {
-    category: "Sistemas",
+    category: lang === 'pt' ? "Sistemas" : "Systems",
     title: "CondoFlow",
-    description: "Resolve a gestão ineficiente e baseada em papel. Centraliza fluxos operacionais de condomínios, automatizando rotinas administrativas.",
+    description: lang === 'pt'
+      ? "Resolve a gestão ineficiente e baseada em papel. Centraliza fluxos operacionais de condomínios, automatizando rotinas administrativas."
+      : "Solves inefficient, paper-based management. Centralizes condominium operational flows, automating administrative routines.",
     tags: ["React", "Firebase", "State Management", "UI/UX"],
     link: "https://condo-flow-eta.vercel.app",
     github: "https://github.com/Ygor-Silva/CondoFlow",
     image: "/CondoFlow_preview.png"
   },
   {
-    category: "Sistemas",
+    category: lang === 'pt' ? "Sistemas" : "Systems",
     title: "NexoFin",
-    description: "Dashboard analítico robusto que consolida streams de dados para oferecer controle direto sobre KPIs vitais e apoiar a rápida tomada de decisão.",
+    description: lang === 'pt'
+      ? "Dashboard analítico robusto que consolida streams de dados para oferecer controle direto sobre KPIs vitais e apoiar a rápida tomada de decisão."
+      : "Robust analytical dashboard that consolidates data streams to offer direct control over vital KPIs and support rapid decision-making.",
     tags: ["Data Viz", "Node.js", "Financial API", "Auth"],
     link: "https://nexo-fin.vercel.app/auth",
     github: "https://github.com/Ygor-Silva/NexoFin",
@@ -427,16 +520,20 @@ const projects = [
   {
     category: "Dashboards",
     title: "BI Operation Dashboard",
-    description: "Reduziu um overhead massivo de relatórios manuais. Automação completa de painéis operacionais fluídos e KPIs em tempo real.",
+    description: lang === 'pt'
+      ? "Reduziu um overhead massivo de relatórios manuais. Automação completa de painéis operacionais fluídos e KPIs em tempo real."
+      : "Reduced massive manual reporting overhead. Full automation of fluid operational panels and real-time KPIs.",
     tags: ["Power BI", "SQL", "DAX", "Python"],
     github: "https://www.linkedin.com/feed/update/urn:li:activity:7379670470251528192/",
     githubIcon: Linkedin,
     image: "/BI_preview.png"
   },
   {
-    category: "Automação",
-    title: "Bot Suporte N1/N2",
-    description: "Supera gargalos de triagem inicial. Robô de atendimento que centraliza e qualifica incidentes, diminuindo o TME e o MTTR.",
+    category: lang === 'pt' ? "Automação" : "Automation",
+    title: lang === 'pt' ? "Bot Suporte N1/N2" : "L1/L2 Support Bot",
+    description: lang === 'pt'
+      ? "Supera gargalos de triagem inicial. Robô de atendimento que centraliza e qualifica incidentes, diminuindo o TME e o MTTR."
+      : "Overcomes initial triage bottlenecks. Service robot that centralizes and qualifies incidents, decreasing AHT and MTTR.",
     tags: ["Power Automate", "Teams API", "Python"],
     github: "https://www.linkedin.com/feed/update/urn:li:activity:7384978331571548160/",
     githubIcon: Linkedin,
@@ -444,8 +541,10 @@ const projects = [
   },
   {
     category: "Dashboards",
-    title: "Relatório Gerencial Servicedesk N1",
-    description: "Análise anual detalhada da operação de servicedesk N1, com extração automatizada via Jira API. Visão holística da produtividade e ISPs.",
+    title: lang === 'pt' ? "Relatório Gerencial Servicedesk N1" : "L1 Servicedesk Managerial Report",
+    description: lang === 'pt'
+      ? "Análise anual detalhada da operação de servicedesk N1, com extração automatizada via Jira API. Visão holística da produtividade e ISPs."
+      : "Detailed annual analysis of L1 servicedesk operation, with automated extraction via Jira API. Holistic view of productivity and SLAs.",
     tags: ["Jira API", "Data Analytics", "Dashboards", "JQL"],
     github: "https://www.linkedin.com/in/ygor-silva-developer/",
     githubIcon: Linkedin,
@@ -459,8 +558,10 @@ const projects = [
   },
   {
     category: "Dashboards",
-    title: "Monitoramento SLA Teams (N1)",
-    description: "Dash operacional estratégico para monitoramento de SLAs em canais do Microsoft Teams. Focado em garantir resposta rápida em menos de 1h.",
+    title: lang === 'pt' ? "Monitoramento SLA Teams (N1)" : "Teams SLA Monitoring (L1)",
+    description: lang === 'pt'
+      ? "Dash operacional estratégico para monitoramento de SLAs em canais do Microsoft Teams. Focado em garantir resposta rápida em menos de 1h."
+      : "Strategic operational dash for SLA monitoring in Microsoft Teams channels. Focused on ensuring quick response in under 1h.",
     tags: ["Jira", "MS Teams", "Real-time Monitoring", "SLA"],
     github: "https://www.linkedin.com/in/ygor-silva-developer/",
     githubIcon: Linkedin,
@@ -468,8 +569,10 @@ const projects = [
   },
   {
     category: "Dashboards",
-    title: "Gestão de Saúde Operacional N1",
-    description: "Dashboard estratégico conectado via API ao Jira, utilizando JQL. Apresenta ranking de chamados e filtros dinâmicos atualizados a cada 15 min.",
+    title: lang === 'pt' ? "Gestão de Saúde Operacional N1" : "L1 Operational Health Management",
+    description: lang === 'pt'
+      ? "Dashboard estratégico conectado via API ao Jira, utilizando JQL. Apresenta ranking de chamados e filtros dinâmicos atualizados a cada 15 min."
+      : "Strategic dashboard connected via API to Jira, using JQL. Presents ticket ranking and dynamic filters updated every 15 min.",
     tags: ["Jira API", "JQL", "Operational Health", "Management"],
     github: "https://www.linkedin.com/in/ygor-silva-developer/",
     githubIcon: Linkedin,
@@ -480,9 +583,53 @@ const projects = [
   }
 ];
 
+const getTechStack = (lang: 'pt' | 'en') => [
+  {
+    category: lang === 'pt' ? "Automação" : "Automation",
+    icon: Workflow,
+    color: "text-cyan-400",
+    skills: [
+      { name: "Python", details: "Selenium, BeautifulSoup, PyAutoGUI, Requests" },
+      { name: "Power Automate", details: lang === 'pt' ? "Desktop (RPA), Cloud Flows, Integrações" : "Desktop (RPA), Cloud Flows, Integrations" },
+      { name: "N8N & Make", details: lang === 'pt' ? "Workflows, Webhooks, API Integrations" : "Workflows, Webhooks, API Integrations" },
+      { name: lang === 'pt' ? "Desenvolvimento de Bots" : "Bot Development", details: lang === 'pt' ? "Teams API, Discord Bots, Automação N1/N2" : "Teams API, Discord Bots, L1/L2 Automation" }
+    ]
+  },
+  {
+    category: lang === 'pt' ? "Dados & BI" : "Data & BI",
+    icon: Database,
+    color: "text-violet-400",
+    skills: [
+      { name: "Power BI", details: lang === 'pt' ? "DAX, Power Query, Modelagem de Dados e Dashboards" : "DAX, Power Query, Data Modeling and Dashboards" },
+      { name: lang === 'pt' ? "SQL & Relacionais" : "SQL & Relational DBs", details: "Oracle PL/SQL, PostgreSQL, MySQL/MariaDB" },
+      { name: "Python Data Stack", details: lang === 'pt' ? "Pandas, NumPy, PIPELINES e Processos ETL" : "Pandas, NumPy, PIPELINES and ETL Processes" },
+      { name: lang === 'pt' ? "Análise de Métricas" : "Metrics Analysis", details: lang === 'pt' ? "SLA Monitoring, KPI Tracking, Data Viz" : "SLA Monitoring, KPI Tracking, Data Viz" }
+    ]
+  },
+  {
+    category: lang === 'pt' ? "Infra & Desenvolvimento" : "Infra & Development",
+    icon: Terminal,
+    color: "text-emerald-400",
+    skills: [
+      { name: "ERP Senior", details: lang === 'pt' ? "SGI, LSP, Customizações de Interface e Regras" : "SGI, LSP, UI Customizations and Rules" },
+      { name: lang === 'pt' ? "Linux & Servidores" : "Linux & Servers", details: "Ubuntu Server, Shell/Bash Scripting, Cron jobs" },
+      { name: lang === 'pt' ? "Dev Web & APIs" : "Web Dev & APIs", details: "RESTful APIs, TypeScript, Node.js, Next.js" },
+      { name: lang === 'pt' ? "Ferramentas Corporativas" : "Corporate Tools", details: "Git, Jira Software, Active Directory" }
+    ]
+  }
+];
+
 export default function Portfolio() {
+  const [lang, setLang] = React.useState<'pt' | 'en'>('pt');
   const [currentExpPage, setCurrentExpPage] = React.useState(0);
-  const [activeCategory, setActiveCategory] = React.useState("Todos");
+  
+  const t = translations[lang];
+  
+  const experiences = React.useMemo(() => getExperiences(lang), [lang]);
+  const projects = React.useMemo(() => getProjects(lang), [lang]);
+  const techStack = React.useMemo(() => getTechStack(lang), [lang]);
+
+  const [activeCategory, setActiveCategory] = React.useState("Todos"); // Will update dynamically or keep track
   
   const experiencesPerPage = 2;
   const totalExpPages = Math.ceil(experiences.length / experiencesPerPage);
@@ -492,58 +639,75 @@ export default function Portfolio() {
     (currentExpPage + 1) * experiencesPerPage
   );
   
-  const categories = ["Todos", "Dashboards", "Automação", "Sistemas"];
+  const categories = [t.projects.all, "Dashboards", lang === 'pt' ? "Automação" : "Automation", lang === 'pt' ? "Sistemas" : "Systems"];
   
-  const filteredProjects = activeCategory === "Todos" 
+  // Use a derived fallback for active category if it's the specific "All" label
+  const currentActiveCategory = (activeCategory === "Todos" || activeCategory === "All" || activeCategory === t.projects.all) ? t.projects.all : activeCategory;
+
+  const filteredProjects = currentActiveCategory === t.projects.all 
     ? projects 
-    : projects.filter(p => p.category === activeCategory);
+    : projects.filter(p => p.category === currentActiveCategory);
 
   return (
     <main className="bg-[#050505] min-h-screen text-stone-200 selection:bg-cyan-500/30 selection:text-cyan-200">
       <InteractiveBackground />
 
       {/* Navigation */}
-      <nav className="fixed top-0 w-full z-50 px-6 py-8 flex justify-between items-center backdrop-blur-md bg-stone-950/20 border-b border-white/5">
-        <div className="text-xl font-bold tracking-tighter text-white">
-          Y<span className="text-cyan-400 text-2xl">.</span>TEIXEIRA
+      <nav className="fixed top-0 w-full z-50 px-4 md:px-6 py-4 md:py-8 flex justify-between items-center backdrop-blur-md bg-stone-950/40 border-b border-white/5">
+        <div className="text-xl md:text-2xl font-bold tracking-tighter text-white">
+          Y<span className="text-cyan-400">.</span>TEIXEIRA
         </div>
-        <div className="hidden md:flex gap-8 text-xs font-mono tracking-widest uppercase text-stone-400">
-          <a href="#about" className="hover:text-cyan-400 transition-colors">Sobre</a>
-          <a href="#experience" className="hover:text-cyan-400 transition-colors">Carreira</a>
-          <a href="#projects" className="hover:text-cyan-400 transition-colors">Projetos</a>
-          <a href="#skills" className="hover:text-cyan-400 transition-colors">Tech</a>
-          <a href="#contact" className="hover:text-cyan-400 transition-colors">Contato</a>
+        <div className="flex items-center gap-6">
+          <div className="hidden md:flex gap-8 text-xs font-mono tracking-widest uppercase text-stone-400">
+            <a href="#about" className="hover:text-cyan-400 transition-colors">{t.nav.about}</a>
+            <a href="#experience" className="hover:text-cyan-400 transition-colors">{t.nav.experience}</a>
+            <a href="#projects" className="hover:text-cyan-400 transition-colors">{t.nav.projects}</a>
+            <a href="#skills" className="hover:text-cyan-400 transition-colors">{t.nav.tech}</a>
+            <a href="#contact" className="hover:text-cyan-400 transition-colors">{t.nav.contact}</a>
+          </div>
+          <button 
+            onClick={() => {
+              const nextLang = lang === 'pt' ? 'en' : 'pt';
+              setLang(nextLang);
+              setCurrentExpPage(0);
+              setActiveCategory(translations[nextLang].projects.all);
+            }}
+            className="flex items-center justify-center p-2 rounded-lg bg-stone-900 border border-stone-800 text-stone-400 hover:text-cyan-400 hover:border-cyan-400/50 transition-colors cursor-pointer text-xs font-mono font-bold"
+            aria-label="Toggle language"
+          >
+            {t.nav.lang}
+          </button>
         </div>
       </nav>
 
       {/* Hero Section */}
-      <section className="relative pt-48 pb-32 px-6 overflow-hidden">
+      <section className="relative pt-32 md:pt-48 pb-24 md:pb-32 px-6 overflow-hidden">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-12">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
-            className="flex-1"
+            className="flex-1 text-center md:text-left"
           >
-            <span className="text-cyan-400 font-mono text-sm tracking-[0.3em] uppercase block mb-4">
-              Disponível para novos desafios
+            <span className="text-cyan-400 font-mono text-xs md:text-sm tracking-[0.2em] md:tracking-[0.3em] uppercase block mb-4">
+              {t.hero.availability}
             </span>
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-white tracking-tighter leading-[0.9] mb-8">
+            <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-white tracking-tighter leading-[0.9] mb-6 md:mb-8">
               YGOR <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-violet-500">TEIXEIRA</span>
             </h1>
-            <p className="text-xl md:text-2xl text-stone-400 max-w-2xl font-light leading-relaxed">
-              Especialista em <span className="text-white border-b border-cyan-400/50">Automação RPA</span> e <span className="text-white border-b border-violet-400/50">Inteligência de Dados</span>. Transformando processos complexos em eficiência mensurável.
+            <p className="text-lg md:text-2xl text-stone-400 max-w-2xl font-light leading-relaxed mx-auto md:mx-0">
+              {t.hero.specialist} <span className="text-white border-b border-cyan-400/50">{t.hero.rpa}</span> {t.hero.and} <span className="text-white border-b border-violet-400/50">{t.hero.dataInsight}</span>. {t.hero.description}
             </p>
             
-            <div className="mt-12 flex flex-wrap gap-4">
+            <div className="mt-10 md:mt-12 flex flex-col sm:flex-row flex-wrap gap-4 justify-center md:justify-start items-center">
               <a 
                 href="#projects" 
-                className="group flex items-center gap-2 bg-white text-black px-8 py-4 rounded-full font-bold hover:bg-cyan-400 transition-colors"
+                className="group w-full sm:w-auto flex items-center justify-center gap-2 bg-white text-black px-8 py-4 rounded-full font-bold hover:bg-cyan-400 transition-colors"
               >
-                Ver Projetos
+                {t.hero.viewProjects}
                 <ArrowUpRight className="w-5 h-5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
               </a>
-              <div className="flex gap-4 items-center pl-4">
+              <div className="flex gap-4 items-center pl-0 sm:pl-4 mt-4 sm:mt-0">
                 <motion.a 
                   href="https://github.com/Ygor-Silva" 
                   target="_blank" 
@@ -568,9 +732,9 @@ export default function Portfolio() {
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="relative"
+            className="relative mt-8 md:mt-0"
           >
-            <div className="w-64 h-64 md:w-80 md:h-80 rounded-full overflow-hidden border-4 border-stone-800 p-2 bg-stone-900 shadow-2xl shadow-cyan-500/10">
+            <div className="w-56 h-56 md:w-80 md:h-80 rounded-full overflow-hidden border-4 border-stone-800 p-2 bg-stone-900 shadow-2xl shadow-cyan-500/10">
               <div className="w-full h-full rounded-full overflow-hidden relative">
                 {/* Profile Image - Using picsum placeholder as requested photo extraction is not possible, but user can replace /ygor.jpg */}
                 <Image 
@@ -589,7 +753,7 @@ export default function Portfolio() {
             <div className="absolute -bottom-4 -right-4 bg-stone-900 border border-stone-800 p-4 rounded-2xl backdrop-blur-md">
               <div className="flex items-center gap-3">
                 <Trophy className="text-cyan-400 w-5 h-5" />
-                <span className="text-xs font-mono font-bold uppercase tracking-widest text-white leading-tight">Em constante <br />evolução</span>
+                <span className="text-xs font-mono font-bold uppercase tracking-widest text-white leading-tight">{t.hero.badge[0]} <br />{t.hero.badge[1]}</span>
               </div>
             </div>
           </motion.div>
@@ -606,7 +770,7 @@ export default function Portfolio() {
         transition={{ duration: 0.8, ease: "easeOut" }}
       >
         <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-16 items-center">
-          <SectionHeading icon={Workflow}>A Jornada</SectionHeading>
+          <SectionHeading icon={Workflow}>{t.about.title}</SectionHeading>
           <div className="col-span-full md:col-span-1">
             <div className="space-y-6 text-stone-400 text-lg leading-relaxed">
               <motion.p
@@ -615,7 +779,7 @@ export default function Portfolio() {
                 viewport={{ once: true, margin: "-50px" }}
                 transition={{ duration: 0.5, delay: 0.1 }}
               >
-                Minha base não começou diante de uma tela, mas na linha de frente industrial. Passei <span className="text-white font-semibold">5 anos na linha de produção e inspeção de qualidade na Mercedes-Benz</span>.
+                {t.about.p1} <span className="text-white font-semibold">{t.about.p1_bold}</span>.
               </motion.p>
               <motion.p
                 initial={{ opacity: 0, y: 15 }}
@@ -623,7 +787,7 @@ export default function Portfolio() {
                 viewport={{ once: true, margin: "-50px" }}
                 transition={{ duration: 0.5, delay: 0.2 }}
               >
-                Essa experiência moldou minha visão analítica aguçada sob o <span className="text-cyan-400 font-mono italic">Método Kaizen</span>. Aprendi que a eficiência não é apenas sobre rapidez, mas sobre a eliminação constante de desperdícios e a busca pela melhoria contínua.
+                {t.about.p2} <span className="text-cyan-400 font-mono italic">{t.about.p2_italic}</span>{t.about.p2_rest}
               </motion.p>
               <motion.p
                 initial={{ opacity: 0, y: 15 }}
@@ -631,7 +795,7 @@ export default function Portfolio() {
                 viewport={{ once: true, margin: "-50px" }}
                 transition={{ duration: 0.5, delay: 0.3 }}
               >
-                Hoje, como <span className="text-white font-semibold">Analista de Sistemas Pleno</span>, aplico essa mesma filosofia de precisão industrial ao mundo do software e dados. Onde outros veem &quot;bugs&quot;, eu vejo gargalos de processo prontos para serem automatizados.
+                {t.about.p3} <span className="text-white font-semibold">{t.about.p3_bold}</span>{t.about.p3_rest}
               </motion.p>
             </div>
           </div>
@@ -644,7 +808,7 @@ export default function Portfolio() {
               className="bg-stone-900 p-8 rounded-2xl border border-stone-800 flex flex-col items-center justify-center text-center"
             >
               <span className="text-4xl font-bold text-cyan-400 mb-2">5+</span>
-              <span className="text-xs uppercase font-mono tracking-widest text-stone-500">Anos Industrial</span>
+              <span className="text-xs uppercase font-mono tracking-widest text-stone-500">{t.about.stat1}</span>
             </motion.div>
             <motion.div 
               initial={{ opacity: 0, y: 15 }}
@@ -654,7 +818,7 @@ export default function Portfolio() {
               className="bg-stone-900 p-8 rounded-2xl border border-stone-800 flex flex-col items-center justify-center text-center"
             >
               <span className="text-4xl font-bold text-violet-500 mb-2">100%</span>
-              <span className="text-xs uppercase font-mono tracking-widest text-stone-500">Foco em Dados</span>
+              <span className="text-xs uppercase font-mono tracking-widest text-stone-500">{t.about.stat2}</span>
             </motion.div>
             <motion.div 
               initial={{ opacity: 0, y: 15 }}
@@ -664,7 +828,7 @@ export default function Portfolio() {
               className="col-span-2 bg-stone-900 p-8 rounded-2xl border border-stone-800 flex items-center gap-6"
             >
               <Factory className="w-12 h-12 text-stone-700" />
-              <p className="text-sm italic text-stone-500">&quot;A qualidade deve ser construída no processo, não apenas inspecionada.&quot;</p>
+              <p className="text-sm italic text-stone-500">{t.about.quote}</p>
             </motion.div>
           </div>
         </div>
@@ -680,7 +844,7 @@ export default function Portfolio() {
         transition={{ duration: 0.8, ease: "easeOut" }}
       >
         <div className="max-w-4xl mx-auto">
-          <SectionHeading icon={BarChart3}>Experiência & Resultados</SectionHeading>
+          <SectionHeading icon={BarChart3}>{t.experience.title}</SectionHeading>
           
           <div className="min-h-[600px] transition-all duration-300">
             {currentExperiences.map((exp, index) => (
@@ -699,7 +863,7 @@ export default function Portfolio() {
           <div className="mt-12 flex flex-col md:flex-row justify-between items-center border-t border-stone-800 pt-8 gap-6">
             <div className="text-xs font-mono text-stone-500 uppercase tracking-[0.2em] flex items-center gap-4 order-2 md:order-1">
               <span className="w-8 h-px bg-stone-800" />
-              Página {currentExpPage + 1} de {totalExpPages}
+              {t.experience.page} {currentExpPage + 1} {t.experience.of} {totalExpPages}
               <span className="w-8 h-px bg-stone-800" />
             </div>
             <div className="flex gap-3 order-1 md:order-2">
@@ -709,14 +873,14 @@ export default function Portfolio() {
                 className="flex items-center gap-3 px-6 py-3 bg-stone-900 border border-stone-800 rounded-2xl hover:border-cyan-400 hover:bg-cyan-400/5 transition-all duration-300 disabled:opacity-20 disabled:cursor-not-allowed group active:scale-95"
               >
                 <ArrowLeft className="w-5 h-5 text-white group-hover:text-cyan-400 group-hover:-translate-x-1 transition-transform" />
-                <span className="text-xs font-bold uppercase tracking-widest text-stone-400 group-hover:text-white transition-colors">Anterior</span>
+                <span className="text-xs font-bold uppercase tracking-widest text-stone-400 group-hover:text-white transition-colors">{t.experience.prev}</span>
               </button>
               <button 
                 onClick={() => setCurrentExpPage(p => Math.min(totalExpPages - 1, p + 1))}
                 disabled={currentExpPage === totalExpPages - 1}
                 className="flex items-center gap-3 px-6 py-3 bg-stone-900 border border-stone-800 rounded-2xl hover:border-cyan-400 hover:bg-cyan-400/5 transition-all duration-300 disabled:opacity-20 disabled:cursor-not-allowed group active:scale-95"
               >
-                <span className="text-xs font-bold uppercase tracking-widest text-stone-400 group-hover:text-white transition-colors">Próximo</span>
+                <span className="text-xs font-bold uppercase tracking-widest text-stone-400 group-hover:text-white transition-colors">{t.experience.next}</span>
                 <ArrowRight className="w-5 h-5 text-white group-hover:text-cyan-400 group-hover:translate-x-1 transition-transform" />
               </button>
             </div>
@@ -736,14 +900,14 @@ export default function Portfolio() {
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-12">
             <div className="flex-1">
-              <SectionHeading icon={LayoutGrid}>Projetos de Inovação</SectionHeading>
+              <SectionHeading icon={LayoutGrid}>{t.projects.title}</SectionHeading>
               <div className="flex flex-col gap-1 -mt-8">
                 <p className="text-stone-500 text-sm max-w-xl font-mono uppercase tracking-wider">
-                  Explorando a intersecção entre dados e automação
+                  {t.projects.subtitle}
                 </p>
                 <p className="text-xs text-stone-600 italic font-mono flex items-center gap-1.5 leading-relaxed">
-                  <span className="w-1 h-1 rounded-full bg-cyan-500/50" />
-                  Nota: Todos os dados exibidos nos dashboards são fictícios e anonimizados para fins de demonstração (Compliance LGPD).
+                  <span className="w-1 h-1 rounded-full bg-cyan-500/50 shrink-0" />
+                  {t.projects.note}
                 </p>
               </div>
             </div>
@@ -755,11 +919,11 @@ export default function Portfolio() {
                   key={cat}
                   onClick={() => setActiveCategory(cat)}
                   className={`px-4 md:px-5 py-2 md:py-2.5 rounded-xl text-[9px] md:text-[10px] font-bold uppercase tracking-[0.2em] transition-all duration-500 relative whitespace-nowrap ${
-                    activeCategory === cat ? 'text-white' : 'text-stone-500 hover:text-stone-300'
+                    currentActiveCategory === cat ? 'text-white' : 'text-stone-500 hover:text-stone-300'
                   }`}
                 >
                   <span className="relative z-10">{cat}</span>
-                  {activeCategory === cat && (
+                  {currentActiveCategory === cat && (
                     <motion.div 
                       layoutId="activeFilter"
                       className="absolute inset-0 bg-cyan-500/20 border border-cyan-400/30 rounded-xl"
@@ -793,7 +957,7 @@ export default function Portfolio() {
 
           {filteredProjects.length === 0 && (
             <div className="py-20 text-center text-stone-600 font-mono italic">
-              Nenhum projeto encontrado nesta categoria.
+              {t.projects.empty}
             </div>
           )}
         </div>
@@ -809,7 +973,7 @@ export default function Portfolio() {
         transition={{ duration: 0.8, ease: "easeOut" }}
       >
         <div className="max-w-6xl mx-auto">
-          <SectionHeading icon={Cpu}>Stack Tecnológica</SectionHeading>
+          <SectionHeading icon={Cpu}>{t.skills.title}</SectionHeading>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-12">
             {techStack.map((section, idx) => {
@@ -874,8 +1038,8 @@ export default function Portfolio() {
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-4xl md:text-6xl font-bold text-white mb-8 tracking-tighter">
-              VAMOS OTIMIZAR <br /> <span className="text-cyan-400 italic">SEU NEGÓCIO?</span>
+            <h2 className="text-4xl md:text-6xl font-bold text-white mb-8 tracking-tighter uppercase">
+              {t.contact.title_1} <br /> <span className="text-cyan-400 italic">{t.contact.title_2}</span>
             </h2>
             <div className="flex flex-col md:flex-row justify-center items-center gap-8 md:gap-12 mt-12">
               <motion.a 
@@ -887,7 +1051,7 @@ export default function Portfolio() {
                   <Mail className="w-8 h-8" />
                 </div>
                 <div className="text-left">
-                  <span className="text-[10px] uppercase tracking-widest block text-stone-500 font-mono">E-mail</span>
+                  <span className="text-[10px] uppercase tracking-widest block text-stone-500 font-mono">{t.contact.email}</span>
                   <span className="text-lg">ygor-1996@hotmail.com</span>
                 </div>
               </motion.a>
@@ -909,12 +1073,12 @@ export default function Portfolio() {
           </motion.div>
           
           <div className="mt-48 text-[10px] font-mono tracking-[0.4em] uppercase text-stone-600">
-            © 2026 Ygor Teixeira • Built with precision & code
+            {t.contact.footer}
           </div>
         </div>
       </motion.footer>
 
-      <FloatingChat />
+      <FloatingChat lang={lang} />
       <ScrollToTop />
     </main>
   );
