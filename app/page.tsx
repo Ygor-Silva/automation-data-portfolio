@@ -486,6 +486,16 @@ const getProjects = (lang: 'pt' | 'en') => [
   },
   {
     category: lang === 'pt' ? "Sistemas" : "Systems",
+    title: "Kerdos",
+    description: lang === 'pt'
+      ? "Assistente financeiro pessoal especializado e inteligência de saldos com uma interface cyberpunk imersiva. Otimiza o controle de fluxos de caixa, conciliações e relatórios dinâmicos."
+      : "Specialized personal financial assistant and balance intelligence with an immersive cyberpunk interface. Optimizes cash flow controls, reconciliations, and dynamic reports.",
+    tags: ["Next.js", "Tailwind CSS", "TypeScript", "UX/UI Cyberpunk", "Financial Intelligence"],
+    github: "https://github.com/Ygor-Silva/kerdos__",
+    image: "/Kerdos_preview.png"
+  },
+  {
+    category: lang === 'pt' ? "Sistemas" : "Systems",
     title: "DivCom",
     description: lang === 'pt'
       ? "Descomplica a rotina de profissionais comissionados em salões de beleza. Cálculo automático de comissões e relatórios de faturamento."
