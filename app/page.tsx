@@ -486,6 +486,16 @@ const getProjects = (lang: 'pt' | 'en') => [
   },
   {
     category: lang === 'pt' ? "Sistemas" : "Systems",
+    title: "Registro de Atividades",
+    description: lang === 'pt'
+      ? "Sistema de registro e acompanhamento de atividades técnicas (ajustes em ERP, suporte de infraestrutura e automações) para um cliente corporativo, com geração automatizada de resumos semanais e mensais enviados à gestão."
+      : "System for logging and tracking technical activities (ERP adjustments, infrastructure support, automations) for a corporate client, with automated weekly and monthly summary reports sent to management.",
+    tags: ["React", "Supabase", "Vercel", "TypeScript", "Automação de Relatórios"],
+    github: "https://github.com/Ygor-Silva/registro-atividades-tecnolimp",
+    image: "/RegistroAtividades_preview.png"
+  },
+  {
+    category: lang === 'pt' ? "Sistemas" : "Systems",
     title: "Kerdos",
     description: lang === 'pt'
       ? "Assistente financeiro pessoal especializado e inteligência de saldos com uma interface cyberpunk imersiva. Otimiza o controle de fluxos de caixa, conciliações e relatórios dinâmicos."
