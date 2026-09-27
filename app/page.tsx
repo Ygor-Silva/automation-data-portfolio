@@ -28,7 +28,9 @@ import {
   ArrowUp,
   BarChart2,
   PieChart,
-  Maximize2
+  Maximize2,
+  Sparkles,
+  Rocket
 } from 'lucide-react';
 import {
   ResponsiveContainer,
@@ -43,6 +45,7 @@ import {
 
 import FloatingChat from '../components/FloatingChat';
 import ProjectFocusModal, { ProjectItem } from '../components/ProjectFocusModal';
+import { CompanyMarquee } from '../components/CompanyMarquee';
 import { 
   JarvisDataSpine, 
   Card3D, 
@@ -172,14 +175,8 @@ const colors = {
   bg: 'stone-950',
 };
 
-const SectionHeading = ({ children, icon: Icon, tag }: { children: React.ReactNode, icon?: any, tag?: string }) => (
+const SectionHeading = ({ children, icon: Icon }: { children: React.ReactNode, icon?: any, tag?: string }) => (
   <div className="flex flex-col mb-12">
-    {tag && (
-      <span className="text-[10px] font-mono text-cyan-400 tracking-[0.25em] uppercase mb-2 flex items-center gap-2">
-        <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_6px_#22d3ee]" />
-        {tag}
-      </span>
-    )}
     <div className="flex items-center gap-3">
       {Icon && (
         <div className="p-2 rounded-lg bg-cyan-950/40 border border-cyan-500/30 text-cyan-400 shadow-[0_0_15px_rgba(6,182,212,0.15)]">
@@ -230,30 +227,9 @@ const ProjectCard = ({
         onClick={() => onOpenFocus && onOpenFocus()}
         className="group relative overflow-hidden flex flex-col h-full rounded-2xl cursor-pointer"
       >
-        {/* Browser-style top bar */}
-        <div className="bg-stone-900/80 px-4 py-2.5 border-b border-stone-800 flex items-center justify-between z-10 relative">
-          <div className="flex gap-1.5 items-center">
-            <div className="w-2.5 h-2.5 rounded-full bg-cyan-500/40" />
-            <div className="w-2.5 h-2.5 rounded-full bg-stone-700" />
-            <div className="w-2.5 h-2.5 rounded-full bg-stone-700" />
-            <span className="ml-2 text-[9px] font-mono text-stone-500 tracking-wider">PROJECT.EXE</span>
-          </div>
-          <div className="flex items-center gap-2">
-            {/* Quick Focus Mode Trigger Button */}
-            {onOpenFocus && (
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onOpenFocus();
-                }}
-                className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-cyan-950/70 border border-cyan-500/30 text-cyan-300 hover:bg-cyan-500/20 hover:border-cyan-400 text-[10px] font-mono font-medium tracking-wider transition-all cursor-pointer shadow-sm"
-                title={lang === 'pt' ? 'Ativar Modo Foco' : 'Open Focus Mode'}
-              >
-                <Maximize2 className="w-3 h-3" />
-                <span>{lang === 'pt' ? 'Foco' : 'Focus'}</span>
-              </button>
-            )}
+        {/* Top actions bar */}
+        {(github || link) && (
+          <div className="bg-stone-900/80 px-4 py-2 border-b border-stone-800 flex items-center justify-end gap-2 z-10 relative">
             {github && (
               <motion.a 
                 href={github} 
@@ -279,7 +255,7 @@ const ProjectCard = ({
               </motion.a>
             )}
           </div>
-        </div>
+        )}
 
         {(displayImage || images) && (
           <div className="relative aspect-[16/10] sm:aspect-video w-full border-b border-stone-800 overflow-hidden bg-stone-900/50 group/img">
@@ -416,26 +392,31 @@ const translations = {
     hero: {
       availability: "Disponível para novos desafios",
       specialist: "Especialista em",
-      rpa: "Automação RPA",
+      rpa: "ERP Senior Sapiens",
       and: "e",
-      dataInsight: "Inteligência de Dados",
-      description: "Transformando processos complexos em eficiência mensurável.",
+      dataInsight: "Soluções com LLM (Claude) & Automação",
+      description: "Integrando a robustez dos sistemas corporativos à inteligência artificial de ponta para transformar processos complexos em eficiência mensurável.",
       viewProjects: "Ver Projetos",
       badge: ["Em constante", "evolução"]
     },
     about: {
       title: "A Jornada",
-      p1: "Minha base não começou diante de uma tela, mas na linha de frente industrial. Passei",
-      p1_bold: "5 anos na linha de produção e inspeção de qualidade na Mercedes-Benz",
-      p2: "Essa experiência moldou minha visão analítica aguçada sob o",
+      p1: "Minha base técnica não começou diante de uma tela, mas na linha de frente da indústria automotiva. Passei",
+      p1_bold: "5 anos na linha de montagem e inspeção de qualidade na Mercedes-Benz",
+      p2: "Essa vivência consolidou minha visão sistêmica aguçada sob o",
       p2_italic: "Método Kaizen",
-      p2_rest: ". Aprendi que a eficiência não é apenas sobre rapidez, mas sobre a eliminação constante de desperdícios e a busca pela melhoria contínua.",
-      p3: "Hoje, como",
-      p3_bold: "Analista de Sistemas Pleno",
-      p3_rest: ", aplico essa mesma filosofia de precisão industrial ao mundo do software e dados. Onde outros veem \"bugs\", eu vejo gargalos de processo prontos para serem automatizados.",
-      stat1: "Anos Industrial",
-      stat2: "Foco em Dados",
-      quote: "\"A qualidade deve ser construída no processo, não apenas inspecionada.\""
+      p2_rest: ". Aprendi que a eficiência não é apenas sobre rapidez, mas sobre a eliminação metódica de desperdícios, padronização e busca incansável pela melhoria contínua em escala.",
+      p3: "Hoje, atuo na",
+      p3_bold: "Tecnolimp",
+      p3_mid: "— grupo paranaense com mais de 30 anos de atuação e liderança em facilities e serviços corporativos — como",
+      p3_role: "Analista & Desenvolvedor de Sistemas ERP (Senior Sapiens)",
+      p3_rest: ", atuando na arquitetura de regras de negócio em LSP, customizações SGI e integrações de alta criticidade via APIs e Web Services.",
+      p4: "Com profundo domínio em",
+      p4_bold: "LLMs (Large Language Models) e Claude (Anthropic)",
+      p4_rest: ", aplico inteligência artificial generativa na automação de processos complexos, orquestração de rotinas e engenharia de contexto. Onde outros veem rotinas lentas ou gargalos operacionais, uno o rigor do ERP à cognição das LLMs para gerar eficiência mensurável e salto de produtividade.",
+      stat1: "Anos Indústria",
+      stat2: "ERP & LLM Focus",
+      quote: "\"A excelência não é um ato isolado, mas a sintonia contínua entre processos, sistemas de gestão e inteligência aplicada.\""
     },
     experience: {
       title: "Experiência & Resultados",
@@ -481,26 +462,31 @@ const translations = {
     hero: {
       availability: "Available for new challenges",
       specialist: "Specialist in",
-      rpa: "RPA Automation",
+      rpa: "Senior ERP Sapiens",
       and: "and",
-      dataInsight: "Data Intelligence",
-      description: "Transforming complex processes into measurable efficiency.",
+      dataInsight: "LLM Solutions (Claude) & Automation",
+      description: "Integrating enterprise systems resilience with cutting-edge intelligence to transform complexity into measurable efficiency.",
       viewProjects: "View Projects",
       badge: ["Constantly", "evolving"]
     },
     about: {
       title: "The Journey",
-      p1: "My foundation didn't start in front of a screen, but on the industrial frontline. I spent",
-      p1_bold: "5 years on the production and quality inspection line at Mercedes-Benz",
-      p2: "This experience shaped my sharp analytical vision under the",
+      p1: "My technical foundation didn't start behind a monitor, but on the automotive assembly line. I spent",
+      p1_bold: "5 years on the assembly and quality inspection line at Mercedes-Benz",
+      p2: "This experience forged my sharp systemic vision under the",
       p2_italic: "Kaizen Method",
-      p2_rest: ". I learned that efficiency isn't just about speed, but the constant elimination of waste and the pursuit of continuous improvement.",
-      p3: "Today, as a",
-      p3_bold: "Mid-level Systems Analyst",
-      p3_rest: ", I apply this same philosophy of industrial precision to the world of software and data. Where others see \"bugs\", I see process bottlenecks ready to be automated.",
+      p2_rest: ". I learned that efficiency isn't just about speed, but the methodical elimination of waste, standardization, and relentless pursuit of continuous improvement at scale.",
+      p3: "Today, I work at",
+      p3_bold: "Tecnolimp",
+      p3_mid: "— a leading Brazilian group with over 30 years of excellence in facilities and corporate services — as a",
+      p3_role: "Systems & ERP (Senior Sapiens) Developer Analyst",
+      p3_rest: ", architecting LSP business rules, SGI customizations, and mission-critical integrations via APIs and Web Services.",
+      p4: "With deep expertise in",
+      p4_bold: "Large Language Models (LLMs) and Anthropic's Claude",
+      p4_rest: ", I deploy generative AI to automate complex processes, orchestrate workflows, and engineer context. Where others see manual friction or operational bottlenecks, I bridge ERP robustness with LLM cognition to deliver measurable efficiency and productivity leaps.",
       stat1: "Years Industrial",
-      stat2: "Data Focus",
-      quote: "\"Quality must be built into the process, not just inspected.\""
+      stat2: "ERP & LLM Focus",
+      quote: "\"Excellence is not an isolated act, but the continuous harmony between processes, enterprise systems, and applied intelligence.\""
     },
     experience: {
       title: "Experience & Results",
@@ -546,7 +532,19 @@ const translations = {
 const getExperiences = (lang: 'pt' | 'en') => {
   return [
     {
-      period: lang === 'pt' ? "Dez/2025 – Atualmente" : "Dec/2025 – Present",
+      period: lang === 'pt' ? "Set/2026 – Atualmente" : "Sep/2026 – Present",
+      company: "Tecnolimp",
+      role: lang === 'pt' ? "Analista & Dev de Sistemas (ERP Senior Sapiens)" : "Systems & ERP Developer Analyst (Senior Sapiens)",
+      logo: "/tecnolimp_square.svg",
+      description: lang === 'pt'
+        ? "Atuação como Analista e Desenvolvedor de Sistemas na matriz da Tecnolimp (líder com 30+ anos no segmento de facilities e terceirização de mão de obra qualificada). Responsável pela arquitetura, evolução e sustentação do ERP Senior (Sapiens), desenvolvimento de regras de negócio em LSP, relatórios gerenciais SGI e integrações estratégicas via APIs REST/SOAP e Web Services. Lidero também a implementação de automações e fluxos assistidos por LLMs (especialmente Claude/Anthropic) para otimização de rotinas administrativas e operacionais corporativas."
+        : "Acting as Systems & ERP Developer Analyst at Tecnolimp headquarters (market leader with 30+ years in facilities and specialized outsourcing). Responsible for architecture, evolution, and maintenance of Senior ERP (Sapiens), developing LSP business rules, SGI managerial reports, and strategic integrations via REST/SOAP APIs and Web Services. I also lead the deployment of automations and LLM-assisted workflows (specifically Claude/Anthropic) to optimize administrative and corporate operational tasks.",
+      impact: lang === 'pt'
+        ? ["ERP Senior Sapiens (LSP/SGI)", "Soluções com LLMs (Claude)", "Governança & Integrações"]
+        : ["Senior ERP Sapiens (LSP/SGI)", "LLM Solutions (Claude)", "Governance & Integrations"]
+    },
+    {
+      period: lang === 'pt' ? "Dez/2025 – Jul/2026" : "Dec/2025 – Jul/2026",
       company: "Livrarias Curitiba",
       role: lang === 'pt' ? "Analista de Sistemas Pleno" : "Mid-level Systems Analyst",
       logo: "/livrarias-curitiba.png",
@@ -729,14 +727,36 @@ const getProjects = (lang: 'pt' | 'en') => [
 
 const getTechStack = (lang: 'pt' | 'en') => [
   {
-    category: lang === 'pt' ? "Automação" : "Automation",
+    category: lang === 'pt' ? "IA & LLMs" : "AI & LLMs",
+    icon: Sparkles,
+    color: "text-sky-400",
+    skills: [
+      { name: "Claude (Anthropic)", details: lang === 'pt' ? "Claude Opus 5.5 / Sonnet 3.5, Context Window, Artifacts, MCP" : "Claude Opus 5.5 / Sonnet 3.5, Context Window, Artifacts, MCP" },
+      { name: lang === 'pt' ? "Engenharia de Prompts" : "Prompt Engineering", details: lang === 'pt' ? "Few-Shot, CoT, System Prompts, Structured Outputs (JSON)" : "Few-Shot, CoT, System Prompts, Structured Outputs (JSON)" },
+      { name: lang === 'pt' ? "Integração & APIs de LLMs" : "LLM APIs & Integration", details: lang === 'pt' ? "Anthropic API, Tool Use, Function Calling, Agentes Autônomos" : "Anthropic API, Tool Use, Function Calling, Autonomous Agents" },
+      { name: lang === 'pt' ? "RAG & Automação Cognitiva" : "RAG & Cognitive Automation", details: lang === 'pt' ? "Embeddings, IA conectada a ERPs e automação de rotinas" : "Embeddings, AI connected to ERPs and workflow automation" }
+    ]
+  },
+  {
+    category: lang === 'pt' ? "ERP & Desenvolvimento" : "ERP & Development",
+    icon: Terminal,
+    color: "text-emerald-400",
+    skills: [
+      { name: "ERP Senior Sapiens", details: lang === 'pt' ? "LSP (Linguagem Senior), SGI, Regras de Negócio e Telas" : "LSP (Senior Language), SGI, Business Rules and UI" },
+      { name: lang === 'pt' ? "Web Services & APIs" : "Web Services & APIs", details: lang === 'pt' ? "REST/SOAP, Webhooks, Middleware e Integrações ERP" : "REST/SOAP, Webhooks, Middleware and ERP Integrations" },
+      { name: lang === 'pt' ? "Linux & Servidores" : "Linux & Servers", details: lang === 'pt' ? "Ubuntu/Debian, Shell/Bash Scripting, Cron, PDV Linux" : "Ubuntu/Debian, Shell/Bash Scripting, Cron, Linux POS" },
+      { name: lang === 'pt' ? "Full-Stack & Ferramentas" : "Full-Stack & Tools", details: "Node.js, TypeScript, Next.js, Python, Git, Jira" }
+    ]
+  },
+  {
+    category: lang === 'pt' ? "Automação & RPA" : "Automation & RPA",
     icon: Workflow,
     color: "text-cyan-400",
     skills: [
-      { name: "Python", details: "Selenium, BeautifulSoup, PyAutoGUI, Requests" },
-      { name: "Power Automate", details: lang === 'pt' ? "Desktop (RPA), Cloud Flows, Integrações" : "Desktop (RPA), Cloud Flows, Integrations" },
-      { name: "N8N & Make", details: lang === 'pt' ? "Workflows, Webhooks, API Integrations" : "Workflows, Webhooks, API Integrations" },
-      { name: lang === 'pt' ? "Desenvolvimento de Bots" : "Bot Development", details: lang === 'pt' ? "Teams API, Discord Bots, Automação N1/N2" : "Teams API, Discord Bots, L1/L2 Automation" }
+      { name: "Python Automation", details: "Selenium, BeautifulSoup, PyAutoGUI, Requests, Headless" },
+      { name: "Power Automate", details: lang === 'pt' ? "Desktop (RPA), Cloud Flows, Conectores e Gatilhos" : "Desktop (RPA), Cloud Flows, Connectors and Triggers" },
+      { name: "N8N & Make", details: lang === 'pt' ? "Orquestração de Workflows, Webhooks, Integração Multi-Sistemas" : "Workflow Orchestration, Webhooks, Multi-System Integration" },
+      { name: lang === 'pt' ? "Bots & Agentes de Suporte" : "Bots & Support Agents", details: lang === 'pt' ? "Teams API, Discord Bots, Triagem e Resolução N1/N2" : "Teams API, Discord Bots, L1/L2 Triage and Resolution" }
     ]
   },
   {
@@ -744,21 +764,10 @@ const getTechStack = (lang: 'pt' | 'en') => [
     icon: Database,
     color: "text-violet-400",
     skills: [
-      { name: "Power BI", details: lang === 'pt' ? "DAX, Power Query, Modelagem de Dados e Dashboards" : "DAX, Power Query, Data Modeling and Dashboards" },
-      { name: lang === 'pt' ? "SQL & Relacionais" : "SQL & Relational DBs", details: "Oracle PL/SQL, PostgreSQL, MySQL/MariaDB" },
-      { name: "Python Data Stack", details: lang === 'pt' ? "Pandas, NumPy, PIPELINES e Processos ETL" : "Pandas, NumPy, PIPELINES and ETL Processes" },
-      { name: lang === 'pt' ? "Análise de Métricas" : "Metrics Analysis", details: lang === 'pt' ? "SLA Monitoring, KPI Tracking, Data Viz" : "SLA Monitoring, KPI Tracking, Data Viz" }
-    ]
-  },
-  {
-    category: lang === 'pt' ? "Infra & Desenvolvimento" : "Infra & Development",
-    icon: Terminal,
-    color: "text-emerald-400",
-    skills: [
-      { name: "ERP Senior", details: lang === 'pt' ? "SGI, LSP, Customizações de Interface e Regras" : "SGI, LSP, UI Customizations and Rules" },
-      { name: lang === 'pt' ? "Linux & Servidores" : "Linux & Servers", details: "Ubuntu Server, Shell/Bash Scripting, Cron jobs" },
-      { name: lang === 'pt' ? "Dev Web & APIs" : "Web Dev & APIs", details: "RESTful APIs, TypeScript, Node.js, Next.js" },
-      { name: lang === 'pt' ? "Ferramentas Corporativas" : "Corporate Tools", details: "Git, Jira Software, Active Directory" }
+      { name: "Power BI", details: lang === 'pt' ? "DAX Avançado, Power Query, Modelagem Star Schema, Dashboards" : "Advanced DAX, Power Query, Star Schema Modeling, Dashboards" },
+      { name: lang === 'pt' ? "SQL & Relacionais" : "SQL & Relational DBs", details: "Oracle PL/SQL, Microsoft SQL Server, PostgreSQL, MySQL" },
+      { name: "Python Data Stack", details: lang === 'pt' ? "Pandas, NumPy, Pipelines ETL e Limpeza de Dados" : "Pandas, NumPy, ETL Pipelines and Data Cleaning" },
+      { name: lang === 'pt' ? "Gestão de SLAs & KPIs" : "SLA & KPI Management", details: lang === 'pt' ? "Monitoramento Operacional em Tempo Real, Análise de MTTR" : "Real-time Operational Monitoring, MTTR Analysis" }
     ]
   }
 ];
@@ -1022,7 +1031,7 @@ export default function Portfolio() {
             </ArcReactorFrame>
             <div className="absolute -bottom-4 -right-4 bg-stone-900/95 border border-cyan-500/30 p-3.5 rounded-xl backdrop-blur-md shadow-xl z-20">
               <div className="flex items-center gap-3">
-                <Trophy className="text-cyan-400 w-5 h-5" />
+                <Rocket className="text-cyan-400 w-5 h-5" />
                 <span className="text-[11px] font-mono font-bold uppercase tracking-widest text-white leading-tight">
                   {t.hero.badge[0]} <br />{t.hero.badge[1]}
                 </span>
@@ -1043,7 +1052,7 @@ export default function Portfolio() {
       >
         <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-16 items-center">
           <div className="col-span-full">
-            <SectionHeading icon={Workflow} tag="SECTOR 01 // ORIGIN & METHOD">{t.about.title}</SectionHeading>
+            <SectionHeading icon={Workflow}>{t.about.title}</SectionHeading>
           </div>
           <div className="col-span-full md:col-span-1">
             <div className="space-y-6 text-stone-400 text-lg leading-relaxed">
@@ -1069,7 +1078,15 @@ export default function Portfolio() {
                 viewport={{ once: true, margin: "-50px" }}
                 transition={{ duration: 0.5, delay: 0.3 }}
               >
-                {t.about.p3} <span className="text-white font-semibold">{t.about.p3_bold}</span>{t.about.p3_rest}
+                {t.about.p3} <span className="text-white font-semibold">{t.about.p3_bold}</span> {t.about.p3_mid} <span className="text-cyan-300 font-semibold">{t.about.p3_role}</span>{t.about.p3_rest}
+              </motion.p>
+              <motion.p
+                initial={{ opacity: 0, y: 15 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{ duration: 0.5, delay: 0.4 }}
+              >
+                {t.about.p4} <span className="text-white font-semibold">{t.about.p4_bold}</span>{t.about.p4_rest}
               </motion.p>
             </div>
           </div>
@@ -1106,7 +1123,7 @@ export default function Portfolio() {
         transition={{ duration: 0.8, ease: "easeOut" }}
       >
         <div className="max-w-4xl mx-auto">
-          <SectionHeading icon={BarChart3} tag="SECTOR 02 // CAREER TIMELINE">{t.experience.title}</SectionHeading>
+          <SectionHeading icon={BarChart3}>{t.experience.title}</SectionHeading>
           
           <div className="min-h-[600px] transition-all duration-300">
             {currentExperiences.map((exp, index) => (
@@ -1162,7 +1179,7 @@ export default function Portfolio() {
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-12">
             <div className="flex-1">
-              <SectionHeading icon={LayoutGrid} tag="SECTOR 03 // DEPLOYED ARTIFACTS">{t.projects.title}</SectionHeading>
+              <SectionHeading icon={LayoutGrid}>{t.projects.title}</SectionHeading>
               <div className="flex flex-col gap-1 -mt-8">
                 <p className="text-stone-500 text-sm max-w-xl font-mono uppercase tracking-wider">
                   {t.projects.subtitle}
@@ -1241,7 +1258,7 @@ export default function Portfolio() {
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
             <div>
-              <SectionHeading icon={BarChart2} tag="SECTOR 04 // METRIC TELEMETRY">{t.stats.title}</SectionHeading>
+              <SectionHeading icon={BarChart2}>{t.stats.title}</SectionHeading>
               <p className="text-stone-500 text-sm max-w-xl font-mono uppercase tracking-wider -mt-8">
                 {t.stats.subtitle}
               </p>
@@ -1450,9 +1467,9 @@ export default function Portfolio() {
         transition={{ duration: 0.8, ease: "easeOut" }}
       >
         <div className="max-w-6xl mx-auto">
-          <SectionHeading icon={Cpu} tag="SECTOR 05 // SYSTEM STACK">{t.skills.title}</SectionHeading>
+          <SectionHeading icon={Cpu}>{t.skills.title}</SectionHeading>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
             {techStack.map((section, idx) => {
               const Icon = section.icon;
               return (
@@ -1500,6 +1517,9 @@ export default function Portfolio() {
         </div>
       </motion.section>
 
+      {/* Companies Logo Carousel / Trajectory Marquee */}
+      <CompanyMarquee lang={lang} />
+
       {/* Footer / Contact */}
       <motion.footer 
         id="contact" 
@@ -1515,9 +1535,6 @@ export default function Portfolio() {
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
           >
-            <span className="text-[10px] font-mono tracking-[0.3em] uppercase text-cyan-400 bg-cyan-950/40 border border-cyan-500/30 px-3.5 py-1 rounded-full mb-4 inline-block">
-              SECTOR 06 // COMMS UPLINK
-            </span>
             <h2 className="text-4xl md:text-6xl font-bold text-white mb-8 tracking-tighter uppercase">
               {t.contact.title_1} <br /> <span className="text-cyan-400 italic">{t.contact.title_2}</span>
             </h2>
