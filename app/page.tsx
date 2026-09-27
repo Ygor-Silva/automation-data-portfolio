@@ -25,18 +25,71 @@ import {
   User,
   Filter,
   LayoutGrid,
-  ArrowUp
+  ArrowUp,
+  BarChart2,
+  PieChart,
+  Maximize2
 } from 'lucide-react';
+import {
+  ResponsiveContainer,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  Cell,
+  CartesianGrid
+} from 'recharts';
 
 import FloatingChat from '../components/FloatingChat';
+import ProjectFocusModal, { ProjectItem } from '../components/ProjectFocusModal';
+import { 
+  JarvisDataSpine, 
+  Card3D, 
+  ArcReactorFrame, 
+  PerspectiveCyberGrid 
+} from '../components/JarvisHUD';
+
+interface CustomStatsTooltipProps {
+  active?: boolean;
+  payload?: any[];
+  lang: 'pt' | 'en';
+  totalProjects: number;
+}
+
+const CustomStatsTooltip = ({ active, payload, lang, totalProjects }: CustomStatsTooltipProps) => {
+  if (active && payload && payload.length) {
+    const data = payload[0].payload;
+    const percentage = totalProjects > 0 ? Math.round((data.count / totalProjects) * 100) : 0;
+    return (
+      <div className="bg-stone-900/95 border border-stone-700/80 p-3.5 rounded-xl shadow-2xl backdrop-blur-md font-mono text-xs z-50">
+        <div className="flex items-center gap-2 mb-1.5">
+          <span className={`w-2.5 h-2.5 rounded-full ${data.dotColor}`} />
+          <span className="text-white font-bold text-sm">{data.category}</span>
+        </div>
+        <div className="text-stone-300 flex items-center justify-between gap-4 py-0.5">
+          <span className="text-stone-400">{lang === 'pt' ? 'Projetos:' : 'Projects:'}</span>
+          <span className={`font-bold ${data.accentText}`}>
+            {data.count} {lang === 'pt' ? (data.count === 1 ? 'projeto' : 'projetos') : (data.count === 1 ? 'project' : 'projects')}
+          </span>
+        </div>
+        <div className="text-stone-400 flex items-center justify-between gap-4 text-[11px] mt-1 border-t border-stone-800 pt-1">
+          <span>{lang === 'pt' ? 'Participação:' : 'Portfolio Share:'}</span>
+          <span className="text-stone-200 font-semibold">{percentage}%</span>
+        </div>
+        <div className="text-[10px] text-stone-500 mt-1 italic">
+          {lang === 'pt' ? '↗ Clique para filtrar no catálogo' : '↗ Click to filter in catalog'}
+        </div>
+      </div>
+    );
+  }
+  return null;
+};
 
 const InteractiveBackground = () => {
   const [mousePosition, setMousePosition] = React.useState({ x: 0, y: 0 });
-  const [isClient, setIsClient] = React.useState(false);
 
   React.useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setIsClient(true);
     const handleMouseMove = (e: MouseEvent) => {
       setMousePosition({ x: e.clientX, y: e.clientY });
     };
@@ -44,12 +97,11 @@ const InteractiveBackground = () => {
     return () => window.removeEventListener("mousemove", handleMouseMove);
   }, []);
 
-  if (!isClient) return null;
-
   return (
     <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-cyan-500/20 blur-[120px] rounded-full" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-violet-500/20 blur-[120px] rounded-full" />
+      <PerspectiveCyberGrid />
+      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-cyan-500/15 blur-[120px] rounded-full" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-violet-500/15 blur-[120px] rounded-full" />
       
       {/* Interactive mouse follow glow */}
       <motion.div
@@ -68,9 +120,6 @@ const InteractiveBackground = () => {
         }}
         transition={{ type: "tween", ease: "linear", duration: 0.3 }}
       />
-      
-      {/* Grain overlay */}
-      <div className="absolute inset-0 opacity-[0.015] bg-[url('https://upload.wikimedia.org/wikipedia/commons/7/76/1k_Dissolve_Noise_Texture.png')] bg-repeat mix-blend-overlay"></div>
     </div>
   );
 };
@@ -106,7 +155,7 @@ const ScrollToTop = () => {
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.8, y: 20 }}
           onClick={scrollToTop}
-          className="fixed bottom-8 right-8 md:bottom-12 md:right-12 p-3 md:p-4 bg-stone-800 border border-stone-700 hover:border-cyan-400 text-cyan-400 rounded-full shadow-xl shadow-cyan-500/10 z-50 transition-colors group"
+          className="fixed bottom-8 right-8 md:bottom-12 md:right-12 p-3 md:p-4 bg-stone-900/90 border border-cyan-500/40 hover:border-cyan-400 text-cyan-400 rounded-full shadow-[0_0_20px_rgba(6,182,212,0.2)] z-50 transition-all group backdrop-blur-md cursor-pointer"
           aria-label="Voltar ao topo"
         >
           <ArrowUp className="w-5 h-5 md:w-6 md:h-6 group-hover:-translate-y-1 transition-transform" />
@@ -123,17 +172,40 @@ const colors = {
   bg: 'stone-950',
 };
 
-const SectionHeading = ({ children, icon: Icon }: { children: React.ReactNode, icon?: any }) => (
-  <div className="flex items-center gap-3 mb-12">
-    {Icon && <Icon className="text-cyan-400 w-8 h-8" />}
-    <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-white uppercase font-mono">
-      {children}
-    </h2>
-    <div className="h-px flex-1 bg-gradient-to-r from-cyan-400/50 to-transparent ml-4" />
+const SectionHeading = ({ children, icon: Icon, tag }: { children: React.ReactNode, icon?: any, tag?: string }) => (
+  <div className="flex flex-col mb-12">
+    {tag && (
+      <span className="text-[10px] font-mono text-cyan-400 tracking-[0.25em] uppercase mb-2 flex items-center gap-2">
+        <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_6px_#22d3ee]" />
+        {tag}
+      </span>
+    )}
+    <div className="flex items-center gap-3">
+      {Icon && (
+        <div className="p-2 rounded-lg bg-cyan-950/40 border border-cyan-500/30 text-cyan-400 shadow-[0_0_15px_rgba(6,182,212,0.15)]">
+          <Icon className="w-6 h-6" />
+        </div>
+      )}
+      <h2 className="text-3xl md:text-4xl font-black tracking-tight text-white uppercase font-mono">
+        {children}
+      </h2>
+      <div className="h-px flex-1 bg-gradient-to-r from-cyan-400/40 via-cyan-400/10 to-transparent ml-4" />
+    </div>
   </div>
 );
 
-const ProjectCard = ({ title, description, tags, link, github, image, images, githubIcon: GithubIcon = Github }: any) => {
+const ProjectCard = ({ 
+  title, 
+  description, 
+  tags, 
+  link, 
+  github, 
+  image, 
+  images, 
+  githubIcon: GithubIcon = Github,
+  onOpenFocus,
+  lang = 'pt'
+}: any) => {
   const [isExpanded, setIsExpanded] = React.useState(false);
   const [currentImageIndex, setCurrentImageIndex] = React.useState(0);
   const [isHovered, setIsHovered] = React.useState(false);
@@ -151,174 +223,196 @@ const ProjectCard = ({ title, description, tags, link, github, image, images, gi
   const displayImage = images && images.length > 0 ? images[activeIndex] : image;
 
   return (
-    <motion.div 
-      whileHover={{ scale: 1.02 }}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      className="group relative bg-stone-900/40 border border-stone-800 rounded-2xl overflow-hidden hover:border-cyan-400/50 transition-all duration-500 backdrop-blur-sm flex flex-col h-full"
-    >
-      {/* Browser-style top bar */}
-      <div className="bg-stone-900/80 px-4 py-3 border-b border-stone-800 flex items-center justify-between z-10 relative">
-        <div className="flex gap-1.5">
-          <div className="w-2.5 h-2.5 rounded-full bg-stone-800" />
-          <div className="w-2.5 h-2.5 rounded-full bg-stone-800" />
-          <div className="w-2.5 h-2.5 rounded-full bg-stone-800" />
+    <Card3D glowColor="cyan" className="h-full">
+      <div 
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        onClick={() => onOpenFocus && onOpenFocus()}
+        className="group relative overflow-hidden flex flex-col h-full rounded-2xl cursor-pointer"
+      >
+        {/* Browser-style top bar */}
+        <div className="bg-stone-900/80 px-4 py-2.5 border-b border-stone-800 flex items-center justify-between z-10 relative">
+          <div className="flex gap-1.5 items-center">
+            <div className="w-2.5 h-2.5 rounded-full bg-cyan-500/40" />
+            <div className="w-2.5 h-2.5 rounded-full bg-stone-700" />
+            <div className="w-2.5 h-2.5 rounded-full bg-stone-700" />
+            <span className="ml-2 text-[9px] font-mono text-stone-500 tracking-wider">PROJECT.EXE</span>
+          </div>
+          <div className="flex items-center gap-2">
+            {/* Quick Focus Mode Trigger Button */}
+            {onOpenFocus && (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onOpenFocus();
+                }}
+                className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-cyan-950/70 border border-cyan-500/30 text-cyan-300 hover:bg-cyan-500/20 hover:border-cyan-400 text-[10px] font-mono font-medium tracking-wider transition-all cursor-pointer shadow-sm"
+                title={lang === 'pt' ? 'Ativar Modo Foco' : 'Open Focus Mode'}
+              >
+                <Maximize2 className="w-3 h-3" />
+                <span>{lang === 'pt' ? 'Foco' : 'Focus'}</span>
+              </button>
+            )}
+            {github && (
+              <motion.a 
+                href={github} 
+                target="_blank" 
+                onClick={(e) => e.stopPropagation()}
+                whileTap={{ scale: 0.9, opacity: 0.8 }}
+                className="text-stone-400 hover:text-cyan-400 transition-colors p-1"
+                title="Código Fonte / Post"
+              >
+                <GithubIcon className="w-4 h-4" />
+              </motion.a>
+            )}
+            {link && (
+              <motion.a 
+                href={link} 
+                target="_blank" 
+                onClick={(e) => e.stopPropagation()}
+                whileTap={{ scale: 0.9, opacity: 0.8 }}
+                className="text-stone-400 hover:text-cyan-400 transition-colors p-1"
+                title="Acessar Projeto"
+              >
+                <ExternalLink className="w-4 h-4" />
+              </motion.a>
+            )}
+          </div>
         </div>
-        <div className="flex gap-4">
-          {github && (
-            <motion.a 
-              href={github} 
-              target="_blank" 
-              whileTap={{ scale: 0.9, opacity: 0.8 }}
-              className="text-stone-500 hover:text-white transition-colors"
-            >
-              <GithubIcon className="w-4 h-4" />
-            </motion.a>
-          )}
-          {link && (
-            <motion.a 
-              href={link} 
-              target="_blank" 
-              whileTap={{ scale: 0.9, opacity: 0.8 }}
-              className="text-stone-500 hover:text-cyan-400 transition-colors"
-            >
-              <ExternalLink className="w-4 h-4" />
-            </motion.a>
-          )}
-        </div>
-      </div>
 
-      {(displayImage || images) && (
-        <div className="relative aspect-[16/10] sm:aspect-video w-full border-b border-stone-800 overflow-hidden bg-stone-900/50">
+        {(displayImage || images) && (
+          <div className="relative aspect-[16/10] sm:aspect-video w-full border-b border-stone-800 overflow-hidden bg-stone-900/50 group/img">
+            <motion.div
+              key={activeIndex}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.4 }}
+              className="w-full h-full"
+            >
+              <Image 
+                src={displayImage} 
+                alt={title} 
+                fill 
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                quality={100}
+                className="object-cover group-hover:scale-105 transition-transform duration-700" 
+                referrerPolicy="no-referrer"
+              />
+            </motion.div>
+
+            {/* Hover overlay hint */}
+            <div className="absolute inset-0 bg-stone-950/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none z-20">
+              <span className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-stone-900/90 border border-cyan-400/50 text-cyan-300 font-mono text-[11px] shadow-xl tracking-wider uppercase backdrop-blur-md">
+                <Maximize2 className="w-3.5 h-3.5 text-cyan-400" />
+                {lang === 'pt' ? 'Clique para Modo Foco' : 'Click for Focus Mode'}
+              </span>
+            </div>
+            
+            {images && images.length > 1 && (
+              <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1 z-20">
+                {images.map((_: any, i: number) => (
+                  <div 
+                    key={i} 
+                    className={`h-1 rounded-full transition-all duration-300 ${i === activeIndex ? 'w-4 bg-cyan-400' : 'w-1.5 bg-white/20'}`} 
+                  />
+                ))}
+              </div>
+            )}
+
+            <div className="absolute inset-0 bg-gradient-to-t from-stone-950/90 via-stone-950/20 to-transparent pointer-events-none" />
+          </div>
+        )}
+
+        <div className="p-6 flex flex-col flex-1">
+          <div className="flex items-center justify-between gap-3 mb-4">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-stone-800/80 rounded-lg group-hover:bg-cyan-400/10 transition-colors">
+                <Code2 className="text-stone-400 group-hover:text-cyan-400 w-5 h-5" />
+              </div>
+              <h3 className="text-lg font-bold text-white group-hover:text-cyan-400 transition-colors leading-tight">{title}</h3>
+            </div>
+            <button 
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsExpanded(!isExpanded);
+              }}
+              className="text-stone-500 hover:text-cyan-400 transition-colors p-1"
+            >
+              <ChevronDown className={`w-5 h-5 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`} />
+            </button>
+          </div>
+          
+          <p className={`text-stone-400 text-sm mb-6 leading-relaxed transition-all duration-300 ${isExpanded ? '' : 'line-clamp-2'}`}>
+            {description}
+          </p>
+
+          {/* Expandable details with smooth height transition */}
           <motion.div
-            key={activeIndex}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.4 }}
-            className="w-full h-full"
+            initial={false}
+            animate={{ height: isExpanded ? 'auto' : 0, opacity: isExpanded ? 1 : 0 }}
+            className="overflow-hidden"
           >
-            <Image 
-              src={displayImage} 
-              alt={title} 
-              fill 
-              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-              quality={100}
-              className="object-cover group-hover:scale-105 transition-transform duration-700 group-hover:opacity-100" 
-              referrerPolicy="no-referrer"
-            />
+            <div className="pt-2 pb-6 border-t border-stone-800/50 mt-4">
+              <p className="text-xs text-stone-500 font-mono leading-relaxed">
+                Focado em eficiência operacional, automação de processos complexos e geração de valor através de inteligência de dados aplicada.
+              </p>
+            </div>
           </motion.div>
           
-          {images && images.length > 1 && (
-            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1 z-20">
-              {images.map((_: any, i: number) => (
-                <div 
-                  key={i} 
-                  className={`h-1 rounded-full transition-all duration-300 ${i === activeIndex ? 'w-4 bg-cyan-400' : 'w-1.5 bg-white/20'}`} 
-                />
-              ))}
-            </div>
-          )}
-
-          <div className="absolute inset-0 bg-gradient-to-t from-stone-900/90 to-transparent pointer-events-none" />
-        </div>
-      )}
-
-      <div className="p-6 flex flex-col flex-1">
-        <div className="flex items-center justify-between gap-3 mb-4">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-stone-800 rounded-lg group-hover:bg-cyan-400/10 transition-colors">
-              <Code2 className="text-stone-500 group-hover:text-cyan-400 w-5 h-5" />
-            </div>
-            <h3 className="text-lg font-bold text-white group-hover:text-cyan-400 transition-colors leading-tight">{title}</h3>
+          <div className="flex flex-wrap gap-2 mt-auto">
+            {tags.map((tag: string) => (
+              <span key={tag} className="text-[9px] uppercase font-mono tracking-widest px-2 py-1 bg-stone-900/90 text-stone-400 rounded border border-stone-800 group-hover:border-cyan-500/30 transition-colors">
+                {tag}
+              </span>
+            ))}
           </div>
-          <button 
-            onClick={() => setIsExpanded(!isExpanded)}
-            className="text-stone-600 hover:text-cyan-400 transition-colors"
-          >
-            <ChevronDown className={`w-5 h-5 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`} />
-          </button>
-        </div>
-        
-        <p className={`text-stone-400 text-sm mb-6 leading-relaxed transition-all duration-300 ${isExpanded ? '' : 'line-clamp-2'}`}>
-          {description}
-        </p>
-
-        {/* Expandable details with smooth height transition */}
-        <motion.div
-          initial={false}
-          animate={{ height: isExpanded ? 'auto' : 0, opacity: isExpanded ? 1 : 0 }}
-          className="overflow-hidden"
-        >
-          <div className="pt-2 pb-6 border-t border-stone-800/50 mt-4">
-            <p className="text-xs text-stone-500 font-mono leading-relaxed">
-              Focado em eficiência operacional, automação de processos complexos e geração de valor através de inteligência de dados aplicada.
-            </p>
-          </div>
-        </motion.div>
-        
-        <div className="flex flex-wrap gap-2 mt-auto">
-          {tags.map((tag: string) => (
-            <span key={tag} className="text-[9px] uppercase font-mono tracking-widest px-2 py-1 bg-stone-950 text-stone-500 rounded border border-stone-800 group-hover:border-stone-700 transition-colors">
-              {tag}
-            </span>
-          ))}
         </div>
       </div>
-    </motion.div>
+    </Card3D>
   );
 };
 
 const ExperienceItem = ({ company, role, period, description, impact, logo }: any) => (
-  <motion.div 
-    initial={{ opacity: 0, y: 20 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    viewport={{ once: true, margin: "-100px" }}
-    transition={{ duration: 0.6, ease: "easeOut" }}
-    className="relative pl-8 border-l border-stone-800 pb-12 last:pb-0"
-  >
-    <div className="absolute left-[-5px] top-0 w-[9px] h-[9px] rounded-full bg-cyan-400 ring-4 ring-cyan-400/20" />
-    <span className="text-xs font-mono text-cyan-400 uppercase tracking-widest mb-2 block">{period}</span>
-    <div className="flex items-center gap-4 mb-4">
+  <Card3D glowColor="cyan" className="mb-6">
+    <div className="p-6 md:p-8 flex flex-col md:flex-row items-start gap-6">
       {logo && (
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.95 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-          className="w-16 h-16 md:w-20 md:h-20 rounded-xl bg-white border border-stone-800 overflow-hidden flex items-center justify-center p-2.5 md:p-3 transition-colors shrink-0 shadow-lg shadow-white/5"
-        >
-          <Image src={logo} alt={company} width={80} height={80} className="object-contain transition-all duration-300" referrerPolicy="no-referrer" />
-        </motion.div>
+        <div className="w-16 h-16 md:w-20 md:h-20 rounded-xl bg-white border border-stone-800 overflow-hidden flex items-center justify-center p-2.5 md:p-3 shrink-0 shadow-lg shadow-white/5">
+          <Image src={logo} alt={company} width={80} height={80} className="object-contain" referrerPolicy="no-referrer" />
+        </div>
       )}
-      <h3 className="text-xl font-bold text-white leading-tight">
-        {role} <br />
-        <span className="text-stone-400 text-lg">@ {company}</span>
-      </h3>
-    </div>
-    <p className="text-stone-400 text-sm leading-relaxed max-w-2xl">{description}</p>
-    {impact && (
-      <div className="mt-4 flex flex-wrap gap-4">
-        {impact.map((item: string, i: number) => (
-          <motion.div 
-            key={i} 
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.4, delay: i * 0.05 }}
-            className="flex items-center text-emerald-400 text-xs font-medium bg-emerald-400/5 px-3 py-1.5 rounded-full border border-emerald-400/10"
-          >
-            <Trophy className="w-3 h-3 mr-2" />
-            {item}
-          </motion.div>
-        ))}
+      <div className="flex-1 w-full">
+        <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+          <h3 className="text-xl font-bold text-white leading-tight">
+            {role} <span className="text-cyan-400 text-lg">@ {company}</span>
+          </h3>
+          <span className="text-xs font-mono text-cyan-400 bg-cyan-950/60 border border-cyan-500/30 px-3 py-1 rounded-full uppercase tracking-widest">
+            {period}
+          </span>
+        </div>
+        <p className="text-stone-400 text-sm leading-relaxed mb-4">{description}</p>
+        {impact && (
+          <div className="flex flex-wrap gap-2">
+            {impact.map((item: string, i: number) => (
+              <div 
+                key={i} 
+                className="flex items-center text-emerald-400 text-xs font-medium bg-emerald-400/5 px-3 py-1 rounded-full border border-emerald-400/20"
+              >
+                <Trophy className="w-3 h-3 mr-2 text-emerald-400 shrink-0" />
+                {item}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
-    )}
-  </motion.div>
+    </div>
+  </Card3D>
 );
 
 const translations = {
   pt: {
-    nav: { about: "Sobre", experience: "Carreira", projects: "Projetos", tech: "Dev", contact: "Contato", lang: "EN" },
+    nav: { about: "Sobre", experience: "Carreira", projects: "Projetos", stats: "Métricas", tech: "Dev", contact: "Contato", lang: "EN" },
     hero: {
       availability: "Disponível para novos desafios",
       specialist: "Especialista em",
@@ -357,6 +451,21 @@ const translations = {
       empty: "Nenhum projeto encontrado nesta categoria.",
       all: "Todos"
     },
+    stats: {
+      title: "Estatísticas de Projetos",
+      subtitle: "Distribuição e volume de entregas por categoria técnica",
+      clickToFilter: "Clique no gráfico ou card para filtrar",
+      chartTitle: "Distribuição por Categoria",
+      systems: "Sistemas",
+      dashboards: "Dashboards",
+      automation: "Automação",
+      total: "Total de Projetos",
+      share: "do total",
+      allCategories: "Todas as categorias ativas",
+      yAxisLabel: "Eixo Y: Quantidade de Projetos",
+      totalDeliverables: "entregas catalogadas",
+      ctaFilter: "Filtrar no catálogo"
+    },
     skills: {
       title: "Stack Tecnológica"
     },
@@ -368,7 +477,7 @@ const translations = {
     }
   },
   en: {
-    nav: { about: "About", experience: "Career", projects: "Projects", tech: "Tech", contact: "Contact", lang: "PT" },
+    nav: { about: "About", experience: "Career", projects: "Projects", stats: "Stats", tech: "Tech", contact: "Contact", lang: "PT" },
     hero: {
       availability: "Available for new challenges",
       specialist: "Specialist in",
@@ -406,6 +515,21 @@ const translations = {
       note: "Note: All data displayed in dashboards are fictitious and anonymized for demonstration purposes (LGPD Compliance).",
       empty: "No projects found in this category.",
       all: "All"
+    },
+    stats: {
+      title: "Project Statistics",
+      subtitle: "Distribution and volume of deliverables by technical category",
+      clickToFilter: "Click chart or card to filter",
+      chartTitle: "Distribution by Category",
+      systems: "Systems",
+      dashboards: "Dashboards",
+      automation: "Automation",
+      total: "Total Projects",
+      share: "of total",
+      allCategories: "All active categories",
+      yAxisLabel: "Y Axis: Project Count",
+      totalDeliverables: "cataloged deliverables",
+      ctaFilter: "Filter in catalog"
     },
     skills: {
       title: "Tech Stack"
@@ -639,10 +763,18 @@ const getTechStack = (lang: 'pt' | 'en') => [
   }
 ];
 
+const emptySubscribe = () => () => {};
+
 export default function Portfolio() {
   const [lang, setLang] = React.useState<'pt' | 'en'>('pt');
   const [currentExpPage, setCurrentExpPage] = React.useState(0);
   const [toastMsg, setToastMsg] = React.useState<string | null>(null);
+  const [focusedProject, setFocusedProject] = React.useState<ProjectItem | null>(null);
+  const isMounted = React.useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false
+  );
   
   const t = translations[lang];
   
@@ -669,9 +801,102 @@ export default function Portfolio() {
     ? projects 
     : projects.filter(p => p.category === currentActiveCategory);
 
+  const statsData = React.useMemo(() => {
+    const systemsCategoryName = lang === 'pt' ? "Sistemas" : "Systems";
+    const automationCategoryName = lang === 'pt' ? "Automação" : "Automation";
+    const dashboardsCategoryName = "Dashboards";
+
+    const systemsCount = projects.filter(p => p.category === systemsCategoryName).length;
+    const dashboardsCount = projects.filter(p => p.category === dashboardsCategoryName).length;
+    const automationCount = projects.filter(p => p.category === automationCategoryName).length;
+
+    return [
+      {
+        key: 'systems',
+        category: systemsCategoryName,
+        count: systemsCount,
+        filterCategory: systemsCategoryName,
+        color: '#22d3ee', // cyan-400
+        strokeColor: '#06b6d4',
+        accentBg: 'bg-cyan-500/10',
+        accentBorder: 'border-cyan-500/30',
+        accentText: 'text-cyan-400',
+        dotColor: 'bg-cyan-400',
+        desc: lang === 'pt' ? 'Aplicações full-stack, ERPs e ferramentas SaaS' : 'Full-stack applications, ERPs and SaaS tools'
+      },
+      {
+        key: 'dashboards',
+        category: dashboardsCategoryName,
+        count: dashboardsCount,
+        filterCategory: dashboardsCategoryName,
+        color: '#a855f7', // violet-500
+        strokeColor: '#8b5cf6',
+        accentBg: 'bg-violet-500/10',
+        accentBorder: 'border-violet-500/30',
+        accentText: 'text-violet-400',
+        dotColor: 'bg-violet-400',
+        desc: lang === 'pt' ? 'Relatórios gerenciais, KPIs e análises em tempo real' : 'Management reports, KPIs and real-time analytics'
+      },
+      {
+        key: 'automation',
+        category: automationCategoryName,
+        count: automationCount,
+        filterCategory: automationCategoryName,
+        color: '#34d399', // emerald-400
+        strokeColor: '#10b981',
+        accentBg: 'bg-emerald-500/10',
+        accentBorder: 'border-emerald-500/30',
+        accentText: 'text-emerald-400',
+        dotColor: 'bg-emerald-400',
+        desc: lang === 'pt' ? 'Bots RPA, fluxos de integração e automação de triagem' : 'RPA bots, integration flows and triage automation'
+      }
+    ];
+  }, [projects, lang]);
+
+  const handleFilterCategory = (categoryToFilter: string) => {
+    setActiveCategory(categoryToFilter);
+    const element = document.getElementById('projects');
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const [activeSector, setActiveSector] = React.useState('about');
+
+  React.useEffect(() => {
+    const sectionIds = ['about', 'experience', 'projects', 'project-statistics', 'skills', 'contact'];
+    const handleScroll = () => {
+      const scrollPos = window.scrollY + 280;
+      for (const id of sectionIds) {
+        const el = document.getElementById(id);
+        if (el) {
+          const top = el.offsetTop;
+          const height = el.offsetHeight;
+          if (scrollPos >= top && scrollPos < top + height) {
+            setActiveSector(id);
+            break;
+          }
+        }
+      }
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
     <main className="bg-[#050505] min-h-screen text-stone-200 selection:bg-cyan-500/30 selection:text-cyan-200">
       <InteractiveBackground />
+      {!focusedProject && <JarvisDataSpine lang={lang} activeSection={activeSector} />}
+
+      {/* Focus Mode Overlay Component */}
+      <ProjectFocusModal
+        project={focusedProject}
+        allProjects={projects}
+        lang={lang}
+        onClose={() => setFocusedProject(null)}
+        onSelectProject={(p) => setFocusedProject(p)}
+      />
 
       <AnimatePresence>
         {toastMsg && (
@@ -679,7 +904,7 @@ export default function Portfolio() {
             initial={{ opacity: 0, y: -20, x: '-50%' }}
             animate={{ opacity: 1, y: 0, x: '-50%' }}
             exit={{ opacity: 0, y: -20, x: '-50%' }}
-            className="fixed top-24 left-1/2 z-[100] bg-stone-900 border border-stone-800 text-stone-200 px-4 py-2 rounded-full text-xs font-mono shadow-2xl flex items-center gap-2"
+            className="fixed top-20 left-1/2 z-[100] bg-stone-900 border border-cyan-500/30 text-stone-200 px-4 py-2 rounded-full text-xs font-mono shadow-2xl flex items-center gap-2"
           >
             <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
             {toastMsg}
@@ -688,15 +913,16 @@ export default function Portfolio() {
       </AnimatePresence>
 
       {/* Navigation */}
-      <nav className="fixed top-0 w-full z-50 px-4 md:px-6 py-4 md:py-8 flex justify-between items-center backdrop-blur-md bg-stone-950/40 border-b border-white/5">
-        <div className="text-xl md:text-2xl font-bold tracking-tighter text-white">
+      <nav className="fixed top-0 w-full z-40 px-4 md:px-8 py-3.5 flex justify-between items-center backdrop-blur-md bg-stone-950/80 border-b border-cyan-500/10">
+        <a href="#" className="text-xl md:text-2xl font-black tracking-tighter text-white hover:opacity-90 transition-opacity">
           Y<span className="text-cyan-400">.</span>TEIXEIRA
-        </div>
+        </a>
         <div className="flex items-center gap-6">
-          <div className="hidden md:flex gap-8 text-xs font-mono tracking-widest uppercase text-stone-400">
+          <div className="hidden md:flex gap-7 text-xs font-mono tracking-widest uppercase text-stone-400">
             <a href="#about" className="hover:text-cyan-400 transition-colors">{t.nav.about}</a>
             <a href="#experience" className="hover:text-cyan-400 transition-colors">{t.nav.experience}</a>
             <a href="#projects" className="hover:text-cyan-400 transition-colors">{t.nav.projects}</a>
+            <a href="#project-statistics" className="hover:text-cyan-400 transition-colors">{t.nav.stats}</a>
             <a href="#skills" className="hover:text-cyan-400 transition-colors">{t.nav.tech}</a>
             <a href="#contact" className="hover:text-cyan-400 transition-colors">{t.nav.contact}</a>
           </div>
@@ -706,60 +932,66 @@ export default function Portfolio() {
               setLang(nextLang);
               setCurrentExpPage(0);
               setActiveCategory(translations[nextLang].projects.all);
-              setToastMsg(nextLang === 'en' ? 'Language switched to English' : 'Idioma alterado para Português');
+              setToastMsg(nextLang === 'en' ? 'SYS.LANG: English' : 'SYS.LANG: Português');
               setTimeout(() => setToastMsg(null), 3000);
             }}
-            className="flex items-center justify-center p-2 rounded-lg bg-stone-900 border border-stone-800 text-stone-400 hover:text-cyan-400 hover:border-cyan-400/50 transition-colors cursor-pointer text-xs font-mono font-bold"
+            className="flex items-center justify-center px-3 py-1.5 rounded-lg bg-cyan-950/40 border border-cyan-500/30 text-cyan-300 hover:text-white hover:border-cyan-400 hover:bg-cyan-500/20 transition-all cursor-pointer text-xs font-mono font-bold tracking-widest"
             aria-label="Toggle language"
           >
-            {t.nav.lang}
+            [{t.nav.lang}]
           </button>
         </div>
       </nav>
 
       {/* Hero Section */}
-      <section className="relative pt-32 md:pt-48 pb-24 md:pb-32 px-6 overflow-hidden">
-        <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-12">
+      <section className="relative pt-28 md:pt-36 pb-24 md:pb-32 px-6 overflow-hidden">
+        <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-12 relative z-10">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6 }}
             className="flex-1 text-center md:text-left"
           >
-            <span className="text-cyan-400 font-mono text-xs md:text-sm tracking-[0.2em] md:tracking-[0.3em] uppercase block mb-4">
-              {t.hero.availability}
-            </span>
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-white tracking-tighter leading-[0.9] mb-6 md:mb-8">
-              YGOR <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-violet-500">TEIXEIRA</span>
+            <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 mb-4">
+              <span className="text-cyan-400 font-mono text-xs md:text-sm tracking-[0.2em] md:tracking-[0.25em] uppercase bg-cyan-950/60 border border-cyan-500/30 px-3 py-1 rounded-full flex items-center gap-2 shadow-[0_0_12px_rgba(6,182,212,0.15)]">
+                <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_8px_#22d3ee]" />
+                {t.hero.availability}
+              </span>
+            </div>
+
+            <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-white tracking-tighter leading-[0.9] mb-6 md:mb-8 font-mono">
+              YGOR <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-sky-300 to-violet-400">TEIXEIRA</span>
             </h1>
-            <p className="text-lg md:text-2xl text-stone-400 max-w-2xl font-light leading-relaxed mx-auto md:mx-0">
-              {t.hero.specialist} <span className="text-white border-b border-cyan-400/50">{t.hero.rpa}</span> {t.hero.and} <span className="text-white border-b border-violet-400/50">{t.hero.dataInsight}</span>. {t.hero.description}
+            <p className="text-lg md:text-2xl text-stone-300 max-w-2xl font-light leading-relaxed mx-auto md:mx-0">
+              {t.hero.specialist} <span className="text-cyan-300 font-normal border-b border-cyan-400/50">{t.hero.rpa}</span> {t.hero.and} <span className="text-violet-300 font-normal border-b border-violet-400/50">{t.hero.dataInsight}</span>. {t.hero.description}
             </p>
             
             <div className="mt-10 md:mt-12 flex flex-col sm:flex-row flex-wrap gap-4 justify-center md:justify-start items-center">
               <a 
                 href="#projects" 
-                className="group w-full sm:w-auto flex items-center justify-center gap-2 bg-white text-black px-8 py-4 rounded-full font-bold hover:bg-cyan-400 transition-colors"
+                className="group w-full sm:w-auto flex items-center justify-center gap-2 bg-gradient-to-r from-cyan-400 to-cyan-500 text-stone-950 font-bold px-8 py-4 rounded-xl hover:shadow-[0_0_25px_rgba(6,182,212,0.4)] transition-all font-mono uppercase tracking-wider text-xs cursor-pointer"
               >
                 {t.hero.viewProjects}
-                <ArrowUpRight className="w-5 h-5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                <ArrowUpRight className="w-4 h-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
               </a>
               <div className="flex gap-4 items-center pl-0 sm:pl-4 mt-4 sm:mt-0">
                 <motion.a 
                   href="https://github.com/Ygor-Silva" 
                   target="_blank" 
                   whileTap={{ scale: 0.9, opacity: 0.8 }}
-                  className="p-3 bg-stone-900 border border-stone-800 rounded-full hover:border-cyan-400 transition-colors"
+                  className="p-3.5 bg-stone-900/90 border border-stone-800 rounded-xl hover:border-cyan-400 hover:text-cyan-400 transition-all text-stone-400 hover:shadow-[0_0_15px_rgba(6,182,212,0.2)]"
+                  aria-label="GitHub Profile"
                 >
-                  <Github className="w-6 h-6" />
+                  <Github className="w-5 h-5" />
                 </motion.a>
                 <motion.a 
                   href="https://www.linkedin.com/in/ygor-silva-developer/" 
                   target="_blank" 
                   whileTap={{ scale: 0.9, opacity: 0.8 }}
-                  className="p-3 bg-stone-900 border border-stone-800 rounded-full hover:border-violet-400 transition-colors"
+                  className="p-3.5 bg-stone-900/90 border border-stone-800 rounded-xl hover:border-violet-400 hover:text-violet-400 transition-all text-stone-400 hover:shadow-[0_0_15px_rgba(168,85,247,0.2)]"
+                  aria-label="LinkedIn Profile"
                 >
-                  <Linkedin className="w-6 h-6" />
+                  <Linkedin className="w-5 h-5" />
                 </motion.a>
               </div>
             </div>
@@ -771,26 +1003,29 @@ export default function Portfolio() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="relative mt-8 md:mt-0"
           >
-            <div className="w-56 h-56 md:w-80 md:h-80 rounded-full overflow-hidden border-4 border-stone-800 p-2 bg-stone-900 shadow-2xl shadow-cyan-500/10">
-              <div className="w-full h-full rounded-full overflow-hidden relative">
-                {/* Profile Image - Using picsum placeholder as requested photo extraction is not possible, but user can replace /ygor.jpg */}
-                <Image 
-                  src="/ygor.jpg" 
-                  alt="Ygor Teixeira" 
-                  fill
-                  priority
-                  quality={100}
-                  sizes="(max-width: 768px) 256px, 320px"
-                  className="object-cover transition-all duration-500"
-                  referrerPolicy="no-referrer"
-                />
-                <div className="absolute inset-0 bg-cyan-400/10 mix-blend-overlay" />
+            <ArcReactorFrame>
+              <div className="w-56 h-56 md:w-80 md:h-80 rounded-full overflow-hidden border-4 border-cyan-400/40 p-2 bg-stone-950/90 shadow-2xl shadow-cyan-500/20 backdrop-blur-md relative z-10">
+                <div className="w-full h-full rounded-full overflow-hidden relative">
+                  <Image 
+                    src="/ygor.jpg" 
+                    alt="Ygor Teixeira" 
+                    fill
+                    priority
+                    quality={100}
+                    sizes="(max-width: 768px) 256px, 320px"
+                    className="object-cover transition-all duration-700 hover:scale-105"
+                    referrerPolicy="no-referrer"
+                  />
+                  <div className="absolute inset-0 bg-cyan-400/10 mix-blend-overlay pointer-events-none" />
+                </div>
               </div>
-            </div>
-            <div className="absolute -bottom-4 -right-4 bg-stone-900 border border-stone-800 p-4 rounded-2xl backdrop-blur-md">
+            </ArcReactorFrame>
+            <div className="absolute -bottom-4 -right-4 bg-stone-900/95 border border-cyan-500/30 p-3.5 rounded-xl backdrop-blur-md shadow-xl z-20">
               <div className="flex items-center gap-3">
                 <Trophy className="text-cyan-400 w-5 h-5" />
-                <span className="text-xs font-mono font-bold uppercase tracking-widest text-white leading-tight">{t.hero.badge[0]} <br />{t.hero.badge[1]}</span>
+                <span className="text-[11px] font-mono font-bold uppercase tracking-widest text-white leading-tight">
+                  {t.hero.badge[0]} <br />{t.hero.badge[1]}
+                </span>
               </div>
             </div>
           </motion.div>
@@ -807,7 +1042,9 @@ export default function Portfolio() {
         transition={{ duration: 0.8, ease: "easeOut" }}
       >
         <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-16 items-center">
-          <SectionHeading icon={Workflow}>{t.about.title}</SectionHeading>
+          <div className="col-span-full">
+            <SectionHeading icon={Workflow} tag="SECTOR 01 // ORIGIN & METHOD">{t.about.title}</SectionHeading>
+          </div>
           <div className="col-span-full md:col-span-1">
             <div className="space-y-6 text-stone-400 text-lg leading-relaxed">
               <motion.p
@@ -837,36 +1074,24 @@ export default function Portfolio() {
             </div>
           </div>
           <div className="grid grid-cols-2 gap-4">
-            <motion.div 
-              initial={{ opacity: 0, y: 15 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              className="bg-stone-900 p-8 rounded-2xl border border-stone-800 flex flex-col items-center justify-center text-center"
-            >
-              <span className="text-4xl font-bold text-cyan-400 mb-2">5+</span>
-              <span className="text-xs uppercase font-mono tracking-widest text-stone-500">{t.about.stat1}</span>
-            </motion.div>
-            <motion.div 
-              initial={{ opacity: 0, y: 15 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
-              transition={{ duration: 0.5, delay: 0.3 }}
-              className="bg-stone-900 p-8 rounded-2xl border border-stone-800 flex flex-col items-center justify-center text-center"
-            >
-              <span className="text-4xl font-bold text-violet-500 mb-2">100%</span>
-              <span className="text-xs uppercase font-mono tracking-widest text-stone-500">{t.about.stat2}</span>
-            </motion.div>
-            <motion.div 
-              initial={{ opacity: 0, y: 15 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
-              transition={{ duration: 0.5, delay: 0.4 }}
-              className="col-span-2 bg-stone-900 p-8 rounded-2xl border border-stone-800 flex items-center gap-6"
-            >
-              <Factory className="w-12 h-12 text-stone-700" />
-              <p className="text-sm italic text-stone-500">{t.about.quote}</p>
-            </motion.div>
+            <Card3D glowColor="cyan">
+              <div className="p-8 flex flex-col items-center justify-center text-center">
+                <span className="text-4xl font-black text-cyan-400 mb-2 font-mono">5+</span>
+                <span className="text-xs uppercase font-mono tracking-widest text-stone-400">{t.about.stat1}</span>
+              </div>
+            </Card3D>
+            <Card3D glowColor="violet">
+              <div className="p-8 flex flex-col items-center justify-center text-center">
+                <span className="text-4xl font-black text-violet-400 mb-2 font-mono">100%</span>
+                <span className="text-xs uppercase font-mono tracking-widest text-stone-400">{t.about.stat2}</span>
+              </div>
+            </Card3D>
+            <Card3D glowColor="cyan" className="col-span-2">
+              <div className="p-6 md:p-8 flex items-center gap-6">
+                <Factory className="w-12 h-12 text-cyan-500/60 shrink-0" />
+                <p className="text-sm italic text-stone-300 font-mono leading-relaxed">{t.about.quote}</p>
+              </div>
+            </Card3D>
           </div>
         </div>
       </motion.section>
@@ -881,7 +1106,7 @@ export default function Portfolio() {
         transition={{ duration: 0.8, ease: "easeOut" }}
       >
         <div className="max-w-4xl mx-auto">
-          <SectionHeading icon={BarChart3}>{t.experience.title}</SectionHeading>
+          <SectionHeading icon={BarChart3} tag="SECTOR 02 // CAREER TIMELINE">{t.experience.title}</SectionHeading>
           
           <div className="min-h-[600px] transition-all duration-300">
             {currentExperiences.map((exp, index) => (
@@ -937,7 +1162,7 @@ export default function Portfolio() {
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-12">
             <div className="flex-1">
-              <SectionHeading icon={LayoutGrid}>{t.projects.title}</SectionHeading>
+              <SectionHeading icon={LayoutGrid} tag="SECTOR 03 // DEPLOYED ARTIFACTS">{t.projects.title}</SectionHeading>
               <div className="flex flex-col gap-1 -mt-8">
                 <p className="text-stone-500 text-sm max-w-xl font-mono uppercase tracking-wider">
                   {t.projects.subtitle}
@@ -986,7 +1211,11 @@ export default function Portfolio() {
                   exit={{ opacity: 0, scale: 0.9, y: 10 }}
                   transition={{ duration: 0.5, ease: "circOut" }}
                 >
-                  <ProjectCard {...project} />
+                  <ProjectCard 
+                    {...project} 
+                    lang={lang}
+                    onOpenFocus={() => setFocusedProject(project)} 
+                  />
                 </motion.div>
               ))}
             </AnimatePresence>
@@ -1000,6 +1229,217 @@ export default function Portfolio() {
         </div>
       </motion.section>
 
+      {/* Project Statistics Section */}
+      <motion.section 
+        id="project-statistics" 
+        className="py-20 px-6 bg-stone-950/40 border-t border-b border-stone-800/40 scroll-mt-24"
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-100px" }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+      >
+        <div className="max-w-6xl mx-auto">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+            <div>
+              <SectionHeading icon={BarChart2} tag="SECTOR 04 // METRIC TELEMETRY">{t.stats.title}</SectionHeading>
+              <p className="text-stone-500 text-sm max-w-xl font-mono uppercase tracking-wider -mt-8">
+                {t.stats.subtitle}
+              </p>
+            </div>
+            <div className="flex items-center gap-2 text-xs font-mono text-stone-500 bg-stone-900/60 px-3.5 py-2 rounded-xl border border-stone-800 self-start md:self-auto">
+              <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+              <span>{t.stats.clickToFilter}</span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            {/* Chart Card */}
+            <div 
+              id="project-stats-chart-card"
+              className="lg:col-span-7 bg-stone-900/40 border border-stone-800 rounded-2xl p-6 md:p-8 backdrop-blur-sm flex flex-col justify-between"
+            >
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-stone-800/60">
+                <div className="flex items-center gap-2.5">
+                  <BarChart3 className="w-5 h-5 text-cyan-400" />
+                  <span className="text-white font-mono text-sm font-bold uppercase tracking-wider">
+                    {t.stats.chartTitle}
+                  </span>
+                </div>
+                <div className="flex flex-wrap items-center gap-3 text-xs font-mono text-stone-400">
+                  <span className="flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-cyan-400" />
+                    {t.stats.systems}
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-violet-400" />
+                    {t.stats.dashboards}
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400" />
+                    {t.stats.automation}
+                  </span>
+                </div>
+              </div>
+
+              {/* Chart container */}
+              <div id="project-stats-recharts-wrapper" className="w-full h-[280px] md:h-[300px]">
+                {isMounted ? (
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart 
+                      data={statsData} 
+                      margin={{ top: 20, right: 15, left: -20, bottom: 5 }}
+                      onClick={(state: any) => {
+                        if (state && state.activePayload && state.activePayload.length) {
+                          const clickedItem = state.activePayload[0].payload;
+                          handleFilterCategory(clickedItem.filterCategory);
+                        }
+                      }}
+                    >
+                      <defs>
+                        <linearGradient id="barGrad-systems" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor="#22d3ee" stopOpacity={0.9} />
+                          <stop offset="100%" stopColor="#0891b2" stopOpacity={0.4} />
+                        </linearGradient>
+                        <linearGradient id="barGrad-dashboards" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor="#c084fc" stopOpacity={0.9} />
+                          <stop offset="100%" stopColor="#7c3aed" stopOpacity={0.4} />
+                        </linearGradient>
+                        <linearGradient id="barGrad-automation" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor="#34d399" stopOpacity={0.9} />
+                          <stop offset="100%" stopColor="#059669" stopOpacity={0.4} />
+                        </linearGradient>
+                      </defs>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#262626" vertical={false} opacity={0.6} />
+                      <XAxis 
+                        dataKey="category" 
+                        stroke="#737373" 
+                        tickLine={false} 
+                        axisLine={{ stroke: '#262626' }}
+                        tick={{ fill: '#a8a29e', fontSize: 12, fontFamily: 'monospace' }}
+                      />
+                      <YAxis 
+                        stroke="#737373" 
+                        tickLine={false} 
+                        axisLine={{ stroke: '#262626' }}
+                        allowDecimals={false}
+                        tick={{ fill: '#78716c', fontSize: 11, fontFamily: 'monospace' }}
+                      />
+                      <Tooltip 
+                        content={<CustomStatsTooltip lang={lang} totalProjects={projects.length} />} 
+                        cursor={{ fill: 'rgba(255, 255, 255, 0.04)', radius: 8 }} 
+                      />
+                      <Bar 
+                        dataKey="count" 
+                        radius={[8, 8, 0, 0]} 
+                        maxBarSize={64}
+                        animationDuration={1000}
+                        className="cursor-pointer"
+                      >
+                        {statsData.map((entry, index) => (
+                          <Cell 
+                            key={`cell-${index}`} 
+                            fill={`url(#barGrad-${entry.key})`}
+                            stroke={entry.strokeColor}
+                            strokeWidth={1}
+                          />
+                        ))}
+                      </Bar>
+                    </BarChart>
+                  </ResponsiveContainer>
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center">
+                    <div className="w-6 h-6 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin" />
+                  </div>
+                )}
+              </div>
+
+              <div className="mt-4 pt-3 border-t border-stone-800/60 flex items-center justify-between text-[11px] font-mono text-stone-500">
+                <span>{t.stats.yAxisLabel}</span>
+                <span className="text-cyan-400/80">{projects.length} {t.stats.totalDeliverables}</span>
+              </div>
+            </div>
+
+            {/* KPI Cards Breakdown */}
+            <div 
+              id="project-stats-kpi-container"
+              className="lg:col-span-5 flex flex-col justify-between gap-4"
+            >
+              {/* Total KPI */}
+              <div 
+                id="stat-card-total"
+                onClick={() => handleFilterCategory(t.projects.all)}
+                className="bg-stone-900/40 border border-stone-800 hover:border-cyan-400/40 rounded-2xl p-5 backdrop-blur-sm cursor-pointer transition-all duration-300 group"
+              >
+                <div className="flex items-center justify-between">
+                  <div>
+                    <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-stone-500 block mb-1">
+                      {t.stats.total}
+                    </span>
+                    <div className="text-3xl font-black text-white group-hover:text-cyan-400 transition-colors font-mono">
+                      {projects.length}
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <span className="inline-flex items-center gap-1 text-xs font-mono text-cyan-400 bg-cyan-400/10 px-2.5 py-1 rounded-full border border-cyan-400/20">
+                      100% {t.stats.share}
+                    </span>
+                    <p className="text-[11px] font-mono text-stone-500 mt-1">
+                      {t.stats.allCategories}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* 3 Categories KPI */}
+              {statsData.map((item) => {
+                const percentage = projects.length > 0 ? Math.round((item.count / projects.length) * 100) : 0;
+                return (
+                  <div 
+                    key={item.key}
+                    id={`stat-card-${item.key}`}
+                    onClick={() => handleFilterCategory(item.filterCategory)}
+                    className="bg-stone-900/40 border border-stone-800 hover:border-stone-700 rounded-2xl p-4 md:p-5 backdrop-blur-sm cursor-pointer transition-all duration-300 group"
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2.5">
+                        <span className={`w-2.5 h-2.5 rounded-full ${item.dotColor}`} />
+                        <h4 className="text-white font-bold text-sm group-hover:text-cyan-400 transition-colors">
+                          {item.category}
+                        </h4>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-lg font-black font-mono text-white group-hover:text-stone-200 transition-colors">
+                          {item.count}
+                        </span>
+                        <span className={`text-[10px] font-mono px-2 py-0.5 rounded-full ${item.accentBg} ${item.accentText} border ${item.accentBorder}`}>
+                          {percentage}%
+                        </span>
+                      </div>
+                    </div>
+                    
+                    <p className="text-xs text-stone-400 font-light leading-relaxed mb-3">
+                      {item.desc}
+                    </p>
+
+                    {/* Mini progress bar */}
+                    <div className="w-full h-1.5 bg-stone-800 rounded-full overflow-hidden">
+                      <motion.div 
+                        initial={{ width: 0 }}
+                        whileInView={{ width: `${percentage}%` }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 1, ease: "easeOut" }}
+                        className="h-full rounded-full"
+                        style={{ backgroundColor: item.color }}
+                      />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </motion.section>
+
       {/* Skills Radar */}
       <motion.section 
         id="skills" 
@@ -1010,7 +1450,7 @@ export default function Portfolio() {
         transition={{ duration: 0.8, ease: "easeOut" }}
       >
         <div className="max-w-6xl mx-auto">
-          <SectionHeading icon={Cpu}>{t.skills.title}</SectionHeading>
+          <SectionHeading icon={Cpu} tag="SECTOR 05 // SYSTEM STACK">{t.skills.title}</SectionHeading>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-12">
             {techStack.map((section, idx) => {
@@ -1075,6 +1515,9 @@ export default function Portfolio() {
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
           >
+            <span className="text-[10px] font-mono tracking-[0.3em] uppercase text-cyan-400 bg-cyan-950/40 border border-cyan-500/30 px-3.5 py-1 rounded-full mb-4 inline-block">
+              SECTOR 06 // COMMS UPLINK
+            </span>
             <h2 className="text-4xl md:text-6xl font-bold text-white mb-8 tracking-tighter uppercase">
               {t.contact.title_1} <br /> <span className="text-cyan-400 italic">{t.contact.title_2}</span>
             </h2>
@@ -1115,8 +1558,12 @@ export default function Portfolio() {
         </div>
       </motion.footer>
 
-      <FloatingChat lang={lang} />
-      <ScrollToTop />
+      {!focusedProject && (
+        <>
+          <FloatingChat lang={lang} />
+          <ScrollToTop />
+        </>
+      )}
     </main>
   );
 }

@@ -228,10 +228,31 @@ export default function FloatingChat({ lang = 'pt' }: { lang?: 'pt' | 'en' }) {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.8, y: 20 }}
             onClick={() => setIsOpen(true)}
-            className="fixed bottom-24 right-8 md:bottom-28 md:right-12 p-3 md:p-4 bg-cyan-500 border border-cyan-400 text-stone-950 rounded-full shadow-xl shadow-cyan-500/20 z-50 transition-colors hover:bg-cyan-400 group"
+            className="fixed bottom-24 right-8 md:bottom-28 md:right-12 w-14 h-14 md:w-16 md:h-16 rounded-full shadow-2xl shadow-cyan-500/30 z-50 flex items-center justify-center group cursor-pointer"
             aria-label={currentT.openChat}
           >
-            <Bot className="w-6 h-6" />
+            {/* Outer spinning orbital ring */}
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ repeat: Infinity, duration: 12, ease: "linear" }}
+              className="absolute inset-[-4px] rounded-full border border-dashed border-cyan-400/50"
+            />
+            {/* Counter-rotating segmented ring */}
+            <motion.div
+              animate={{ rotate: -360 }}
+              transition={{ repeat: Infinity, duration: 8, ease: "linear" }}
+              className="absolute inset-[-8px] rounded-full border border-cyan-500/20 border-t-cyan-400/80 border-b-cyan-400/80"
+            />
+            {/* Core Arc Glow */}
+            <div className="absolute inset-0 rounded-full bg-stone-950/90 border-2 border-cyan-400/80 group-hover:border-cyan-300 group-hover:shadow-[0_0_25px_rgba(34,211,238,0.6)] transition-all flex items-center justify-center backdrop-blur-md">
+              <Bot className="w-6 h-6 text-cyan-400 group-hover:scale-110 transition-transform" />
+              {/* Pulsing core light */}
+              <span className="absolute w-2 h-2 rounded-full bg-cyan-300 animate-ping opacity-75" />
+            </div>
+            {/* Subtle JARVIS tag badge */}
+            <span className="absolute -top-2 -right-1 bg-cyan-500 text-[9px] font-mono font-black text-black px-1.5 py-0.5 rounded tracking-tighter uppercase shadow">
+              AI
+            </span>
           </motion.button>
         )}
       </AnimatePresence>
@@ -239,26 +260,36 @@ export default function FloatingChat({ lang = 'pt' }: { lang?: 'pt' | 'en' }) {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 20, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ type: 'spring', stiffness: 260, damping: 20 }}
-            className="fixed bottom-24 right-6 md:bottom-28 md:right-12 w-[calc(100vw-48px)] md:w-[380px] h-[500px] max-h-[70vh] bg-stone-900 border border-stone-800 rounded-2xl shadow-2xl z-50 flex flex-col overflow-hidden"
+            className="fixed bottom-24 right-6 md:bottom-28 md:right-12 w-[calc(100vw-48px)] md:w-[400px] h-[520px] max-h-[75vh] bg-stone-950/95 border border-cyan-500/40 rounded-2xl shadow-[0_0_50px_rgba(6,182,212,0.15)] z-50 flex flex-col overflow-hidden backdrop-blur-xl"
           >
-            {/* Header */}
-            <div className="bg-stone-950 p-4 border-b border-stone-800 flex justify-between items-center">
+            {/* Holographic Header */}
+            <div className="bg-stone-950/90 px-4 py-3 border-b border-cyan-500/20 flex justify-between items-center relative">
               <div className="flex items-center gap-3">
-                <div className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse" />
-                <h3 className="text-stone-200 font-mono text-sm font-bold uppercase tracking-widest">
-                  YgorBot
-                </h3>
+                <div className="relative flex items-center justify-center">
+                  <div className="w-3 h-3 bg-cyan-400 rounded-full animate-pulse shadow-[0_0_10px_#22d3ee]" />
+                  <div className="w-5 h-5 border border-cyan-400/40 rounded-full absolute animate-ping" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-white font-mono text-xs font-black uppercase tracking-[0.2em]">
+                      YGOR.AI
+                    </h3>
+                  </div>
+                  <span className="text-[10px] font-mono text-stone-400 block">
+                    {lang === 'pt' ? 'Sistema de Consulta Executiva' : 'Executive Query System'}
+                  </span>
+                </div>
               </div>
               <button
                 onClick={() => setIsOpen(false)}
-                className="text-stone-400 hover:text-white transition-colors"
+                className="p-1.5 rounded-lg border border-stone-800 text-stone-400 hover:text-cyan-400 hover:border-cyan-500/40 transition-colors"
                 aria-label={currentT.closeChat}
               >
-                <X className="w-5 h-5" />
+                <X className="w-4 h-4" />
               </button>
             </div>
 
