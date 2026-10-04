@@ -173,12 +173,9 @@ export function JarvisDataSpine({ lang, activeSection }: DataSpineProps) {
 
               {/* Floating Tooltip - ONLY appears on hover so it NEVER sits over the text when scrolling */}
               <div 
-                className="absolute left-full ml-3.5 px-3 py-1.5 rounded-lg bg-stone-950/95 border border-cyan-500/30 text-stone-200 text-xs font-mono shadow-2xl shadow-cyan-950/50 pointer-events-none opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 whitespace-nowrap z-50 flex items-center gap-2"
+                className="absolute left-full ml-3.5 px-3 py-1.5 rounded-lg bg-stone-950/95 border border-cyan-500/30 text-stone-200 text-xs font-mono shadow-2xl shadow-cyan-950/50 pointer-events-none opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 whitespace-nowrap z-50 flex items-center"
               >
-                <span className="text-cyan-400 font-bold text-[10px] tracking-wider">
-                  0{sec.num} {'//'}
-                </span>
-                <span className="font-medium text-stone-200 uppercase tracking-wider text-[11px]">
+                <span className="font-semibold text-cyan-300 uppercase tracking-wider text-[11px]">
                   {lang === 'pt' ? sec.labelPt : sec.labelEn}
                 </span>
               </div>
