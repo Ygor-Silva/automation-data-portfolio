@@ -15,8 +15,11 @@ import {
   Cpu, 
   Layers, 
   Sparkles,
-  CheckCircle2
+  CheckCircle2,
+  Workflow,
+  Eye
 } from 'lucide-react';
+import ProjectArchitectureBlueprint from './ProjectArchitectureBlueprint';
 
 export interface ProjectItem {
   category: string;
@@ -47,11 +50,13 @@ export default function ProjectFocusModal({
 }: ProjectFocusModalProps) {
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const [prevTitle, setPrevTitle] = useState(project?.title);
+  const [activeTab, setActiveTab] = useState<'overview' | 'blueprint'>('overview');
 
   // Adjust state during render when project changes (recommended React pattern)
   if (project && project.title !== prevTitle) {
     setPrevTitle(project.title);
     setCurrentSlideIndex(0);
+    setActiveTab('overview');
   }
 
   // Lock body scroll and listen for keyboard navigation
@@ -113,10 +118,14 @@ export default function ProjectFocusModal({
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.3 }}
+        onClick={onClose}
         className="fixed inset-0 z-[100] bg-stone-950/95 backdrop-blur-2xl overflow-y-auto flex flex-col justify-between"
       >
         {/* TOP BAR: HUD FOCUS STATUS & CONTROLS */}
-        <header className="sticky top-0 z-20 w-full px-4 md:px-8 py-3.5 bg-stone-950/90 border-b border-cyan-500/20 backdrop-blur-md flex items-center justify-between">
+        <header 
+          onClick={(e) => e.stopPropagation()}
+          className="sticky top-0 z-20 w-full px-4 md:px-8 py-3.5 bg-stone-950/90 border-b border-cyan-500/20 backdrop-blur-md flex items-center justify-between"
+        >
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2 bg-cyan-950/80 border border-cyan-500/40 px-3 py-1 rounded-full text-cyan-300 text-xs font-mono">
               <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_8px_#22d3ee]" />
@@ -169,12 +178,23 @@ export default function ProjectFocusModal({
         <main className="flex-1 max-w-5xl w-full mx-auto px-4 md:px-8 py-8 md:py-12 flex flex-col justify-center">
           <motion.div
             key={project.title}
+            onClick={(e) => e.stopPropagation()}
             initial={{ opacity: 0, scale: 0.96, y: 15 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.96, y: -15 }}
             transition={{ duration: 0.35, ease: "easeOut" }}
             className="bg-stone-900/90 border border-cyan-500/30 rounded-3xl overflow-hidden shadow-2xl shadow-cyan-950/60 backdrop-blur-xl relative"
           >
+            {/* Prominent Close 'X' Button in Top-Right Corner of the Card */}
+            <button
+              onClick={onClose}
+              className="absolute top-3.5 right-3.5 sm:top-4 sm:right-4 z-30 p-2 sm:p-2.5 rounded-full bg-stone-950/85 hover:bg-stone-900 border border-cyan-500/40 hover:border-cyan-400 text-stone-200 hover:text-white transition-all shadow-xl backdrop-blur-md cursor-pointer group flex items-center justify-center"
+              aria-label={lang === 'pt' ? 'Fechar modo foco' : 'Close focus mode'}
+              title={lang === 'pt' ? 'Fechar modo foco (ESC)' : 'Close focus mode (ESC)'}
+            >
+              <X className="w-5 h-5 text-cyan-400 group-hover:rotate-90 group-hover:text-white transition-all duration-200" />
+            </button>
+
             {/* Tech Corner Reticles */}
             <div className="absolute top-2 left-2 w-4 h-4 border-t-2 border-l-2 border-cyan-400/60 pointer-events-none z-10" />
             <div className="absolute top-2 right-2 w-4 h-4 border-t-2 border-r-2 border-cyan-400/60 pointer-events-none z-10" />
@@ -254,8 +274,9 @@ export default function ProjectFocusModal({
 
             {/* Detailed Metadata & Technical Breakdown */}
             <div className="p-6 md:p-10 space-y-6">
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <div className="flex items-center gap-3">
+              {/* Category, Status, Tabs & Direct Action Links */}
+              <div className="flex flex-wrap items-center justify-between gap-4 border-b border-stone-800 pb-5">
+                <div className="flex flex-wrap items-center gap-3">
                   <span className="text-xs font-mono font-bold uppercase tracking-widest text-cyan-400 bg-cyan-950/60 border border-cyan-500/30 px-3 py-1 rounded-full">
                     {project.category}
                   </span>
@@ -263,6 +284,32 @@ export default function ProjectFocusModal({
                     <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
                     {lang === 'pt' ? 'Produção / Homologado' : 'Production / Approved'}
                   </span>
+                </div>
+
+                {/* Tab Switcher: Overview vs Architecture Blueprint */}
+                <div className="flex items-center gap-1.5 p-1 bg-stone-950/90 rounded-xl border border-stone-800 font-mono text-xs">
+                  <button
+                    onClick={() => setActiveTab('overview')}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
+                      activeTab === 'overview'
+                        ? 'bg-cyan-500 text-stone-950 font-bold shadow-[0_0_10px_rgba(6,182,212,0.4)]'
+                        : 'text-stone-400 hover:text-stone-200'
+                    }`}
+                  >
+                    <Eye className="w-3.5 h-3.5" />
+                    <span>{lang === 'pt' ? 'Visão Geral' : 'Overview'}</span>
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('blueprint')}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
+                      activeTab === 'blueprint'
+                        ? 'bg-cyan-500 text-stone-950 font-bold shadow-[0_0_10px_rgba(6,182,212,0.4)]'
+                        : 'text-stone-400 hover:text-cyan-300'
+                    }`}
+                  >
+                    <Workflow className="w-3.5 h-3.5" />
+                    <span>{lang === 'pt' ? 'Blueprint de Arquitetura' : 'Architecture Blueprint'}</span>
+                  </button>
                 </div>
 
                 {/* Direct Action Links */}
@@ -293,52 +340,69 @@ export default function ProjectFocusModal({
                 </div>
               </div>
 
-              <div>
-                <h1 className="text-3xl md:text-5xl font-black text-white font-mono tracking-tight mb-3">
-                  {project.title}
-                </h1>
-                <p className="text-stone-300 text-base md:text-lg leading-relaxed max-w-3xl">
-                  {project.description}
-                </p>
-              </div>
+              {/* TAB CONTENT */}
+              {activeTab === 'overview' ? (
+                <div className="space-y-6">
+                  <div>
+                    <h1 className="text-3xl md:text-5xl font-black text-white font-mono tracking-tight mb-3">
+                      {project.title}
+                    </h1>
+                    <p className="text-stone-300 text-base md:text-lg leading-relaxed max-w-3xl">
+                      {project.description}
+                    </p>
+                  </div>
 
-              {/* Solution & Impact Box */}
-              <div className="p-4 md:p-5 rounded-2xl bg-stone-950/80 border border-cyan-500/20 flex items-start gap-4">
-                <Sparkles className="w-5 h-5 text-cyan-400 shrink-0 mt-0.5" />
-                <div className="space-y-1 text-xs md:text-sm font-mono text-stone-400 leading-relaxed">
-                  <p className="text-stone-200 font-semibold uppercase tracking-wider">
-                    {lang === 'pt' ? 'FOCO OPERACIONAL & ENGENHARIA:' : 'OPERATIONAL FOCUS & ENGINEERING:'}
-                  </p>
-                  <p>
-                    {lang === 'pt'
-                      ? 'Desenvolvido para eliminar gargalos manuais, automatizar o fluxo de dados em ponta a ponta e garantir conformidade analítica com tomada de decisão rápida e precisa.'
-                      : 'Built to eliminate manual bottlenecks, automate end-to-end data flows, and ensure analytical compliance with fast, accurate decision making.'}
-                  </p>
-                </div>
-              </div>
+                  {/* Solution & Impact Box */}
+                  <div className="p-4 md:p-5 rounded-2xl bg-stone-950/80 border border-cyan-500/20 flex items-start gap-4">
+                    <Sparkles className="w-5 h-5 text-cyan-400 shrink-0 mt-0.5" />
+                    <div className="space-y-1 text-xs md:text-sm font-mono text-stone-400 leading-relaxed">
+                      <p className="text-stone-200 font-semibold uppercase tracking-wider">
+                        {lang === 'pt' ? 'FOCO OPERACIONAL & ENGENHARIA:' : 'OPERATIONAL FOCUS & ENGINEERING:'}
+                      </p>
+                      <p>
+                        {lang === 'pt'
+                          ? 'Desenvolvido para eliminar gargalos manuais, automatizar o fluxo de dados em ponta a ponta e garantir conformidade analítica com tomada de decisão rápida e precisa.'
+                          : 'Built to eliminate manual bottlenecks, automate end-to-end data flows, and ensure analytical compliance with fast, accurate decision making.'}
+                      </p>
+                    </div>
+                  </div>
 
-              {/* Technologies Applied */}
-              <div className="space-y-2">
-                <span className="text-[10px] font-mono uppercase tracking-[0.25em] text-stone-500 block">
-                  {lang === 'pt' ? 'TECNOLOGIAS & FERRAMENTAS:' : 'TECHNOLOGIES & TOOLS:'}
-                </span>
-                <div className="flex flex-wrap gap-2">
-                  {project.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="px-3 py-1.5 rounded-lg bg-stone-950/80 border border-cyan-500/30 text-cyan-300 text-xs font-mono font-medium tracking-wide shadow-sm"
-                    >
-                      {tag}
+                  {/* Technologies Applied */}
+                  <div className="space-y-2">
+                    <span className="text-[10px] font-mono uppercase tracking-[0.25em] text-stone-500 block">
+                      {lang === 'pt' ? 'TECNOLOGIAS & FERRAMENTAS:' : 'TECHNOLOGIES & TOOLS:'}
                     </span>
-                  ))}
+                    <div className="flex flex-wrap gap-2">
+                      {project.tags.map((tag) => (
+                        <span
+                          key={tag}
+                          className="px-3 py-1.5 rounded-lg bg-stone-950/80 border border-cyan-500/30 text-cyan-300 text-xs font-mono font-medium tracking-wide shadow-sm"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <div className="pt-2">
+                  <ProjectArchitectureBlueprint
+                    projectTitle={project.title}
+                    projectCategory={project.category}
+                    tags={project.tags}
+                    lang={lang}
+                  />
+                </div>
+              )}
             </div>
           </motion.div>
         </main>
 
         {/* BOTTOM HUD FOOTER: KEYBOARD GUIDE & NAVIGATION */}
-        <footer className="sticky bottom-0 z-20 w-full px-4 md:px-8 py-3 bg-stone-950/90 border-t border-stone-800/80 backdrop-blur-md flex flex-wrap items-center justify-between gap-3 text-xs font-mono text-stone-500">
+        <footer 
+          onClick={(e) => e.stopPropagation()}
+          className="sticky bottom-0 z-20 w-full px-4 md:px-8 py-3 bg-stone-950/90 border-t border-stone-800/80 backdrop-blur-md flex flex-wrap items-center justify-between gap-3 text-xs font-mono text-stone-500"
+        >
           <div className="flex items-center gap-3">
             <button
               onClick={handlePrevProject}

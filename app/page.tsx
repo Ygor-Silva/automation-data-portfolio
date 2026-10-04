@@ -30,7 +30,8 @@ import {
   PieChart,
   Maximize2,
   Sparkles,
-  Rocket
+  Rocket,
+  FileText
 } from 'lucide-react';
 import {
   ResponsiveContainer,
@@ -46,6 +47,7 @@ import {
 import FloatingChat from '../components/FloatingChat';
 import ProjectFocusModal, { ProjectItem } from '../components/ProjectFocusModal';
 import { CompanyMarquee } from '../components/CompanyMarquee';
+import ResumeDownloadModal from '../components/ResumeDownloadModal';
 import { 
   JarvisDataSpine, 
   Card3D, 
@@ -388,7 +390,7 @@ const ExperienceItem = ({ company, role, period, description, impact, logo }: an
 
 const translations = {
   pt: {
-    nav: { about: "Sobre", experience: "Carreira", projects: "Projetos", stats: "Métricas", tech: "Dev", contact: "Contato", lang: "EN" },
+    nav: { about: "Sobre", experience: "Carreira", projects: "Projetos", stats: "Métricas", tech: "Dev", contact: "Contato", resume: "Currículo", lang: "EN" },
     hero: {
       availability: "Disponível para novos desafios",
       specialist: "Especialista em",
@@ -397,6 +399,7 @@ const translations = {
       dataInsight: "Soluções com LLM (Claude) & Automação",
       description: "Integrando a robustez dos sistemas corporativos à inteligência artificial de ponta para transformar processos complexos em eficiência mensurável.",
       viewProjects: "Ver Projetos",
+      downloadCv: "Baixar Currículo",
       badge: ["Em constante", "evolução"]
     },
     about: {
@@ -458,7 +461,7 @@ const translations = {
     }
   },
   en: {
-    nav: { about: "About", experience: "Career", projects: "Projects", stats: "Stats", tech: "Tech", contact: "Contact", lang: "PT" },
+    nav: { about: "About", experience: "Career", projects: "Projects", stats: "Stats", tech: "Tech", contact: "Contact", resume: "Resume", lang: "PT" },
     hero: {
       availability: "Available for new challenges",
       specialist: "Specialist in",
@@ -467,6 +470,7 @@ const translations = {
       dataInsight: "LLM Solutions (Claude) & Automation",
       description: "Integrating enterprise systems resilience with cutting-edge intelligence to transform complexity into measurable efficiency.",
       viewProjects: "View Projects",
+      downloadCv: "Download CV",
       badge: ["Constantly", "evolving"]
     },
     about: {
@@ -595,6 +599,17 @@ const getExperiences = (lang: 'pt' | 'en') => {
 };
 
 const getProjects = (lang: 'pt' | 'en') => [
+  {
+    category: "Dashboards",
+    title: "Pipeline de Dados e BI Financeiro",
+    description: lang === 'pt'
+      ? "Pipeline ETL em Python para ingestão de arquivos bancários (CNAB240) em Oracle, com deduplicação em três camadas e validação exata contra os totais do arquivo. Estruturação da camada de dados que alimenta o dashboard de KPIs financeiros (Looker Studio)."
+      : "Python ETL pipeline for banking file ingestion (CNAB240) into Oracle, with three-tier deduplication and exact validation against file totals. Structuring data layer powering financial KPI dashboards (Looker Studio).",
+    tags: ["Python (Pandas)", "Oracle (PL/SQL)", "CNAB240", "ETL Batch", "Looker Studio"],
+    github: "https://www.linkedin.com/in/ygor-silva-developer/",
+    githubIcon: Linkedin,
+    image: "/tecnolimp_brand.png"
+  },
   {
     category: lang === 'pt' ? "Sistemas" : "Systems",
     title: "AuraDocs",
@@ -779,6 +794,7 @@ export default function Portfolio() {
   const [currentExpPage, setCurrentExpPage] = React.useState(0);
   const [toastMsg, setToastMsg] = React.useState<string | null>(null);
   const [focusedProject, setFocusedProject] = React.useState<ProjectItem | null>(null);
+  const [isResumeModalOpen, setIsResumeModalOpen] = React.useState(false);
   const isMounted = React.useSyncExternalStore(
     emptySubscribe,
     () => true,
@@ -907,6 +923,13 @@ export default function Portfolio() {
         onSelectProject={(p) => setFocusedProject(p)}
       />
 
+      {/* Resume Download Modal with Real-time Notification Alert */}
+      <ResumeDownloadModal
+        isOpen={isResumeModalOpen}
+        onClose={() => setIsResumeModalOpen(false)}
+        lang={lang}
+      />
+
       <AnimatePresence>
         {toastMsg && (
           <motion.div
@@ -935,6 +958,13 @@ export default function Portfolio() {
             <a href="#skills" className="hover:text-cyan-400 transition-colors">{t.nav.tech}</a>
             <a href="#contact" className="hover:text-cyan-400 transition-colors">{t.nav.contact}</a>
           </div>
+          <button
+            onClick={() => setIsResumeModalOpen(true)}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-stone-900/90 border border-cyan-500/30 text-stone-300 hover:text-cyan-300 hover:border-cyan-400 transition-all cursor-pointer text-xs font-mono font-medium tracking-wide shadow-sm"
+          >
+            <FileText className="w-3.5 h-3.5 text-cyan-400" />
+            <span>{t.nav.resume}</span>
+          </button>
           <button 
             onClick={() => {
               const nextLang = lang === 'pt' ? 'en' : 'pt';
@@ -983,6 +1013,13 @@ export default function Portfolio() {
                 {t.hero.viewProjects}
                 <ArrowUpRight className="w-4 h-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
               </a>
+              <button
+                onClick={() => setIsResumeModalOpen(true)}
+                className="group w-full sm:w-auto flex items-center justify-center gap-2 bg-stone-900/90 hover:bg-stone-850 text-stone-200 hover:text-white font-bold px-6 py-4 rounded-xl border border-stone-800 hover:border-cyan-400/50 hover:shadow-[0_0_20px_rgba(6,182,212,0.2)] transition-all font-mono uppercase tracking-wider text-xs cursor-pointer"
+              >
+                <FileText className="w-4 h-4 text-cyan-400 group-hover:scale-110 transition-transform" />
+                <span>{t.hero.downloadCv}</span>
+              </button>
               <div className="flex gap-4 items-center pl-0 sm:pl-4 mt-4 sm:mt-0">
                 <motion.a 
                   href="https://github.com/Ygor-Silva" 
@@ -1539,6 +1576,22 @@ export default function Portfolio() {
               {t.contact.title_1} <br /> <span className="text-cyan-400 italic">{t.contact.title_2}</span>
             </h2>
             <div className="flex flex-col md:flex-row justify-center items-center gap-8 md:gap-12 mt-12">
+              <button
+                onClick={() => setIsResumeModalOpen(true)}
+                className="flex items-center gap-3 text-stone-400 hover:text-white transition-colors group cursor-pointer"
+              >
+                <div className="p-4 bg-stone-900 rounded-full group-hover:bg-cyan-500/20 group-hover:text-cyan-400 transition-colors">
+                  <FileText className="w-8 h-8" />
+                </div>
+                <div className="text-left">
+                  <span className="text-[10px] uppercase tracking-widest block text-stone-500 font-mono">
+                    {lang === 'pt' ? 'CURRÍCULO' : 'RESUME'}
+                  </span>
+                  <span className="text-lg font-mono font-bold text-white group-hover:text-cyan-300 transition-colors">
+                    {lang === 'pt' ? 'Baixar PDF Oficial' : 'Download Official PDF'}
+                  </span>
+                </div>
+              </button>
               <motion.a 
                 href="mailto:ygor-1996@hotmail.com" 
                 whileTap={{ scale: 0.95, opacity: 0.9 }}
