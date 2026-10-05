@@ -31,8 +31,8 @@ export async function GET() {
   // NO secret keys, lengths, or prefixes are ever exposed.
   const isOpenRouterConfigured = Boolean(process.env.OPENROUTER_API_KEY && process.env.OPENROUTER_API_KEY.trim() !== '');
   const activeModelName = isOpenRouterConfigured 
-    ? (OPENROUTER_FREE_MODELS[0]?.name || "Qwen 3.8 27B") 
-    : "Gemini 2.5 Flash";
+    ? (OPENROUTER_FREE_MODELS[0]?.name || "NVIDIA: Nemotron 3 Ultra (free)") 
+    : "Gemini 3.5 Flash";
 
   return NextResponse.json({
     openRouterConfigured: isOpenRouterConfigured,

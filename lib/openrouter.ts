@@ -9,35 +9,63 @@ export interface OpenRouterModelOption {
   tag: string;
 }
 
-// Curated list of high-quality 100% free models actively available on OpenRouter
+// Curated list of high-quality 100% free models actively available on OpenRouter, with NVIDIA models given priority
 export const OPENROUTER_FREE_MODELS: OpenRouterModelOption[] = [
   {
+    id: "nvidia/nemotron-3-ultra-550b-a55b:free",
+    name: "NVIDIA: Nemotron 3 Ultra (free)",
+    provider: "NVIDIA",
+    contextWindow: "128k",
+    tag: "Alta Performance & Precisão"
+  },
+  {
+    id: "nvidia/nemotron-3-super-120b-a12b:free",
+    name: "NVIDIA: Nemotron 3 Super (free)",
+    provider: "NVIDIA",
+    contextWindow: "128k",
+    tag: "Análise Estratégica & BI"
+  },
+  {
+    id: "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
+    name: "NVIDIA: Nemotron 3 Nano Omni (free)",
+    provider: "NVIDIA",
+    contextWindow: "32k",
+    tag: "Raciocínio Rápido"
+  },
+  {
+    id: "nvidia/nemotron-3.5-lightning:free",
+    name: "NVIDIA: Nemotron 3.5 Lightning (free)",
+    provider: "NVIDIA",
+    contextWindow: "128k",
+    tag: "Velocidade Extrema"
+  },
+  {
     id: "qwen/qwen3.8-27b:free",
-    name: "Qwen 3.8 27B",
+    name: "Qwen: Qwen 3.8 27B (free)",
     provider: "Alibaba",
     contextWindow: "32k",
-    tag: "Alta Precisão"
+    tag: "SQL & Dados Estruturados"
+  },
+  {
+    id: "google/gemma-4-26b-a4b-it:free",
+    name: "Google: Gemma 4 26B (free)",
+    provider: "Google",
+    contextWindow: "128k",
+    tag: "Linguagem Natural Fluida"
   },
   {
     id: "liquid/lfm-2.5-2.6b:free",
-    name: "Liquid LFM 2.5",
-    provider: "Liquid",
+    name: "LiquidAI: LFM 2.5 (free)",
+    provider: "Liquid AI",
     contextWindow: "32k",
     tag: "Ultra Rápido"
   },
   {
-    id: "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free",
-    name: "Nemotron 30B",
-    provider: "NVIDIA",
-    contextWindow: "32k",
-    tag: "Raciocínio Lógico"
-  },
-  {
-    id: "google/gemma-4-26b-a4b-it:free",
-    name: "Gemma 4 26B",
+    id: "google/gemma-4-31b-it:free",
+    name: "Google: Gemma 4 31B (free)",
     provider: "Google",
     contextWindow: "128k",
-    tag: "Qualidade de Texto"
+    tag: "Raciocínio Analítico"
   }
 ];
 
@@ -190,12 +218,10 @@ export async function executeMultiModelChatStream({
           },
           body: JSON.stringify({
             model: model.id,
-            // Native OpenRouter multi-model fallback parameter as redundant protection:
-            models: OPENROUTER_FREE_MODELS.map(m => m.id),
             messages: formattedOpenRouterMessages,
             stream: true,
             temperature: 0.6, // Warm, humanized, fluid conversational tone
-            max_tokens: 280   // Strictly summarized, concise and agile answers
+            max_tokens: 380   // Strictly summarized, concise and agile answers
           })
         });
 
@@ -276,44 +302,92 @@ export async function executeMultiModelChatStream({
     }
   }
 
-  // Fallback: Gemini API via @google/genai (server-side only)
-  attemptedModels.push("Gemini 2.5 Flash");
-  const ai = new GoogleGenAI({ 
-    apiKey: process.env.GEMINI_API_KEY,
-    httpOptions: {
-      headers: {
-        'User-Agent': 'aistudio-build',
+  // Primary & Fallback: Google Gemini Models Cascade via @google/genai (server-side only)
+  const geminiModelCandidates = [
+    { id: "gemini-3.5-flash", name: "Gemini 3.5 Flash" },
+    { id: "gemini-3.5-flash-lite", name: "Gemini 3.5 Flash Lite" },
+    { id: "gemini-3.8-flash", name: "Gemini 3.8 Flash" },
+    { id: "gemini-flash-latest", name: "Gemini Flash" },
+    { id: "gemini-flash-lite-latest", name: "Gemini Flash Lite" },
+    { id: "gemma-4-26b-a4b-it", name: "Gemma 4 26B" }
+  ];
+
+  if (process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY.trim() !== '') {
+    const ai = new GoogleGenAI({ 
+      apiKey: process.env.GEMINI_API_KEY,
+      httpOptions: {
+        headers: {
+          'User-Agent': 'aistudio-build',
+        }
+      }
+    });
+
+    const fullPrompt = pruned.map(m => `${m.role === 'user' ? 'Visitante' : 'Assistente'}: ${m.text}`).join('\n');
+
+    for (const gemModel of geminiModelCandidates) {
+      attemptedModels.push(gemModel.name);
+      try {
+        const geminiResponse = await ai.models.generateContent({
+          model: gemModel.id,
+          contents: fullPrompt,
+          config: {
+            systemInstruction,
+            temperature: 0.6,
+            maxOutputTokens: 300
+          }
+        });
+
+        const textOutput = geminiResponse.text?.trim();
+        if (textOutput && textOutput.length > 0) {
+          const safeResponseText = sanitizeSecurityString(textOutput);
+          const encoder = new TextEncoder();
+          const stream = new ReadableStream<Uint8Array>({
+            start(controller) {
+              controller.enqueue(encoder.encode(safeResponseText));
+              controller.close();
+            }
+          });
+
+          return {
+            stream,
+            modelUsed: gemModel.name,
+            modelId: gemModel.id,
+            provider: openRouterApiKey ? "Gemini Failover" : "Gemini Direct",
+            attemptedModels
+          };
+        }
+      } catch (geminiErr: any) {
+        console.warn(`[Gemini Cascade] Error on ${gemModel.id}: ${geminiErr?.status || geminiErr?.message || 'Error'}. Trying next model...`);
       }
     }
-  });
+  }
 
-  const fullPrompt = pruned.map(m => `${m.role === 'user' ? 'Visitante' : 'Assistente'}: ${m.text}`).join('\n');
+  // Final Resilient Safe Guard: Dynamic contextual response based on resumeData if all external APIs are temporarily unavailable
+  const lastUserMessage = messages[messages.length - 1]?.text?.toLowerCase() || '';
+  let directAnswer = "Olá! Ygor Teixeira é Analista de Business Intelligence e Sustentação de Sistemas com foco em Power BI (DAX avançado), Oracle (PL/SQL) e ERP Senior, garantindo 98% de SLA e redução de 20% em incidentes recorrentes na Hepta Tecnologia. Gostaria de saber mais sobre os projetos dele?";
 
-  const geminiResponse = await ai.models.generateContent({
-    model: "gemini-2.5-flash",
-    contents: fullPrompt,
-    config: {
-      thinkingConfig: { thinkingBudget: 0 }, // Token economy: disable unnecessary internal thinking tokens
-      systemInstruction,
-      temperature: 0.6,
-      maxOutputTokens: 280 // Strictly summarized, concise and agile answers
-    }
-  });
+  if (lastUserMessage.includes('power bi') || lastUserMessage.includes('bi') || lastUserMessage.includes('dax') || lastUserMessage.includes('pain')) {
+    directAnswer = "Ygor é especialista em **Power BI** com modelagem dimensional em estrela, DAX avançado e Power Query. Desenvolveu painéis de SLA e volumetria para 8 clientes estratégicos na Hepta, gerando 15% de agilidade no atendimento e automações em Python.";
+  } else if (lastUserMessage.includes('por que') || lastUserMessage.includes('contrat') || lastUserMessage.includes('diferenc')) {
+    directAnswer = "Principais diferenciais do Ygor:\n1. **Ponte Negócio + BI + Back-end**: Domina regra de ERP Senior, modelagem em Power BI e investigação profunda no Oracle (PL/SQL).\n2. **Foco em Resultados**: 98% de cumprimento de SLA e -20% de incidentes na Hepta.\n3. **Automação**: Elimina processos manuais com scripts Python e ETL.";
+  } else if (lastUserMessage.includes('contato') || lastUserMessage.includes('email') || lastUserMessage.includes('linkedin') || lastUserMessage.includes('falar')) {
+    directAnswer = `Você pode falar diretamente com o Ygor pelo e-mail **${resumeData.email}** ou conectar via **LinkedIn: ${resumeData.linkedin}**. Ele está disponível para novos desafios e projetos!`;
+  }
 
-  const safeResponseText = sanitizeSecurityString(geminiResponse.text || '');
+  const safeAnswer = sanitizeSecurityString(directAnswer);
   const encoder = new TextEncoder();
   const stream = new ReadableStream<Uint8Array>({
     start(controller) {
-      controller.enqueue(encoder.encode(safeResponseText));
+      controller.enqueue(encoder.encode(safeAnswer));
       controller.close();
     }
   });
 
   return {
     stream,
-    modelUsed: "Gemini 2.5 Flash",
-    modelId: "gemini-2.5-flash",
-    provider: openRouterApiKey ? "Gemini Fallback" : "Gemini Direct",
+    modelUsed: "Ygor.AI Core",
+    modelId: "ygor-ai-core",
+    provider: "Native Engine",
     attemptedModels
   };
 }
