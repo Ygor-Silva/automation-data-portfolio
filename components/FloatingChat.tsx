@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { MessageCircle, X, Send, Loader2, Bot } from 'lucide-react';
+import { MessageCircle, X, Send, Loader2, Bot, Cpu, Zap, Info, ShieldCheck, Sparkles, RefreshCw, Maximize2, Minimize2 } from 'lucide-react';
 import Markdown from 'react-markdown';
 
 interface ChatMessage {
@@ -10,63 +10,117 @@ interface ChatMessage {
   role: 'user' | 'assistant';
   text: string;
   isTyping?: boolean;
+  modelUsed?: string;
+}
+
+interface ModelInfo {
+  id: string;
+  name: string;
+  provider: string;
+  contextWindow: string;
+  tag: string;
 }
 
 export default function FloatingChat({ lang = 'pt' }: { lang?: 'pt' | 'en' }) {
   const t = {
     pt: {
-      welcome: 'Olá! Sou o assistente virtual do portfólio. Como posso ajudar você a conhecer mais sobre a experiência profissional e os projetos descritos aqui?',
+      welcome: 'Olá! Sou o **Ygor.AI**, assistente inteligente do portfólio profissional de Ygor Teixeira. Como posso ajudar você a conhecer as experiências dele em Business Intelligence (Power BI), automações de processos e sustentação de sistemas críticos?',
       empty: 'A mensagem não pode estar vazia.',
-      tooLong: 'A mensagem é muito longa. Por favor, resuma em poucas palavras.',
-      loadingErr: 'O servidor está iniciando ou reconectando. Por favor, aguarde alguns segundos e tente novamente.',
-      fetchErr: 'Erro ao buscar a resposta. Tente novamente mais tarde.',
-      defaultErr: 'Desculpe, ocorreu um erro.',
+      tooLong: 'Perguntas com até 500 caracteres são ideais para uma resposta completa.',
+      loadingErr: 'O servidor está iniciando ou alternando o modelo. Aguarde instantes.',
+      fetchErr: 'Erro ao buscar a resposta. Tentando modelo alternativo...',
+      defaultErr: 'Desculpe, ocorreu uma oscilação na conexão. Pode tentar novamente?',
       questions: [
-        "Qual sua maior experiência com RPA?",
-        "Como você utiliza dados para tomada de decisão?",
-        "Quais tecnologias você mais utiliza?",
-        "Como entrar em contato para consultoria?"
+        "Por que contratar o Ygor?",
+        "Experiência com Power BI e SLAs?",
+        "Projetos de automação e dados?",
+        "Qual o contato direto para projetos?"
       ],
-      inputPlaceholder: "Pergunte sobre meus projetos...",
-      askAssistant: "Assistente IA",
+      inputPlaceholder: "Converse com o Ygor.AI sobre diferenciais, projetos e carreira...",
+      askAssistant: "Fale com o Ygor.AI",
       closeChat: "Fechar chat",
-      openChat: "Abrir chat",
-      statusProcessing: "Processando... (~3s)",
-      statusOnline: "Online"
+      openChat: "Fale com o Ygor.AI",
+      statusProcessing: "Digitando...",
+      statusOnline: "Online",
+      ecoTokens: "IA Adaptativa",
+      autoFailover: "Auto-Failover Ativo",
+      expandChat: "Expandir chat",
+      minimizeChat: "Reduzir tamanho",
+      modelDrawerTitle: "Roteamento Inteligente & Orquestração Multi-IA",
+      modelDrawerDesc: "O sistema seleciona dinamicamente a melhor IA de acordo com a complexidade e exigência da pergunta — desde consultas ágeis até raciocínios analíticos de dados.",
+      ecoNotice: "Cluster neural com failover automático e alta resiliência."
     },
     en: {
-      welcome: 'Hello! I am the portfolio virtual assistant. How can I help you learn more about the professional experience and projects described here?',
+      welcome: 'Hello! I am **Ygor.AI**, personal consultative assistant for Ygor Teixeira. How can I help you explore his achievements, skills, and projects in Power BI, SQL, mission-critical system support, and data automation?',
       empty: 'The message cannot be empty.',
-      tooLong: 'The message is too long. Please summarize in a few words.',
-      loadingErr: 'The server is starting or reconnecting. Please wait a few seconds and try again.',
-      fetchErr: 'Error fetching the response. Please try again later.',
-      defaultErr: 'Sorry, an error occurred.',
+      tooLong: 'Questions up to 500 characters are optimal for a thorough response.',
+      loadingErr: 'The server is starting or switching models. Please wait.',
+      fetchErr: 'Error fetching response. Cascading to fallback model...',
+      defaultErr: 'Connection fluctuation detected. Please try again.',
       questions: [
-        "What is your biggest experience with RPA?",
-        "How do you use data for decision making?",
-        "What technologies do you use the most?",
-        "How to contact for consulting?"
+        "Why hire Ygor?",
+        "Experience with Power BI and SLAs?",
+        "Automation and data projects?",
+        "Direct contact for opportunities?"
       ],
-      inputPlaceholder: "Ask about my projects...",
-      askAssistant: "AI Assistant",
+      inputPlaceholder: "Talk with Ygor.AI about achievements, projects, and skills...",
+      askAssistant: "Talk with Ygor.AI",
       closeChat: "Close chat",
-      openChat: "Open chat",
-      statusProcessing: "Processing... (~3s)",
-      statusOnline: "Online"
+      openChat: "Talk with Ygor.AI",
+      statusProcessing: "Typing...",
+      statusOnline: "Online",
+      ecoTokens: "Adaptive AI",
+      autoFailover: "Auto-Failover Active",
+      expandChat: "Expand chat",
+      minimizeChat: "Minimize chat",
+      modelDrawerTitle: "Dynamic AI Routing & Multi-Engine Orchestration",
+      modelDrawerDesc: "The system dynamically routes to the optimal AI model based on query complexity and analytical depth — from fast lookups to complex data engineering queries.",
+      ecoNotice: "Neural cluster with automatic failover and high uptime."
     }
   };
 
   const currentT = t[lang];
 
   const [isOpen, setIsOpen] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [showModelsInfo, setShowModelsInfo] = useState(false);
+  const [activeModel, setActiveModel] = useState<string>("Qwen 3.8 27B");
+  const [activeProvider, setActiveProvider] = useState<string>("OpenRouter");
+  const [availableModels, setAvailableModels] = useState<ModelInfo[]>([
+    { id: "gemini-2.5-flash", name: "Gemini 2.5 Flash", provider: "Google AI", contextWindow: "1M", tag: "Velocidade & Contexto" },
+    { id: "meta-llama/llama-3.3-70b-instruct:free", name: "Meta Llama 3.3", provider: "Meta AI", contextWindow: "128k", tag: "Raciocínio Geral" },
+    { id: "deepseek/deepseek-r1:free", name: "DeepSeek R1", provider: "DeepSeek", contextWindow: "64k", tag: "Lógica Complexa" },
+    { id: "qwen/qwen3.8-27b:free", name: "Qwen 3.8 27B", provider: "Alibaba Cloud", contextWindow: "32k", tag: "SQL & Dados" },
+    { id: "liquid/lfm-2.5-2.6b:free", name: "Liquid LFM 2.5", provider: "Liquid AI", contextWindow: "32k", tag: "Ultra Rápido" },
+    { id: "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free", name: "Nemotron 30B", provider: "NVIDIA", contextWindow: "32k", tag: "Análise Analítica" }
+  ]);
+
   const [messages, setMessages] = useState<ChatMessage[]>([{
     id: 'welcome',
     role: 'assistant',
     text: currentT.welcome,
     isTyping: false
   }]);
+
+  // Fetch API status on mount
+  useEffect(() => {
+    fetch('/api/chat')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.activeModel) {
+          setActiveModel(data.activeModel);
+        }
+        if (data.freeModels && Array.isArray(data.freeModels)) {
+          setAvailableModels(data.freeModels);
+        }
+        if (data.primaryEngine) {
+          setActiveProvider(data.primaryEngine);
+        }
+      })
+      .catch(() => {});
+  }, []);
   
-  // Re-translate first message if it's the only one when languge changes
+  // Re-translate first message if it's the only one when language changes
   useEffect(() => {
     setMessages(prev => {
       if (prev.length === 1 && prev[0].id === 'welcome') {
@@ -101,7 +155,7 @@ export default function FloatingChat({ lang = 'pt' }: { lang?: 'pt' | 'en' }) {
       return;
     }
     
-    if (textToSend.trim().length > 200) {
+    if (textToSend.trim().length > 500) {
       setInputError(currentT.tooLong);
       return;
     }
@@ -118,14 +172,33 @@ export default function FloatingChat({ lang = 'pt' }: { lang?: 'pt' | 'en' }) {
     setIsLoading(true);
 
     try {
+      // Send only last 4 messages to preserve tokens (pruning)
+      const contextHistory = messages.slice(-4).map(m => ({ role: m.role, text: m.text }));
+
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
           message: userMsg.text,
-          history: messages.slice(-6) // just sending last few messages to give context 
+          history: contextHistory
         }),
       });
+
+      // Capture headers showing which model handled the response
+      const modelUsedHeader = response.headers.get('x-model-used');
+      const providerHeader = response.headers.get('x-provider');
+      if (modelUsedHeader) {
+        try {
+          const decoded = decodeURIComponent(modelUsedHeader);
+          setActiveModel(decoded);
+        } catch {}
+      }
+      if (providerHeader) {
+        try {
+          const decoded = decodeURIComponent(providerHeader);
+          setActiveProvider(decoded);
+        } catch {}
+      }
 
       const contentType = response.headers.get('content-type');
       if (contentType && contentType.includes('text/html')) {
@@ -146,7 +219,7 @@ export default function FloatingChat({ lang = 'pt' }: { lang?: 'pt' | 'en' }) {
       let done = false;
 
       if (reader) {
-        setIsLoading(false); // Can stop loading spinner when streaming starts
+        setIsLoading(false); // Stop loading indicator once first chunk arrives
         while (!done) {
           const { value, done: doneReading } = await reader.read();
           done = doneReading;
@@ -173,11 +246,13 @@ export default function FloatingChat({ lang = 'pt' }: { lang?: 'pt' | 'en' }) {
       );
 
     } catch (error: any) {
-      console.error(error);
+      const userFriendlyMessage = (typeof error?.message === 'string' && error.message.length < 200 && !error.message.includes('fetch') && !error.message.includes('Failed to execute') && !error.message.includes('object') && !error.message.includes('TypeError'))
+        ? error.message 
+        : currentT.defaultErr;
       setMessages((prev) => 
          prev.map(msg => 
            msg.id === initialAssistantMsgId 
-           ? { ...msg, text: error.message || currentT.defaultErr, isTyping: false } 
+           ? { ...msg, text: userFriendlyMessage, isTyping: false } 
            : msg
          )
       );
@@ -186,35 +261,41 @@ export default function FloatingChat({ lang = 'pt' }: { lang?: 'pt' | 'en' }) {
     }
   };
 
-  const isContactSectionVisible = () => {
-    // We can also let the floating icon just be there on the page fixed!
-    // The requirement says "na seção de Contato", so let's let the button be floating on the bottom right.
-    return true;
-  };
-
   const renderSuggestedQuestions = () => {
     const questions = currentT.questions;
 
     if (messages.length > 1) return null;
 
     return (
-      <div className="flex flex-col gap-2 p-4">
-        {questions.map((q, i) => (
-          <button
-            key={i}
-            onClick={() => {
-              setInput(q);
-              // Small delay to allow state update before sending
-              setTimeout(() => {
-                const formEvent = { preventDefault: () => {} } as React.FormEvent;
-                handleSend(formEvent, q);
-              }, 50);
-            }}
-            className="text-left text-xs bg-stone-900 border border-stone-700 hover:border-cyan-400 text-stone-300 hover:text-cyan-400 p-2 rounded-lg transition-colors"
-          >
-            {q}
-          </button>
-        ))}
+      <div className="flex flex-col gap-1.5 p-3">
+        <span className="text-[10px] uppercase font-mono tracking-wider text-cyan-400/80 mb-0.5 flex items-center gap-1.5">
+          <Sparkles className="w-3 h-3 text-cyan-400" />
+          {lang === 'pt' ? 'Sugestões de Conversa' : 'Conversation Starters'}
+        </span>
+        <div className={`grid ${isExpanded ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-1'} gap-1.5`}>
+          {questions.map((q, i) => (
+            <button
+              key={i}
+              onClick={() => {
+                setInput(q);
+                setTimeout(() => {
+                  const formEvent = { preventDefault: () => {} } as React.FormEvent;
+                  handleSend(formEvent, q);
+                }, 50);
+              }}
+              className={`text-left text-xs border px-2.5 py-2 rounded-lg transition-all flex items-center justify-between group cursor-pointer ${
+                i === 0 
+                  ? 'bg-cyan-950/50 border-cyan-500/60 text-cyan-200 hover:bg-cyan-900/60 hover:border-cyan-300 font-medium shadow-[0_0_12px_rgba(6,182,212,0.2)]' 
+                  : 'bg-stone-900/90 border-stone-800 hover:border-cyan-400 text-stone-300 hover:text-cyan-300'
+              }`}
+            >
+              <span>{q}</span>
+              <span className={`text-[9px] font-mono ml-2 shrink-0 transition-colors ${i === 0 ? 'text-cyan-400' : 'text-cyan-400/60 group-hover:text-cyan-400'}`}>
+                {i === 0 ? '★' : '⚡'}
+              </span>
+            </button>
+          ))}
+        </div>
       </div>
     );
   };
@@ -246,12 +327,12 @@ export default function FloatingChat({ lang = 'pt' }: { lang?: 'pt' | 'en' }) {
             {/* Core Arc Glow */}
             <div className="absolute inset-0 rounded-full bg-stone-950/90 border-2 border-cyan-400/80 group-hover:border-cyan-300 group-hover:shadow-[0_0_25px_rgba(34,211,238,0.6)] transition-all flex items-center justify-center backdrop-blur-md">
               <Bot className="w-6 h-6 text-cyan-400 group-hover:scale-110 transition-transform" />
-              {/* Pulsing core light */}
               <span className="absolute w-2 h-2 rounded-full bg-cyan-300 animate-ping opacity-75" />
             </div>
-            {/* Subtle JARVIS tag badge */}
-            <span className="absolute -top-2 -right-1 bg-cyan-500 text-[9px] font-mono font-black text-black px-1.5 py-0.5 rounded tracking-tighter uppercase shadow">
-              AI
+            {/* Attention-grabbing interactive badge */}
+            <span className="absolute -top-3 -right-2 bg-gradient-to-r from-cyan-400 via-teal-300 to-cyan-300 text-[9.5px] font-sans font-extrabold text-stone-950 px-2.5 py-0.5 rounded-full tracking-tight shadow-[0_0_16px_rgba(34,211,238,0.85)] flex items-center gap-1.5 border border-cyan-100 whitespace-nowrap select-none hover:scale-105 transition-transform">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse" />
+              {lang === 'pt' ? 'Fale com o Ygor.AI' : 'Talk with Ygor.AI'}
             </span>
           </motion.button>
         )}
@@ -264,7 +345,11 @@ export default function FloatingChat({ lang = 'pt' }: { lang?: 'pt' | 'en' }) {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ type: 'spring', stiffness: 260, damping: 20 }}
-            className="fixed bottom-24 right-6 md:bottom-28 md:right-12 w-[calc(100vw-48px)] md:w-[400px] h-[520px] max-h-[75vh] bg-stone-950/95 border border-cyan-500/40 rounded-2xl shadow-[0_0_50px_rgba(6,182,212,0.15)] z-50 flex flex-col overflow-hidden backdrop-blur-xl"
+            className={`fixed bottom-20 right-4 md:bottom-28 md:right-12 ${
+              isExpanded 
+                ? 'w-[calc(100vw-32px)] sm:w-[620px] md:w-[740px] lg:w-[840px] h-[720px] max-h-[88vh]' 
+                : 'w-[calc(100vw-32px)] sm:w-[460px] md:w-[490px] h-[590px] max-h-[82vh]'
+            } bg-stone-950/95 border border-cyan-500/40 rounded-2xl shadow-[0_0_50px_rgba(6,182,212,0.2)] z-50 flex flex-col overflow-hidden backdrop-blur-xl transition-all duration-300 ease-out`}
           >
             {/* Holographic Header */}
             <div className="bg-stone-950/90 px-4 py-3 border-b border-cyan-500/20 flex justify-between items-center relative">
@@ -278,53 +363,149 @@ export default function FloatingChat({ lang = 'pt' }: { lang?: 'pt' | 'en' }) {
                     <h3 className="text-white font-mono text-xs font-black uppercase tracking-[0.2em]">
                       YGOR.AI
                     </h3>
+                    <button
+                      onClick={() => setShowModelsInfo(!showModelsInfo)}
+                      className="flex items-center gap-1 bg-cyan-950/70 border border-cyan-500/30 text-[9px] font-mono text-cyan-300 hover:text-white hover:border-cyan-400 px-1.5 py-0.5 rounded transition-all cursor-pointer"
+                      title={currentT.autoFailover}
+                    >
+                      <Zap className="w-2.5 h-2.5 text-cyan-400" />
+                      <span>{activeModel.length > 16 ? activeModel.slice(0, 15) + '…' : activeModel}</span>
+                    </button>
                   </div>
-                  <span className="text-[10px] font-mono text-stone-400 block">
-                    {lang === 'pt' ? 'Sistema de Consulta Executiva' : 'Executive Query System'}
-                  </span>
+                  <div className="flex items-center gap-2 mt-0.5">
+                    <span className="text-[10px] font-mono text-stone-400 block">
+                      {lang === 'pt' ? 'Consulta Executiva' : 'Executive Query'}
+                    </span>
+                    <span className="text-[9px] font-mono text-emerald-400 bg-emerald-950/60 border border-emerald-500/30 px-1 rounded">
+                      {currentT.ecoTokens}
+                    </span>
+                  </div>
                 </div>
               </div>
-              <button
-                onClick={() => setIsOpen(false)}
-                className="p-1.5 rounded-lg border border-stone-800 text-stone-400 hover:text-cyan-400 hover:border-cyan-500/40 transition-colors"
-                aria-label={currentT.closeChat}
-              >
-                <X className="w-4 h-4" />
-              </button>
+              <div className="flex items-center gap-1.5">
+                <button
+                  onClick={() => setShowModelsInfo(!showModelsInfo)}
+                  className={`p-1.5 rounded-lg border transition-colors cursor-pointer ${showModelsInfo ? 'bg-cyan-500/20 border-cyan-400 text-cyan-300' : 'border-stone-800 text-stone-400 hover:text-cyan-400'}`}
+                  title="Ver rede de modelos e redundância"
+                  aria-label="Informações de modelos"
+                >
+                  <Cpu className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => setIsExpanded(!isExpanded)}
+                  className={`p-1.5 rounded-lg border transition-colors cursor-pointer ${isExpanded ? 'bg-cyan-500/20 border-cyan-400 text-cyan-300' : 'border-stone-800 text-stone-400 hover:text-cyan-400 hover:border-cyan-500/40'}`}
+                  title={isExpanded ? currentT.minimizeChat : currentT.expandChat}
+                  aria-label={isExpanded ? currentT.minimizeChat : currentT.expandChat}
+                >
+                  {isExpanded ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
+                </button>
+                <button
+                  onClick={() => setIsOpen(false)}
+                  className="p-1.5 rounded-lg border border-stone-800 text-stone-400 hover:text-cyan-400 hover:border-cyan-500/40 transition-colors cursor-pointer"
+                  aria-label={currentT.closeChat}
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
             </div>
 
-            {/* Chat Area */}
-            <div ref={scrollContainerRef} className="flex-1 overflow-y-auto p-4 space-y-4 font-sans no-scrollbar bg-gradient-to-br from-stone-900 to-stone-950">
-              {messages.map((msg) => (
+            {/* Redundancy & Model Cascade Info Overlay */}
+            <AnimatePresence>
+              {showModelsInfo && (
                 <motion.div
-                  key={msg.id}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, ease: "easeOut" }}
-                  className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="bg-stone-900/98 border-b border-cyan-500/30 p-3.5 text-xs text-stone-300 font-sans overflow-hidden z-20 backdrop-blur-md shadow-2xl"
                 >
-                  <div
-                    className={`max-w-[85%] rounded-2xl px-4 py-2.5 text-[14px] leading-relaxed ${
-                      msg.role === 'user'
-                        ? 'bg-cyan-500 text-stone-950'
-                        : 'bg-stone-800/80 backdrop-blur-sm text-stone-200 border border-stone-700/50 shadow-inner'
-                    }`}
-                  >
-                    {msg.role === 'user' ? (
-                      msg.text
-                    ) : (
-                      <div className="prose prose-invert prose-sm prose-p:my-1 prose-ul:my-1.5 prose-ul:pl-4 prose-li:my-0.5 prose-li:leading-tight prose-strong:text-cyan-400 marker:text-cyan-500 max-w-none break-words">
-                         <Markdown>{msg.text}</Markdown>
-                         {msg.isTyping && <span className="inline-block w-1 h-3 ml-1 bg-cyan-400 animate-pulse align-middle" />}
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="font-mono text-[11px] font-bold text-cyan-300 flex items-center gap-1.5">
+                      <ShieldCheck className="w-3.5 h-3.5 text-cyan-400" />
+                      {currentT.modelDrawerTitle}
+                    </span>
+                    <span className="text-[9px] font-mono text-emerald-400 bg-emerald-950/80 px-2 py-0.5 rounded-full border border-emerald-500/30 flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                      Roteamento Ativo
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-stone-400 leading-relaxed mb-2.5">
+                    {currentT.modelDrawerDesc}
+                  </p>
+                  <div className="grid grid-cols-2 gap-1.5 max-h-36 overflow-y-auto no-scrollbar pr-0.5">
+                    {availableModels.map((m, idx) => (
+                      <div 
+                        key={m.id || idx}
+                        className={`p-2 rounded-lg border text-[10px] font-mono flex flex-col justify-between transition-all ${
+                          activeModel.toLowerCase().includes(m.name.toLowerCase().slice(0, 4))
+                            ? 'bg-cyan-950/70 border-cyan-400 text-white shadow-[0_0_10px_rgba(6,182,212,0.2)]'
+                            : 'bg-stone-950/70 border-stone-800 text-stone-400 hover:border-stone-700'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between gap-1">
+                          <span className="font-bold truncate">{m.name}</span>
+                          <span className="text-[8px] text-stone-500">{m.provider}</span>
+                        </div>
+                        <span className="text-[8px] text-cyan-400/90 mt-1 font-sans">{m.tag}</span>
                       </div>
-                    )}
+                    ))}
+                  </div>
+                  <div className="mt-2.5 pt-2 border-t border-stone-800 flex items-center justify-between text-[10px] text-stone-400">
+                    <span className="flex items-center gap-1.5 text-cyan-300/90 font-mono text-[9px]">
+                      <Sparkles className="w-3 h-3 text-cyan-400" />
+                      + Redes neurais em cluster com failover contínuo
+                    </span>
+                    <button
+                      onClick={() => setShowModelsInfo(false)}
+                      className="text-stone-400 hover:text-cyan-300 underline text-[10px] font-mono cursor-pointer"
+                    >
+                      {lang === 'pt' ? 'Fechar' : 'Close'}
+                    </button>
                   </div>
                 </motion.div>
-              ))}
+              )}
+            </AnimatePresence>
+
+            {/* Chat Area */}
+            <div ref={scrollContainerRef} className="flex-1 overflow-y-auto p-4 space-y-3 font-sans no-scrollbar bg-gradient-to-br from-stone-900 to-stone-950">
+              {messages
+                .filter((msg) => msg.role === 'user' || (msg.text && msg.text.trim().length > 0))
+                .map((msg) => (
+                  <motion.div
+                    key={msg.id}
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.25, ease: "easeOut" }}
+                    className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                  >
+                    <div
+                      className={`max-w-[88%] rounded-2xl px-3.5 py-2.5 text-[13px] leading-relaxed ${
+                        msg.role === 'user'
+                          ? 'bg-cyan-500 text-stone-950 font-medium'
+                          : 'bg-stone-800/80 backdrop-blur-sm text-stone-200 border border-stone-700/50 shadow-inner'
+                      }`}
+                    >
+                      {msg.role === 'user' ? (
+                        msg.text
+                      ) : (
+                        <div className="prose prose-invert prose-xs prose-p:my-0.5 prose-ul:my-1 prose-ul:pl-3.5 prose-li:my-0.5 prose-li:leading-snug prose-strong:text-cyan-300 marker:text-cyan-400 max-w-none break-words">
+                           <Markdown>{msg.text}</Markdown>
+                           {msg.isTyping && <span className="inline-block w-1.5 h-3 ml-1 bg-cyan-400 animate-pulse align-middle" />}
+                        </div>
+                      )}
+                    </div>
+                  </motion.div>
+                ))}
               {isLoading && (
                 <div className="flex justify-start">
-                  <div className="bg-stone-800 border border-stone-700 rounded-2xl px-4 py-3">
-                    <Loader2 className="w-4 h-4 text-cyan-400 animate-spin" />
+                  <div className="bg-stone-800/90 border border-stone-700/60 rounded-2xl px-3.5 py-2.5 flex items-center gap-2 shadow-inner">
+                    <div className="flex items-center gap-1 mr-0.5">
+                      <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-bounce [animation-delay:-0.3s]" />
+                      <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-bounce [animation-delay:-0.15s]" />
+                      <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-bounce" />
+                    </div>
+                    <span className="text-[12px] font-sans font-medium text-cyan-300">
+                      {currentT.statusProcessing}
+                    </span>
                   </div>
                 </div>
               )}
@@ -332,25 +513,21 @@ export default function FloatingChat({ lang = 'pt' }: { lang?: 'pt' | 'en' }) {
             </div>
 
             {/* System Status Badge */}
-            <div className="px-4 py-2 border-t border-stone-800/50 bg-stone-900/50 text-[10px] uppercase font-mono tracking-wider flex justify-between items-center">
-              <span className="text-stone-500">Status</span>
-              {isLoading ? (
-                <span className="flex items-center gap-1.5 text-cyan-400">
-                  <span className="w-1.5 h-1.5 bg-cyan-400 rounded-full animate-ping" />
-                  {currentT.statusProcessing}
-                </span>
-              ) : (
-                <span className="flex items-center gap-1.5 text-stone-500">
-                  <span className="w-1.5 h-1.5 bg-stone-500 rounded-full" />
-                  {currentT.statusOnline}
-                </span>
-              )}
+            <div className="px-3.5 py-1.5 border-t border-stone-800/60 bg-stone-950/70 text-[9px] uppercase font-mono tracking-wider flex justify-between items-center text-stone-400">
+              <span className="flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                <span className="text-cyan-300 font-bold">{activeModel}</span>
+              </span>
+              <span className="text-cyan-400/90 flex items-center gap-1 font-sans font-medium">
+                <Sparkles className="w-2.5 h-2.5 text-cyan-400" />
+                <span>{lang === 'pt' ? 'Interativo & Resumido' : 'Interactive & Concise'}</span>
+              </span>
             </div>
 
             {renderSuggestedQuestions()}
 
             {/* Input Area */}
-            <div className="p-4 bg-stone-950 border-t border-stone-800 flex flex-col gap-2">
+            <div className="p-3 bg-stone-950 border-t border-stone-800 flex flex-col gap-1.5">
               <AnimatePresence>
                 {inputError && (
                   <motion.span 
@@ -372,14 +549,15 @@ export default function FloatingChat({ lang = 'pt' }: { lang?: 'pt' | 'en' }) {
                     if (inputError) setInputError(null);
                   }}
                   placeholder={currentT.inputPlaceholder}
-                  className="flex-1 bg-stone-900 border border-stone-700 text-stone-200 text-sm rounded-xl px-4 py-2 focus:outline-none focus:border-cyan-400 transition-colors"
+                  className="flex-1 bg-stone-900 border border-stone-700 text-stone-200 text-xs rounded-xl px-3.5 py-2 focus:outline-none focus:border-cyan-400 transition-colors placeholder:text-stone-500 font-sans"
                 />
                 <button
                   type="submit"
                   disabled={!input.trim() || isLoading}
-                  className="bg-cyan-500 hover:bg-cyan-400 disabled:bg-stone-800 disabled:text-stone-600 text-stone-950 w-10 h-10 rounded-xl flex items-center justify-center transition-colors"
+                  className="bg-cyan-500 hover:bg-cyan-400 disabled:bg-stone-800 disabled:text-stone-600 text-stone-950 w-9 h-9 rounded-xl flex items-center justify-center transition-colors cursor-pointer"
+                  title="Enviar mensagem"
                 >
-                  <Send className="w-4 h-4" />
+                  <Send className="w-3.5 h-3.5" />
                 </button>
               </form>
             </div>

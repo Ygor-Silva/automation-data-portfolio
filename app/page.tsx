@@ -31,7 +31,10 @@ import {
   Maximize2,
   Sparkles,
   Rocket,
-  FileText
+  FileText,
+  Activity,
+  Layers,
+  Send
 } from 'lucide-react';
 import {
   ResponsiveContainer,
@@ -1089,7 +1092,7 @@ export default function Portfolio() {
       >
         <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-16 items-center">
           <div className="col-span-full">
-            <SectionHeading icon={Workflow}>{t.about.title}</SectionHeading>
+            <SectionHeading icon={Cpu}>{t.about.title}</SectionHeading>
           </div>
           <div className="col-span-full md:col-span-1">
             <div className="space-y-6 text-stone-400 text-lg leading-relaxed">
@@ -1160,7 +1163,7 @@ export default function Portfolio() {
         transition={{ duration: 0.8, ease: "easeOut" }}
       >
         <div className="max-w-4xl mx-auto">
-          <SectionHeading icon={BarChart3}>{t.experience.title}</SectionHeading>
+          <SectionHeading icon={Terminal}>{t.experience.title}</SectionHeading>
           
           <div className="min-h-[600px] transition-all duration-300">
             {currentExperiences.map((exp, index) => (
@@ -1216,7 +1219,7 @@ export default function Portfolio() {
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-12">
             <div className="flex-1">
-              <SectionHeading icon={LayoutGrid}>{t.projects.title}</SectionHeading>
+              <SectionHeading icon={Layers}>{t.projects.title}</SectionHeading>
               <div className="flex flex-col gap-1 -mt-8">
                 <p className="text-stone-500 text-sm max-w-xl font-mono uppercase tracking-wider">
                   {t.projects.subtitle}
@@ -1504,7 +1507,7 @@ export default function Portfolio() {
         transition={{ duration: 0.8, ease: "easeOut" }}
       >
         <div className="max-w-6xl mx-auto">
-          <SectionHeading icon={Cpu}>{t.skills.title}</SectionHeading>
+          <SectionHeading icon={Activity}>{t.skills.title}</SectionHeading>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
             {techStack.map((section, idx) => {
@@ -1572,6 +1575,9 @@ export default function Portfolio() {
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
           >
+            <div className="inline-flex items-center justify-center p-3 rounded-2xl bg-cyan-950/40 border border-cyan-500/30 text-cyan-400 shadow-[0_0_15px_rgba(6,182,212,0.15)] mb-6">
+              <Send className="w-6 h-6" />
+            </div>
             <h2 className="text-4xl md:text-6xl font-bold text-white mb-8 tracking-tighter uppercase">
               {t.contact.title_1} <br /> <span className="text-cyan-400 italic">{t.contact.title_2}</span>
             </h2>

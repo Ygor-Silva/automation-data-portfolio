@@ -1,92 +1,126 @@
-import { GoogleGenAI } from "@google/genai";
 import { NextRequest, NextResponse } from "next/server";
-
-const ai = new GoogleGenAI({ 
-  apiKey: process.env.GEMINI_API_KEY,
-  httpOptions: {
-    headers: {
-      'User-Agent': 'aistudio-build',
-    }
-  }
-});
-
-const systemInstruction = "Você é um assistente virtual para ajudar visitantes a tirarem dúvidas sobre a experiência profissional, as habilidades e os projetos de Ygor Teixeira (o dono deste portfólio).\n" +
-"Seja prestativo, educado e amigável. Use um tom profissional mas acessível.\n" +
-"GUIA DE ESTILO RIGOROSO:\n" +
-"- IMPORTANTE: SEJA EXTREMAMENTE BREVE E DIRETO. Suas mensagens não devem exceder 3 linhas de texto em um dispositivo móvel.\n" +
-"- Use EXCLUSIVAMENTE bullet points (marcadores curtos de hífen) e no máximo 1 ou 2 sintagmas curtos antes da lista.\n" +
-"- Remova parágrafos longos, introduções e conclusões desnecessárias.\n" +
-"- USE MARKDOWN para estruturar a resposta.\n" +
-"- Destaque termos técnicos, empresas e conceitos chave em **negrito** (ex: **RPA**, **Supabase**, **TypeScript**).\n" +
-"- Agilidade e eficiência são sua prioridade.";
+import { executeMultiModelChatStream, OPENROUTER_FREE_MODELS } from "@/lib/openrouter";
 
 export const dynamic = 'force-dynamic';
 export const maxDuration = 60;
 
+// In-memory sliding rate limiter per IP to protect from brute-force / abuse
+const ipRateLimitMap = new Map<string, { count: number; resetTime: number }>();
+const RATE_LIMIT_WINDOW_MS = 60 * 1000; // 1 minute
+const MAX_REQUESTS_PER_WINDOW = 20;
+
+function checkRateLimit(ip: string): boolean {
+  const now = Date.now();
+  const entry = ipRateLimitMap.get(ip);
+
+  if (!entry || now > entry.resetTime) {
+    ipRateLimitMap.set(ip, { count: 1, resetTime: now + RATE_LIMIT_WINDOW_MS });
+    return true;
+  }
+
+  if (entry.count >= MAX_REQUESTS_PER_WINDOW) {
+    return false;
+  }
+
+  entry.count++;
+  return true;
+}
+
+export async function GET() {
+  // Only expose public boolean status and public model catalog.
+  // NO secret keys, lengths, or prefixes are ever exposed.
+  const isOpenRouterConfigured = Boolean(process.env.OPENROUTER_API_KEY && process.env.OPENROUTER_API_KEY.trim() !== '');
+  const activeModelName = isOpenRouterConfigured 
+    ? (OPENROUTER_FREE_MODELS[0]?.name || "Qwen 3.8 27B") 
+    : "Gemini 2.5 Flash";
+
+  return NextResponse.json({
+    openRouterConfigured: isOpenRouterConfigured,
+    primaryEngine: isOpenRouterConfigured ? "OpenRouter Multi-Model (Failover)" : "Gemini Direct",
+    activeModel: activeModelName,
+    freeModels: OPENROUTER_FREE_MODELS.map(m => ({
+      id: m.id,
+      name: m.name,
+      provider: m.provider,
+      contextWindow: m.contextWindow,
+      tag: m.tag
+    })),
+    status: "active"
+  });
+}
+
 export async function POST(req: NextRequest) {
   try {
-    const { message, history } = await req.json();
+    // 1. IP Rate Limiting check
+    const forwardedFor = req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || '127.0.0.1';
+    const clientIp = forwardedFor.split(',')[0].trim();
 
-    if (!message) {
-      return NextResponse.json({ error: "Message is required" }, { status: 400 });
-    }
-
-    if (!process.env.GEMINI_API_KEY) {
+    if (!checkRateLimit(clientIp)) {
       return NextResponse.json(
-        { error: "API Key is not configured." },
-        { status: 500 }
+        { text: "Limite de requisições por minuto atingido. Aguarde instantes para enviar novas mensagens." },
+        { status: 429 }
       );
     }
 
-    let fullPrompt = message;
-    if (history && history.length > 0) {
-        const formattedHistory = history.map((h: any) => `${h.role === 'user' ? 'Visitante' : 'Assistente'}: ${h.text}`).join('\n');
-        fullPrompt = `Histórico da conversa:\n${formattedHistory}\n\nVisitante diz agora: ${message}`;
+    const { message, history } = await req.json();
+
+    if (!message || typeof message !== 'string' || !message.trim()) {
+      return NextResponse.json({ text: "A mensagem não pode estar vazia." }, { status: 400 });
     }
 
-    const responseStream = await ai.models.generateContentStream({
-      model: "gemini-3.5-flash",
-      contents: fullPrompt,
-      config: {
-        systemInstruction
-      }
-    });
+    const cleanInput = message.trim();
 
-    const encoder = new TextEncoder();
-    const stream = new ReadableStream({
-      async start(controller) {
-        try {
-          for await (const chunk of responseStream) {
-            if (chunk.text) {
-              controller.enqueue(encoder.encode(chunk.text));
-            }
-          }
-          controller.close();
-        } catch (err) {
-          controller.error(err);
+    // 2. Defense-in-depth: Reject or defuse prompt injection attempts asking for system secrets
+    const suspiciousKeyPatterns = /(?:process\.env|api[_-]?key|sk-or-|sk-[a-z0-9]|openrouter_key|gemini_key|system\s*prompt|env\s*var)/i;
+    if (suspiciousKeyPatterns.test(cleanInput)) {
+      // Immediate clean rejection without calling external APIs
+      return NextResponse.json({
+        text: "Como assistente executivo, posso esclarecer apenas dúvidas sobre as competências, projetos e trajetória de Ygor Teixeira."
+      });
+    }
+
+    const messagesList: { role: 'user' | 'assistant'; text: string }[] = [];
+    if (Array.isArray(history) && history.length > 0) {
+      for (const h of history) {
+        if (h && typeof h.text === 'string' && (h.role === 'user' || h.role === 'assistant')) {
+          // Never forward oversized messages
+          messagesList.push({ role: h.role, text: h.text.slice(0, 300) });
         }
       }
+    }
+    messagesList.push({ role: 'user', text: cleanInput.slice(0, 300) });
+
+    const result = await executeMultiModelChatStream({
+      messages: messagesList
     });
 
-    return new Response(stream, {
+    return new Response(result.stream, {
       headers: {
         'Content-Type': 'text/plain; charset=utf-8',
         'Cache-Control': 'no-cache, no-transform',
-        'Connection': 'keep-alive'
+        'Connection': 'keep-alive',
+        // Sanitize headers to only contain display-friendly strings
+        'X-Model-Used': encodeURIComponent(result.modelUsed),
+        'X-Model-Id': encodeURIComponent(result.modelId),
+        'X-Provider': encodeURIComponent(result.provider),
+        'X-Attempted-Models': encodeURIComponent(result.attemptedModels.join(', '))
       }
     });
   } catch (error: any) {
+    // Sanitized logging on server side - NO credentials or raw stack forwarded to client
+    const safeErrorMsg = error?.status ? `HTTP ${error.status}` : 'Internal error';
+    console.error(`[Chat API Server Error] ${safeErrorMsg}`);
+
     let fallbackText = "Estou com dificuldades técnicas no momento. Tente novamente mais tarde.";
-    if (error?.status === 503 || error?.message?.includes("503") || error?.message?.includes("UNAVAILABLE")) {
-      // transient error from high demand, handled gracefully
-      fallbackText = "No momento estou recebendo muitas mensagens (alta demanda na API). Por favor, aguarde alguns instantes e tente novamente.";
-    } else {
-      console.error("Gemini API Error:", error.message || error);
+    if (error?.status === 429 || error?.message?.includes("429")) {
+      fallbackText = "A taxa de requisições está momentaneamente alta. O sistema tentou alternar entre os modelos gratuitos, aguarde alguns instantes e tente novamente.";
+    } else if (error?.status === 503 || error?.message?.includes("503") || error?.message?.includes("UNAVAILABLE")) {
+      fallbackText = "No momento estou recebendo muitas mensagens. Por favor, aguarde alguns instantes e tente novamente.";
     }
 
     return NextResponse.json(
       { text: fallbackText },
-      { status: 503 } // Return an error state to be handled by the frontend
+      { status: 503 }
     );
   }
 }
