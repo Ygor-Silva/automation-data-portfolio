@@ -291,8 +291,129 @@ const blueprintsMap: Record<string, ProjectBlueprint> = {
         slaOrLatency: "Interface fluida a 60 FPS"
       }
     ]
+  },
+
+  // 5. Rodaz — SaaS multi-tenant de frotas
+  "Rodaz · SaaS de Gestão de Frotas": {
+    projectTitle: "Rodaz · SaaS de Gestão de Frotas",
+    systemName: "RODAZ-FLEET-SAAS",
+    architectureType: "SaaS Multi-tenant White-label com Segurança no Banco",
+    nodes: [
+      { id: "ui", step: 1, name: "App Next.js 16 (App Router)", category: "source",
+        tech: ["Next.js 16", "React 19", "Tailwind 4", "React Hook Form"], protocol: "Server Components / HTTPS",
+        summary: "Interface responsiva (360 a 1024 px) com branding por tenant via tokens de design — nenhuma marca de cliente no código.",
+        engineeringRules: ["Menu lista só módulos implementados (sem telas falsas)", "Cores apenas por tokens, nunca hex em componente"],
+        slaOrLatency: "E2E responsivo validado com Playwright" },
+      { id: "actions", step: 2, name: "Server Actions + Validação Dupla", category: "processing",
+        tech: ["Server Actions", "Zod 4", "can() / RBAC"], protocol: "RPC tipado (Server Actions)",
+        summary: "Toda mutação valida o payload com Zod e checa a permissão no app antes de chegar ao banco, que revalida tudo.",
+        engineeringRules: ["Permissões espelhadas em TS e SQL com teste de paridade", "Regras puras na camada domain, com teste unitário"],
+        slaOrLatency: "49 testes unitários (Vitest)" },
+      { id: "db", step: 3, name: "PostgreSQL + RLS Multi-tenant", category: "storage",
+        tech: ["Supabase", "PostgreSQL 16", "RLS", "Triggers"], protocol: "PostgREST / SQL",
+        summary: "tenant_id imutável em toda tabela de negócio e policies com is_member/has_permission; bloqueio de login após 3 tentativas imposto no banco.",
+        engineeringRules: ["Nunca confiar só no filtro do app", "Trigger genérico de auditoria em cada alteração"],
+        slaOrLatency: "60 testes de banco (IDOR/BOLA, LGPD)" },
+      { id: "ci", step: 4, name: "CI/CD & Entrega", category: "output",
+        tech: ["GitHub Actions", "Docker multi-stage", "Vercel / VM Ubuntu"], protocol: "Pipeline lint → typecheck → test → build",
+        summary: "Cada PR roda lint, typecheck, testes unitários e de banco (Postgres 16) e build; imagem standalone para nuvem ou VM própria.",
+        engineeringRules: ["Gate verde obrigatório antes do merge", "Decisões registradas em ADRs"],
+        slaOrLatency: "Auditoria de segurança: nível 90%" }
+    ]
+  },
+
+  // 6. Portal corporativo de relatórios
+  "Portal Corporativo de Relatórios": {
+    projectTitle: "Portal Corporativo de Relatórios",
+    systemName: "CENTRAL-REPORTS-HUB",
+    architectureType: "ERP Oracle → Fila → Supabase, com Permissão no Banco",
+    nodes: [
+      { id: "erp", step: 1, name: "ERP Oracle (Senior Sapiens)", category: "source",
+        tech: ["Oracle", "Senior Sapiens", "Web Services"], protocol: "Somente leitura (SELECT)",
+        summary: "Fonte oficial de folha, quadro de vagas, férias e desligamentos. O portal nunca conecta direto no Oracle.",
+        engineeringRules: ["Credencial do Oracle só no worker interno", "Escrita no ERP apenas por web service"],
+        slaOrLatency: "Zero escrita direta no ERP" },
+      { id: "worker", step: 2, name: "Workers Python sob Demanda", category: "processing",
+        tech: ["Python", "oracledb", "pandas", "zeep (SOAP)"], protocol: "Fila por RPC (pedido → processamento → resultado)",
+        summary: "O clique do usuário vira um pedido na fila; o worker consulta o Oracle, agrega e publica o espelho no Supabase.",
+        engineeringRules: ["Resultados só com agregados quando não precisa de dado pessoal", "Retenção curta e auditoria dos pedidos"],
+        slaOrLatency: "Atualização sob demanda" },
+      { id: "db", step: 3, name: "Supabase + RLS por Papel", category: "storage",
+        tech: ["PostgreSQL", "RLS", "RPCs security definer", "Edge Function"], protocol: "PostgREST / JWT",
+        summary: "Permissão por área, relatório e papel (RH, gestor, TI) aplicada no banco; rate-limit de login por IP e senha temporária.",
+        engineeringRules: ["Gestor não vê CID nem endereço (LGPD)", "49 migrations versionadas e testadas"],
+        slaOrLatency: "Auditoria de segurança: 94%, sem crítico" },
+      { id: "ui", step: 4, name: "Portal Web Responsivo", category: "output",
+        tech: ["HTML/CSS/JS", "Playwright E2E", "Impressão A4"], protocol: "SPA estática (sem build)",
+        summary: "Home por áreas, busca global, painéis com impressão A4 e base de conhecimento com busca tolerante a acento, erro e sinônimos.",
+        engineeringRules: ["Teste de regressão de XSS", "Busca validada com meta de 95% de acerto"],
+        slaOrLatency: "Testes E2E em cada tela" }
+    ]
+  },
+
+  // 7. Férias & Coberturas
+  "Férias & Coberturas": {
+    projectTitle: "Férias & Coberturas",
+    systemName: "HR-VACATION-COVERAGE",
+    architectureType: "Regras Trabalhistas + Geocodificação + Web Service do ERP",
+    nodes: [
+      { id: "erp", step: 1, name: "Dados do ERP (Férias e Afastamentos)", category: "source",
+        tech: ["Oracle", "R034FUN / R040PER / R038AFA"], protocol: "Somente leitura",
+        summary: "Períodos aquisitivos, programações e afastamentos lidos do Sapiens, sem nunca inventar tabela ou campo.",
+        engineeringRules: ["Schema legado mapeado e confirmado com consulta", "Oracle somente leitura"],
+        slaOrLatency: "3 empresas do grupo" },
+      { id: "calc", step: 2, name: "Motor de Regras em Python", category: "processing",
+        tech: ["Python", "pandas"], protocol: "Batch sob demanda",
+        summary: "Cálculo de avos, saldo de recesso (janela de 2 anos) e alertas de férias vencidas, conciliado com a planilha oficial do RH.",
+        engineeringRules: ["Regras levantadas e validadas com o RH", "Diferenças de conciliação documentadas"],
+        slaOrLatency: "Substitui relatório legado" },
+      { id: "cover", step: 3, name: "Sugestão de Cobertura", category: "storage",
+        tech: ["Geocodificação IBGE/CNEFE", "ViaCEP", "Supabase"], protocol: "Ranking por proximidade e aderência",
+        summary: "Sugere quem cobre cada posto por distância, cargo, horário e empresa; bloqueios eliminatórios e riscos exigem ciência e motivo.",
+        engineeringRules: ["Indicação manual sempre com classificação + motivo", "Histórico de toda alteração"],
+        slaOrLatency: "Decisão auditável" },
+      { id: "ws", step: 4, name: "Trava de Demissão via Web Service", category: "output",
+        tech: ["SOAP (zeep)", "Senior Web Services"], protocol: "SOAP / XML",
+        summary: "Pedido de demissão de quem está de férias, planejado ou cobrindo férias é travado e vai ao RH; aprovação segue pelo web service do ERP.",
+        engineeringRules: ["Nunca INSERT/UPDATE direto no ERP", "Auditoria JSONL e checagem de duplicidade"],
+        slaOrLatency: "12 testes do web service" }
+    ]
+  },
+
+  // 8. App de Campo (PWA)
+  "App de Campo (PWA)": {
+    projectTitle: "App de Campo (PWA)",
+    systemName: "FIELD-ACTIONS-PWA",
+    architectureType: "PWA Mobile + Fila de Integração Bidirecional",
+    nodes: [
+      { id: "pwa", step: 1, name: "PWA Mobile-first", category: "source",
+        tech: ["Next.js 14", "TypeScript", "Tiptap", "Service Worker"], protocol: "HTTPS / PWA",
+        summary: "Gestor registra no local a ação, o centro de custo, as pessoas envolvidas e até 5 fotos comprimidas no próprio celular.",
+        engineeringRules: ["Fotos reduzidas a 1600 px / JPEG 80% antes do envio", "Edição liberada só por 2 h"],
+        slaOrLatency: "Pensado para 4G em campo" },
+      { id: "db", step: 2, name: "Supabase (RLS + Storage privado)", category: "processing",
+        tech: ["PostgreSQL", "RLS", "Storage", "Triggers"], protocol: "PostgREST / JWT",
+        summary: "Autor e janela de edição preenchidos e impostos pelo banco; fotos em bucket privado.",
+        engineeringRules: ["RLS em todas as tabelas", "Auditoria de eventos"],
+        slaOrLatency: "Regras no banco, não só na tela" },
+      { id: "queue", step: 3, name: "Fila de Integração", category: "storage",
+        tech: ["Edge Functions (Deno)", "Status PENDENTE → ENVIADA/ERRO"], protocol: "Fila com reenvio",
+        summary: "Cada registro entra numa fila com status e reenvio automático; service_role isolado no servidor.",
+        engineeringRules: ["Arquitetura em camadas (domain/infra)", "Troca de provedor por interface"],
+        slaOrLatency: "Ciclo de 30 min" },
+      { id: "erp", step: 4, name: "ERP Oracle", category: "output",
+        tech: ["Python", "oracledb", "Agendador Windows"], protocol: "Sync bidirecional",
+        summary: "Worker envia os registros ao ERP e devolve locais e colaboradores atualizados ao app.",
+        engineeringRules: ["Rodapé mostra a última atualização com o ERP", "Erros visíveis e reprocessáveis"],
+        slaOrLatency: "Oracle ↔ Supabase" }
+    ]
   }
 };
+
+// Títulos em inglês apontam para o mesmo blueprint
+blueprintsMap["Rodaz · Fleet Management SaaS"] = blueprintsMap["Rodaz · SaaS de Gestão de Frotas"];
+blueprintsMap["Corporate Reporting Portal"] = blueprintsMap["Portal Corporativo de Relatórios"];
+blueprintsMap["Field App (PWA)"] = blueprintsMap["App de Campo (PWA)"];
 
 interface ProjectArchitectureBlueprintProps {
   projectTitle: string;
