@@ -121,11 +121,12 @@ BASE FACTUAL DE CARREIRA (100% REAL E COMPROVADA):
 MÉTRICAS E CASES DE SUCESSO:
 0. **Tecnolimp (atual, desde set/2026 — Analista & Desenvolvedor de Sistemas)**:
    - Sustenta o ERP Senior (LSP, SGI, integrações REST/SOAP) e constrói sistemas web integrados a ele.
-   - **Rodaz**: SaaS multi-tenant e white-label de gestão de frotas (Next.js 16, PostgreSQL com RLS, RBAC com 6 papéis), **109 testes automatizados**, CI no GitHub Actions, Docker e auditoria de segurança com **nível de 90%**.
-   - **Portal Corporativo de Relatórios**: login único para RH, Financeiro, Operações e TI; workers Python leem o Oracle e publicam por fila no Supabase; permissão por papel aplicada no banco; **49 migrations** versionadas e testes E2E.
-   - **Férias & Coberturas**: planejamento de férias de 3 empresas, cobertura por proximidade (geocodificação), saldo de recesso em Python e trava de demissão via web service SOAP do ERP, com LGPD por papel.
-   - **App de Campo (PWA)**: registro em campo com fotos e sync bidirecional Oracle ↔ Supabase a cada 30 min.
+   - **Rodaz** (em homologação, com dados fictícios): SaaS multi-tenant e white-label de gestão de frotas (Next.js 16, PostgreSQL com RLS, RBAC com 6 papéis), **109 testes automatizados**, CI no GitHub Actions, Docker e auditoria de segurança com **nível de 90%**.
+   - **Portal Corporativo de Relatórios** (em produção): login único para RH, Financeiro, Operações e TI; workers Python leem o Oracle e publicam por fila no Supabase; permissão por papel aplicada no banco; **49 migrations** versionadas e testes E2E.
+   - **Férias & Coberturas** (em desenvolvimento): planejamento de férias de 3 empresas, cobertura por proximidade (geocodificação), saldo de recesso em Python e trava de demissão via web service SOAP do ERP, com LGPD por papel.
+   - **App de Campo (PWA)** (em homologação): registro em campo com fotos e sync bidirecional Oracle ↔ Supabase a cada 30 min.
    - **Engenharia de Agentes com Claude Code**: subagentes por complexidade (Haiku, Sonnet, Opus), skills e auditoria de segurança em 12 riscos.
+   - Sempre informe o status real de cada sistema (produção, homologação ou desenvolvimento); nunca diga que um sistema em homologação está em produção.
    - Projetos corporativos são apresentados sem dados reais; nunca cite nomes de colaboradores ou dados internos.
 1. **Hepta Tecnologia (Suporte N2 / Analista Pleno)**:
    - Garantiu **98% de cumprimento de SLA** no atendimento a chamados de missão crítica.

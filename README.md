@@ -32,7 +32,7 @@ O site é dividido em módulos de alta interatividade, integrando perfeitamente 
 ### 2. Catálogo de Projetos com Filtro Dinâmico
 * **Exibição Categorizada:** Os projetos (como o assistente financeiro cyberpunk **Kerdos**, o calculador de comissões **DivCom**, dashboards integrados de BI e automações complexas) são listados com tags interativas.
 * **Projetos corporativos anonimizados:** SaaS multi-tenant de frotas (**Rodaz**), portal corporativo de relatórios, Férias & Coberturas, app de campo (PWA), sites institucionais e engenharia de agentes com Claude Code. As telas vêm de ambientes de teste com dados fictícios e passam por anonimização (marca, empresas e nomes) antes da captura; ficam em `public/projects/<projeto>/`.
-* **Sistemas em Produção (scroll 3D):** seção `components/Showcase3D.tsx` com moldura em perspectiva que "deita" ao entrar na tela e troca de projeto conforme o scroll (motion `useScroll`). Respeita `prefers-reduced-motion` (vira grade estática).
+* **Sistemas em Destaque (scroll 3D):** seção `components/Showcase3D.tsx` com moldura em perspectiva que "deita" ao entrar na tela e troca de projeto conforme o scroll (motion `useScroll`). Cada sistema mostra o status real (produção, homologação ou desenvolvimento). Respeita `prefers-reduced-motion` (vira grade estática).
 * **Filtragem Reativa:** Sistema de filtragem reativo rápido que re-organiza os elementos na tela sem recarregamento ou oscilações de layout.
 
 ### 3. Assistente de IA Integrado (FloatingChat)
