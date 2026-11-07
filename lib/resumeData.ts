@@ -32,17 +32,31 @@ export interface ResumeData {
 
 export const resumeData: ResumeData = {
   name: "YGOR TEIXEIRA",
-  title: "Analista Power BI | Sustentação de BI, SQL e ITSM",
+  title: "Analista & Desenvolvedor de Sistemas | ERP Senior, Full-Stack e IA",
   email: "ygor-1996@hotmail.com",
   location: "Curitiba, PR · Remoto",
   linkedin: "https://www.linkedin.com/in/ygor-silva-developer/",
-  portfolio: "https://ais-dev-zd6jibpl3tqq6g3mvjlu77-366976354813.us-east1.run.app",
-  profile: "Analista com experiência em Business Intelligence e sustentação de sistemas em ambientes orientados a SLA. Desenvolvo e mantenho dashboards em Power BI (DAX, Power Query), escrevo e depuro queries SQL e PL/SQL (Oracle) para investigar divergências de dados e atuo em incidentes e requisições seguindo processos ITSM/ITIL, sempre documentando causas recorrentes para aumentar a estabilidade do ambiente.",
+  portfolio: "https://ygor-teixeira-portfolio.vercel.app",
+  profile: "Analista e Desenvolvedor de Sistemas que conecta o ERP Senior (Sapiens) ao dia a dia da operação. Desenvolvo regras em LSP e integrações REST/SOAP e construo sistemas web full-stack (Next.js, TypeScript, Supabase/PostgreSQL, Python) com segurança aplicada no banco (RLS, RBAC, LGPD) e testes automatizados. Trago base sólida em BI (Power BI, SQL/PL-SQL) e operação orientada a SLA, e uso IA (Claude Code) com padrão de qualidade e segurança.",
   highlights: [
+    "SaaS multi-tenant de gestão de frotas com isolamento por cliente (RLS), RBAC com 6 papéis, 109 testes automatizados e auditoria de segurança com nível de 90%.",
+    "Portal corporativo de relatórios integrado ao ERP Oracle por workers Python, com permissão por papel aplicada no banco e 49 migrations versionadas.",
     "98% de cumprimento de SLA e redução de 20% em chamados recorrentes a partir da análise de dados históricos de incidentes (Hepta).",
     "Dashboards em Power BI para monitoramento de SLAs e KPIs de 8 clientes estratégicos, com melhoria de 15% na velocidade de resolução de incidentes (Hepta)."
   ],
   experiences: [
+    {
+      role: "Analista & Desenvolvedor de Sistemas (ERP Senior Sapiens)",
+      period: "Set/2026 – Atual",
+      company: "Tecnolimp",
+      bullets: [
+        "Sustentação e evolução do ERP Senior (Sapiens): regras de negócio em LSP, relatórios SGI e integrações REST/SOAP e Web Services.",
+        "Portal corporativo de relatórios (RH, Financeiro, Operações, TI): workers Python leem o Oracle e publicam por fila no Supabase; permissão por área, relatório e papel via RLS; testes E2E com Playwright.",
+        "Férias & Coberturas: planejamento, sugestão de cobertura por geocodificação, cálculo de saldo de recesso em Python e trava de demissão via web service SOAP do Senior.",
+        "SaaS multi-tenant de frotas (Next.js 16, PostgreSQL/RLS, GitHub Actions, Docker) e app PWA de registro em campo com sync bidirecional com o ERP.",
+        "Padronização do desenvolvimento com IA (Claude Code): subagentes por complexidade, skills e auditoria de segurança em 12 riscos."
+      ]
+    },
     {
       role: "Analista de Sistemas Pleno",
       period: "Dez/2025 – Jul/2026",
@@ -114,6 +128,14 @@ export const resumeData: ResumeData = {
     }
   ],
   skills: [
+    {
+      category: "Desenvolvimento",
+      items: "Next.js, React, TypeScript, Node.js, Python, PostgreSQL/Supabase (RLS, RBAC, multi-tenant), Playwright, Vitest, GitHub Actions, Docker"
+    },
+    {
+      category: "IA aplicada",
+      items: "Claude Code (subagentes, skills, MCP), Anthropic API, engenharia de prompts"
+    },
     {
       category: "BI e Dados",
       items: "Power BI (DAX, Power Query), SQL, PL/SQL (Oracle), Python (Pandas), Looker Studio"

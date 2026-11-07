@@ -51,6 +51,7 @@ import FloatingChat from '../components/FloatingChat';
 import ProjectFocusModal, { ProjectItem } from '../components/ProjectFocusModal';
 import { CompanyMarquee } from '../components/CompanyMarquee';
 import ResumeDownloadModal from '../components/ResumeDownloadModal';
+import Showcase3D from '../components/Showcase3D';
 import { 
   JarvisDataSpine, 
   Card3D, 
@@ -399,8 +400,8 @@ const translations = {
       specialist: "Especialista em",
       rpa: "ERP Senior Sapiens",
       and: "e",
-      dataInsight: "Soluções com LLM (Claude) & Automação",
-      description: "Integrando a robustez dos sistemas corporativos à inteligência artificial de ponta para transformar processos complexos em eficiência mensurável.",
+      dataInsight: "Sistemas Full-Stack com IA (Claude)",
+      description: "Construo sistemas que conectam o ERP ao dia a dia da operação — portais, apps e plataformas SaaS com segurança no banco de dados e IA aplicada — para transformar processos complexos em eficiência mensurável.",
       viewProjects: "Ver Projetos",
       downloadCv: "Baixar Currículo",
       badge: ["Em constante", "evolução"]
@@ -416,7 +417,7 @@ const translations = {
       p3_bold: "Tecnolimp",
       p3_mid: "— grupo paranaense com mais de 30 anos de atuação e liderança em facilities e serviços corporativos — como",
       p3_role: "Analista & Desenvolvedor de Sistemas ERP (Senior Sapiens)",
-      p3_rest: ", atuando na arquitetura de regras de negócio em LSP, customizações SGI e integrações de alta criticidade via APIs e Web Services.",
+      p3_rest: ", atuando na arquitetura de regras de negócio em LSP, customizações SGI, integrações de alta criticidade via APIs e Web Services e no desenvolvimento de sistemas web full-stack (Next.js, Supabase/PostgreSQL, Python) integrados ao ERP.",
       p4: "Com profundo domínio em",
       p4_bold: "LLMs (Large Language Models) e Claude (Anthropic)",
       p4_rest: ", aplico inteligência artificial generativa na automação de processos complexos, orquestração de rotinas e engenharia de contexto. Onde outros veem rotinas lentas ou gargalos operacionais, uno o rigor do ERP à cognição das LLMs para gerar eficiência mensurável e salto de produtividade.",
@@ -433,8 +434,8 @@ const translations = {
     },
     projects: {
       title: "Projetos de Inovação",
-      subtitle: "Explorando a intersecção entre dados e automação",
-      note: "Nota: Todos os dados exibidos nos dashboards são fictícios e anonimizados para fins de demonstração (Compliance LGPD).",
+      subtitle: "Sistemas, dados e IA aplicados a problemas reais",
+      note: "Nota: todos os dados exibidos nas telas são fictícios ou anonimizados (LGPD). Projetos corporativos são apresentados sem identificar a empresa ou seus colaboradores.",
       empty: "Nenhum projeto encontrado nesta categoria.",
       all: "Todos"
     },
@@ -470,8 +471,8 @@ const translations = {
       specialist: "Specialist in",
       rpa: "Senior ERP Sapiens",
       and: "and",
-      dataInsight: "LLM Solutions (Claude) & Automation",
-      description: "Integrating enterprise systems resilience with cutting-edge intelligence to transform complexity into measurable efficiency.",
+      dataInsight: "Full-Stack Systems with AI (Claude)",
+      description: "I build systems that connect the ERP to day-to-day operations — portals, apps and SaaS platforms with database-level security and applied AI — turning complex processes into measurable efficiency.",
       viewProjects: "View Projects",
       downloadCv: "Download CV",
       badge: ["Constantly", "evolving"]
@@ -487,7 +488,7 @@ const translations = {
       p3_bold: "Tecnolimp",
       p3_mid: "— a leading Brazilian group with over 30 years of excellence in facilities and corporate services — as a",
       p3_role: "Systems & ERP (Senior Sapiens) Developer Analyst",
-      p3_rest: ", architecting LSP business rules, SGI customizations, and mission-critical integrations via APIs and Web Services.",
+      p3_rest: ", architecting LSP business rules, SGI customizations, mission-critical integrations via APIs and Web Services, and building full-stack web systems (Next.js, Supabase/PostgreSQL, Python) integrated with the ERP.",
       p4: "With deep expertise in",
       p4_bold: "Large Language Models (LLMs) and Anthropic's Claude",
       p4_rest: ", I deploy generative AI to automate complex processes, orchestrate workflows, and engineer context. Where others see manual friction or operational bottlenecks, I bridge ERP robustness with LLM cognition to deliver measurable efficiency and productivity leaps.",
@@ -504,8 +505,8 @@ const translations = {
     },
     projects: {
       title: "Innovation Projects",
-      subtitle: "Exploring the intersection of data and automation",
-      note: "Note: All data displayed in dashboards are fictitious and anonymized for demonstration purposes (LGPD Compliance).",
+      subtitle: "Systems, data and AI applied to real problems",
+      note: "Note: all data shown in screenshots is fictitious or anonymized (LGPD). Corporate projects are presented without identifying the company or its employees.",
       empty: "No projects found in this category.",
       all: "All"
     },
@@ -544,11 +545,11 @@ const getExperiences = (lang: 'pt' | 'en') => {
       role: lang === 'pt' ? "Analista & Dev de Sistemas (ERP Senior Sapiens)" : "Systems & ERP Developer Analyst (Senior Sapiens)",
       logo: "/tecnolimp_square.svg",
       description: lang === 'pt'
-        ? "Atuação como Analista e Desenvolvedor de Sistemas na matriz da Tecnolimp (líder com 30+ anos no segmento de facilities e terceirização de mão de obra qualificada). Responsável pela arquitetura, evolução e sustentação do ERP Senior (Sapiens), desenvolvimento de regras de negócio em LSP, relatórios gerenciais SGI e integrações estratégicas via APIs REST/SOAP e Web Services. Lidero também a implementação de automações e fluxos assistidos por LLMs (especialmente Claude/Anthropic) para otimização de rotinas administrativas e operacionais corporativas."
-        : "Acting as Systems & ERP Developer Analyst at Tecnolimp headquarters (market leader with 30+ years in facilities and specialized outsourcing). Responsible for architecture, evolution, and maintenance of Senior ERP (Sapiens), developing LSP business rules, SGI managerial reports, and strategic integrations via REST/SOAP APIs and Web Services. I also lead the deployment of automations and LLM-assisted workflows (specifically Claude/Anthropic) to optimize administrative and corporate operational tasks.",
+        ? "Analista e Desenvolvedor de Sistemas na matriz da Tecnolimp (30+ anos em facilities e terceirização). Sustento e evoluo o ERP Senior (Sapiens) — regras de negócio em LSP, relatórios SGI e integrações REST/SOAP — e construo sistemas web integrados a ele: portal corporativo de relatórios com permissão no banco (RLS), gestão de férias e coberturas com trava de demissão via web service, app PWA de registro em campo e um SaaS multi-tenant de frotas com 109 testes automatizados. Padronizei o desenvolvimento com IA (Claude Code: subagentes, skills e auditoria de segurança em 12 riscos)."
+        : "Systems & ERP Developer Analyst at Tecnolimp headquarters (30+ years in facilities and outsourcing). I maintain and evolve the Senior ERP (Sapiens) — LSP business rules, SGI reports and REST/SOAP integrations — and build web systems integrated with it: a corporate reporting portal with database-level permissions (RLS), a vacation & coverage planner that blocks dismissals via web service, a field-registration PWA and a multi-tenant fleet SaaS with 109 automated tests. I standardized AI-assisted development (Claude Code: subagents, skills and a 12-risk security audit).",
       impact: lang === 'pt'
-        ? ["ERP Senior Sapiens (LSP/SGI)", "Soluções com LLMs (Claude)", "Governança & Integrações"]
-        : ["Senior ERP Sapiens (LSP/SGI)", "LLM Solutions (Claude)", "Governance & Integrations"]
+        ? ["ERP Senior Sapiens (LSP/SGI)", "Sistemas Full-Stack + ERP", "Segurança no banco (RLS)", "IA aplicada (Claude)"]
+        : ["Senior ERP Sapiens (LSP/SGI)", "Full-Stack Systems + ERP", "Database Security (RLS)", "Applied AI (Claude)"]
     },
     {
       period: lang === 'pt' ? "Dez/2025 – Jul/2026" : "Dec/2025 – Jul/2026",
@@ -602,6 +603,61 @@ const getExperiences = (lang: 'pt' | 'en') => {
 };
 
 const getProjects = (lang: 'pt' | 'en') => [
+  {
+    category: lang === 'pt' ? "Sistemas" : "Systems",
+    title: lang === 'pt' ? "Rodaz · SaaS de Gestão de Frotas" : "Rodaz · Fleet Management SaaS",
+    description: lang === 'pt'
+      ? "Plataforma SaaS multi-tenant e white-label para frotas corporativas: veículos, condutores, documentos, reservas, inspeções e manutenção. Isolamento por cliente com RLS no PostgreSQL, RBAC com 6 papéis, auditoria por trigger e 109 testes automatizados (unitários + banco, incluindo IDOR/BOLA). CI no GitHub Actions, Docker e auditoria de segurança com nível de 90%."
+      : "Multi-tenant, white-label SaaS for corporate fleets: vehicles, drivers, documents, bookings, inspections and maintenance. Per-tenant isolation with PostgreSQL RLS, 6-role RBAC, trigger-based auditing and 109 automated tests (unit + database, including IDOR/BOLA). CI on GitHub Actions, Docker and a security audit scored at 90%.",
+    tags: ["Next.js 16", "React 19", "TypeScript", "PostgreSQL (RLS)", "Supabase", "Vitest", "Playwright", "GitHub Actions", "Docker"],
+    images: ["/projects/rodaz/capa.jpg", "/projects/rodaz/tela-1.jpg", "/projects/rodaz/tela-2.jpg", "/projects/rodaz/tela-3.jpg", "/projects/rodaz/tela-4.jpg"]
+  },
+  {
+    category: lang === 'pt' ? "Sistemas" : "Systems",
+    title: lang === 'pt' ? "Portal Corporativo de Relatórios" : "Corporate Reporting Portal",
+    description: lang === 'pt'
+      ? "Login único para os relatórios gerenciais de RH, Financeiro, Operações e TI de um grupo de facilities. Workers Python leem o ERP Oracle (Senior) em modo somente leitura e publicam por fila no Supabase; a permissão por área, relatório e papel é aplicada no banco (RLS). Inclui painel de desligamentos por centro de custo, base de conhecimento com busca tolerante a erros e 49 migrations versionadas com testes E2E."
+      : "Single sign-on hub for HR, Finance, Operations and IT reports in a facilities group. Python workers read the Oracle ERP (Senior) in read-only mode and publish through a queue to Supabase; permissions by area, report and role are enforced in the database (RLS). Includes a turnover dashboard by cost center, a typo-tolerant knowledge base and 49 versioned migrations covered by E2E tests.",
+    tags: ["Python", "Oracle", "Supabase", "PostgreSQL (RLS)", "JavaScript", "Playwright", "LGPD"],
+    images: ["/projects/portal-relatorios/capa.jpg", "/projects/portal-relatorios/tela-1.jpg", "/projects/portal-relatorios/tela-2.jpg", "/projects/portal-relatorios/tela-3.jpg", "/projects/portal-relatorios/tela-4.jpg"]
+  },
+  {
+    category: lang === 'pt' ? "Sistemas" : "Systems",
+    title: "Férias & Coberturas",
+    description: lang === 'pt'
+      ? "Módulo de RH para três empresas: planejamento de férias, sugestão de cobertura por proximidade (geocodificação IBGE/ViaCEP), saldo de recesso calculado em Python e trava automática de demissão para quem está de férias ou cobrindo alguém, com aprovação via web service SOAP do ERP. LGPD por papel: o gestor não vê CID nem endereço."
+      : "HR module for three companies: vacation planning, proximity-based coverage suggestions (IBGE/ViaCEP geocoding), Python-computed leave balances and an automatic dismissal lock for employees on vacation or covering someone, approved through the ERP's SOAP web service. Role-based LGPD: managers never see medical codes or addresses.",
+    tags: ["Python", "pandas", "SOAP", "Oracle", "Supabase", "Geocodificação", "LGPD"],
+    images: ["/projects/ferias-coberturas/capa.jpg", "/projects/ferias-coberturas/tela-1.jpg", "/projects/ferias-coberturas/tela-2.jpg", "/projects/ferias-coberturas/tela-3.jpg", "/projects/ferias-coberturas/tela-4.jpg", "/projects/ferias-coberturas/tela-5.jpg"]
+  },
+  {
+    category: lang === 'pt' ? "Sistemas" : "Systems",
+    title: lang === 'pt' ? "App de Campo (PWA)" : "Field App (PWA)",
+    description: lang === 'pt'
+      ? "App mobile para gestores registrarem, no local, serviços e necessidades fora do contrato, com texto rico e até 5 fotos comprimidas no celular. Fila de integração com reenvio e sync bidirecional Oracle ↔ Supabase a cada 30 min; RLS em todas as tabelas e regras (autoria, janela de edição de 2 h) impostas no banco. Arquitetura em camadas com troca de provedor por interface."
+      : "Mobile app for managers to log on-site services and out-of-contract needs, with rich text and up to 5 photos compressed on the device. Integration queue with retries and bidirectional Oracle ↔ Supabase sync every 30 min; RLS on every table and rules (authorship, 2-hour edit window) enforced in the database. Layered architecture with swappable providers.",
+    tags: ["Next.js", "TypeScript", "PWA", "Supabase", "Edge Functions", "Python", "Oracle"],
+    image: "/projects/app-campo/capa.jpg"
+  },
+  {
+    category: lang === 'pt' ? "Sistemas" : "Systems",
+    title: lang === 'pt' ? "Sites Institucionais com Ouvidoria" : "Corporate Websites with Ombudsman",
+    description: lang === 'pt'
+      ? "Três sites institucionais de um grupo de serviços, com orçamento, contato, igualdade salarial e ouvidoria com canal anônimo e consulta de protocolo. API Node/Express + Nodemailer com contas SMTP separadas para a ouvidoria, reCAPTCHA e acessibilidade com VLibras."
+      : "Three corporate websites for a services group, with quotes, contact, pay-equity pages and an ombudsman channel with anonymous reports and protocol tracking. Node/Express + Nodemailer API with separate SMTP accounts for the ombudsman, reCAPTCHA and VLibras accessibility.",
+    tags: ["React", "Vite", "TypeScript", "Tailwind", "Node.js", "Express"],
+    image: "/projects/sites-institucionais/capa.jpg"
+  },
+  {
+    category: lang === 'pt' ? "Automação" : "Automation",
+    title: lang === 'pt' ? "Engenharia de Agentes com Claude Code" : "Agent Engineering with Claude Code",
+    description: lang === 'pt'
+      ? "Padrão reutilizável para desenvolver com IA sem perder qualidade: subagentes por complexidade (Haiku para busca, Sonnet para execução e validação, Opus para planejamento e revisão), skill de auditoria de segurança em 12 riscos com evidência real e skills de início e encerramento de projeto. Menos retrabalho e menos tokens."
+      : "A reusable standard for AI-assisted development without losing quality: subagents by complexity (Haiku for search, Sonnet for execution and validation, Opus for planning and review), a 12-risk security audit skill backed by real evidence, and project kickoff/closing skills. Less rework, fewer tokens.",
+    tags: ["Claude Code", "Claude Opus", "Sonnet", "Haiku", "MCP", "Skills", "Agentes de IA"],
+    github: "https://github.com/Ygor-Silva/modelo-projeto-claude",
+    image: "/projects/agentes-claude/capa.jpg"
+  },
   {
     category: "Dashboards",
     title: "Pipeline de Dados e BI Financeiro",
@@ -749,7 +805,7 @@ const getTechStack = (lang: 'pt' | 'en') => [
     icon: Sparkles,
     color: "text-sky-400",
     skills: [
-      { name: "Claude (Anthropic)", details: lang === 'pt' ? "Claude Opus 5.5 / Sonnet 3.5, Context Window, Artifacts, MCP" : "Claude Opus 5.5 / Sonnet 3.5, Context Window, Artifacts, MCP" },
+      { name: "Claude (Anthropic)", details: lang === 'pt' ? "Claude Code, Opus · Sonnet · Haiku, Subagentes, Skills, MCP" : "Claude Code, Opus · Sonnet · Haiku, Subagents, Skills, MCP" },
       { name: lang === 'pt' ? "Engenharia de Prompts" : "Prompt Engineering", details: lang === 'pt' ? "Few-Shot, CoT, System Prompts, Structured Outputs (JSON)" : "Few-Shot, CoT, System Prompts, Structured Outputs (JSON)" },
       { name: lang === 'pt' ? "Integração & APIs de LLMs" : "LLM APIs & Integration", details: lang === 'pt' ? "Anthropic API, Tool Use, Function Calling, Agentes Autônomos" : "Anthropic API, Tool Use, Function Calling, Autonomous Agents" },
       { name: lang === 'pt' ? "RAG & Automação Cognitiva" : "RAG & Cognitive Automation", details: lang === 'pt' ? "Embeddings, IA conectada a ERPs e automação de rotinas" : "Embeddings, AI connected to ERPs and workflow automation" }
@@ -763,7 +819,8 @@ const getTechStack = (lang: 'pt' | 'en') => [
       { name: "ERP Senior Sapiens", details: lang === 'pt' ? "LSP (Linguagem Senior), SGI, Regras de Negócio e Telas" : "LSP (Senior Language), SGI, Business Rules and UI" },
       { name: lang === 'pt' ? "Web Services & APIs" : "Web Services & APIs", details: lang === 'pt' ? "REST/SOAP, Webhooks, Middleware e Integrações ERP" : "REST/SOAP, Webhooks, Middleware and ERP Integrations" },
       { name: lang === 'pt' ? "Linux & Servidores" : "Linux & Servers", details: lang === 'pt' ? "Ubuntu/Debian, Shell/Bash Scripting, Cron, PDV Linux" : "Ubuntu/Debian, Shell/Bash Scripting, Cron, Linux POS" },
-      { name: lang === 'pt' ? "Full-Stack & Ferramentas" : "Full-Stack & Tools", details: "Node.js, TypeScript, Next.js, Python, Git, Jira" }
+      { name: lang === 'pt' ? "Full-Stack & Ferramentas" : "Full-Stack & Tools", details: "Next.js 16, React 19, TypeScript, Tailwind, Node.js, Python, PWA" },
+      { name: lang === 'pt' ? "Qualidade & DevOps" : "Quality & DevOps", details: "Playwright (E2E), Vitest, GitHub Actions, Docker, Vercel, IIS" }
     ]
   },
   {
@@ -784,6 +841,7 @@ const getTechStack = (lang: 'pt' | 'en') => [
     skills: [
       { name: "Power BI", details: lang === 'pt' ? "DAX Avançado, Power Query, Modelagem Star Schema, Dashboards" : "Advanced DAX, Power Query, Star Schema Modeling, Dashboards" },
       { name: lang === 'pt' ? "SQL & Relacionais" : "SQL & Relational DBs", details: "Oracle PL/SQL, Microsoft SQL Server, PostgreSQL, MySQL" },
+      { name: "PostgreSQL & Supabase", details: lang === 'pt' ? "RLS, RBAC, Multi-tenant, Migrations, Edge Functions, LGPD" : "RLS, RBAC, Multi-tenant, Migrations, Edge Functions, LGPD" },
       { name: "Python Data Stack", details: lang === 'pt' ? "Pandas, NumPy, Pipelines ETL e Limpeza de Dados" : "Pandas, NumPy, ETL Pipelines and Data Cleaning" },
       { name: lang === 'pt' ? "Gestão de SLAs & KPIs" : "SLA & KPI Management", details: lang === 'pt' ? "Monitoramento Operacional em Tempo Real, Análise de MTTR" : "Real-time Operational Monitoring, MTTR Analysis" }
     ]
@@ -1206,6 +1264,9 @@ export default function Portfolio() {
           </div>
         </div>
       </motion.section>
+
+      {/* Showcase 3D: telas reais (dados fictícios) com scroll em perspectiva */}
+      <Showcase3D lang={lang} />
 
       {/* Projects Showcase */}
       <motion.section 

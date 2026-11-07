@@ -29,7 +29,7 @@ const INACTIVITY_CLOSE_MS = 1 * 60 * 1000;
 export default function FloatingChat({ lang = 'pt' }: { lang?: 'pt' | 'en' }) {
   const t = {
     pt: {
-      welcome: 'Olá! Sou o **Ygor.AI**, assistente inteligente do portfólio profissional de Ygor Teixeira. Como posso ajudar você a conhecer as experiências dele em Business Intelligence (Power BI), automações de processos e sustentação de sistemas críticos?',
+      welcome: 'Olá! Sou o **Ygor.AI**, assistente do portfólio de Ygor Teixeira. Posso contar sobre os sistemas que ele constrói integrados ao ERP, os projetos com IA (Claude) e a experiência dele em dados e BI. Por onde começamos?',
       empty: 'A mensagem não pode estar vazia.',
       tooLong: 'Perguntas com até 500 caracteres são ideais para uma resposta completa.',
       loadingErr: 'O servidor está iniciando ou alternando o modelo. Aguarde instantes.',
@@ -37,8 +37,8 @@ export default function FloatingChat({ lang = 'pt' }: { lang?: 'pt' | 'en' }) {
       defaultErr: 'Desculpe, ocorreu uma oscilação na conexão. Pode tentar novamente?',
       questions: [
         "Por que contratar o Ygor?",
-        "Experiência com Power BI e SLAs?",
-        "Projetos de automação e dados?",
+        "Quais sistemas ele já construiu?",
+        "Como ele usa IA no desenvolvimento?",
         "Qual o contato direto para projetos?"
       ],
       inputPlaceholder: "Converse com o Ygor.AI sobre diferenciais, projetos e carreira...",
@@ -62,7 +62,7 @@ export default function FloatingChat({ lang = 'pt' }: { lang?: 'pt' | 'en' }) {
       continueSession: "Ainda estou aqui / Continuar"
     },
     en: {
-      welcome: 'Hello! I am **Ygor.AI**, personal consultative assistant for Ygor Teixeira. How can I help you explore his achievements, skills, and projects in Power BI, SQL, mission-critical system support, and data automation?',
+      welcome: 'Hello! I am **Ygor.AI**, the assistant for Ygor Teixeira\'s portfolio. I can walk you through the ERP-integrated systems he builds, his AI projects with Claude and his data & BI background. Where should we start?',
       empty: 'The message cannot be empty.',
       tooLong: 'Questions up to 500 characters are optimal for a thorough response.',
       loadingErr: 'The server is starting or switching models. Please wait.',
@@ -70,8 +70,8 @@ export default function FloatingChat({ lang = 'pt' }: { lang?: 'pt' | 'en' }) {
       defaultErr: 'Connection fluctuation detected. Please try again.',
       questions: [
         "Why hire Ygor?",
-        "Experience with Power BI and SLAs?",
-        "Automation and data projects?",
+        "Which systems has he built?",
+        "How does he use AI in development?",
         "Direct contact for opportunities?"
       ],
       inputPlaceholder: "Talk with Ygor.AI about achievements, projects, and skills...",

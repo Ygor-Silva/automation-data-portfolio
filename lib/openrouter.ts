@@ -112,13 +112,21 @@ MISSÃO & PERSONALIDADE:
 - **Valorize com inteligência, SEM mentir**: Destaque com orgulho legítimo as conquistas reais do Ygor, enfatizando métricas concretas e diferenciais técnicos. Nunca invente experiências ou tecnologias. A verdade sobre a trajetória dele é sólida.
 
 BASE FACTUAL DE CARREIRA (100% REAL E COMPROVADA):
-- **Nome e Perfil**: Ygor Teixeira, Analista de Business Intelligence e Sustentação de Sistemas em ambientes orientados a SLA.
+- **Nome e Perfil**: Ygor Teixeira, Analista & Desenvolvedor de Sistemas: ERP Senior (Sapiens), sistemas web full-stack integrados ao ERP e IA aplicada (Claude), com base sólida em BI e operação orientada a SLA.
 - **Localização**: Curitiba/PR (aberto a oportunidades remotas ou híbridas).
 - **Contato direto**: ${resumeData.email} | LinkedIn: ${resumeData.linkedin}
 - **Formação Acadêmica**: Cursando Análise e Desenvolvimento de Sistemas (Universidade Estácio de Sá, 2023–2027) + Formação Full Stack Developer (EBAC).
 - **Core de Competências**: Power BI (DAX avançado, Power Query, modelagem dimensional em estrela), SQL e PL/SQL (Oracle), Sustentação de ERP Senior (módulos Gestão Empresarial e Vetorh, regras LSP, telas/relatórios SGI), Python para Dados (Pandas, automação de relatórios, pipelines ETL), ITSM/ITIL (incidentes, requisições, SLAs) e integrações via Web Services/APIs REST.
 
 MÉTRICAS E CASES DE SUCESSO:
+0. **Tecnolimp (atual, desde set/2026 — Analista & Desenvolvedor de Sistemas)**:
+   - Sustenta o ERP Senior (LSP, SGI, integrações REST/SOAP) e constrói sistemas web integrados a ele.
+   - **Rodaz**: SaaS multi-tenant e white-label de gestão de frotas (Next.js 16, PostgreSQL com RLS, RBAC com 6 papéis), **109 testes automatizados**, CI no GitHub Actions, Docker e auditoria de segurança com **nível de 90%**.
+   - **Portal Corporativo de Relatórios**: login único para RH, Financeiro, Operações e TI; workers Python leem o Oracle e publicam por fila no Supabase; permissão por papel aplicada no banco; **49 migrations** versionadas e testes E2E.
+   - **Férias & Coberturas**: planejamento de férias de 3 empresas, cobertura por proximidade (geocodificação), saldo de recesso em Python e trava de demissão via web service SOAP do ERP, com LGPD por papel.
+   - **App de Campo (PWA)**: registro em campo com fotos e sync bidirecional Oracle ↔ Supabase a cada 30 min.
+   - **Engenharia de Agentes com Claude Code**: subagentes por complexidade (Haiku, Sonnet, Opus), skills e auditoria de segurança em 12 riscos.
+   - Projetos corporativos são apresentados sem dados reais; nunca cite nomes de colaboradores ou dados internos.
 1. **Hepta Tecnologia (Suporte N2 / Analista Pleno)**:
    - Garantiu **98% de cumprimento de SLA** no atendimento a chamados de missão crítica.
    - Conduziu análise detalhada em histórico de dados no Jira, **reduzindo em 20% os incidentes recorrentes** ao atacar a causa raiz.
@@ -136,9 +144,9 @@ MÉTRICAS E CASES DE SUCESSO:
 
 RESPOSTA ESTRATÉGICA PARA "POR QUE CONTRATAR O YGOR?":
 Quando o usuário perguntar "Por que contratar o Ygor?", responda de forma DIRETA, RESUMIDA e elegante (máximo de 3 tópicos breves):
-1. **Ponte Negócio + BI + Back-end**: Não cria só telas; domina a regra de ERP Senior, modela em Power BI (DAX) e investiga a raiz dos dados no Oracle (PL/SQL).
-2. **Foco Comprovado em Resultados**: 98% de SLA e -20% de incidentes recorrentes na Hepta, atuando na causa raiz.
-3. **Automação & Kaizen**: Automatiza rotinas manuais com Python e traz a cultura de qualidade da Mercedes-Benz.
+1. **Ponte ERP + Full-Stack + Dados**: Domina a regra do ERP Senior e entrega sistemas completos integrados a ele (Next.js, PostgreSQL/Supabase, Python), do levantamento ao deploy.
+2. **Segurança e qualidade de verdade**: RLS e RBAC no banco, multi-tenant, 109 testes automatizados e auditorias de segurança; 98% de SLA e -20% de incidentes recorrentes na Hepta.
+3. **IA aplicada com método**: Usa Claude Code com subagentes e skills para entregar mais rápido sem perder qualidade, com a cultura Kaizen da Mercedes-Benz.
 Finalize com uma breve frase convidando para bater um papo ou conectar no LinkedIn.
 
 DIRETRIZES DE ESTILO:
@@ -364,12 +372,12 @@ export async function executeMultiModelChatStream({
 
   // Final Resilient Safe Guard: Dynamic contextual response based on resumeData if all external APIs are temporarily unavailable
   const lastUserMessage = messages[messages.length - 1]?.text?.toLowerCase() || '';
-  let directAnswer = "Olá! Ygor Teixeira é Analista de Business Intelligence e Sustentação de Sistemas com foco em Power BI (DAX avançado), Oracle (PL/SQL) e ERP Senior, garantindo 98% de SLA e redução de 20% em incidentes recorrentes na Hepta Tecnologia. Gostaria de saber mais sobre os projetos dele?";
+  let directAnswer = "Olá! Ygor Teixeira é Analista & Desenvolvedor de Sistemas: ERP Senior, sistemas full-stack integrados ao ERP (Next.js, PostgreSQL/Supabase, Python) e IA aplicada com Claude. Entre os projetos estão um SaaS multi-tenant de frotas com 109 testes automatizados e um portal corporativo de relatórios integrado ao Oracle. Quer conhecer algum deles?";
 
   if (lastUserMessage.includes('power bi') || lastUserMessage.includes('bi') || lastUserMessage.includes('dax') || lastUserMessage.includes('pain')) {
     directAnswer = "Ygor é especialista em **Power BI** com modelagem dimensional em estrela, DAX avançado e Power Query. Desenvolveu painéis de SLA e volumetria para 8 clientes estratégicos na Hepta, gerando 15% de agilidade no atendimento e automações em Python.";
   } else if (lastUserMessage.includes('por que') || lastUserMessage.includes('contrat') || lastUserMessage.includes('diferenc')) {
-    directAnswer = "Principais diferenciais do Ygor:\n1. **Ponte Negócio + BI + Back-end**: Domina regra de ERP Senior, modelagem em Power BI e investigação profunda no Oracle (PL/SQL).\n2. **Foco em Resultados**: 98% de cumprimento de SLA e -20% de incidentes na Hepta.\n3. **Automação**: Elimina processos manuais com scripts Python e ETL.";
+    directAnswer = "Principais diferenciais do Ygor:\n1. **ERP + Full-Stack + Dados**: domina a regra do ERP Senior e entrega sistemas completos integrados a ele.\n2. **Segurança e qualidade**: RLS/RBAC no banco, 109 testes automatizados no SaaS de frotas, 98% de SLA na Hepta.\n3. **IA aplicada com método**: Claude Code com subagentes e skills.";
   } else if (lastUserMessage.includes('contato') || lastUserMessage.includes('email') || lastUserMessage.includes('linkedin') || lastUserMessage.includes('falar')) {
     directAnswer = `Você pode falar diretamente com o Ygor pelo e-mail **${resumeData.email}** ou conectar via **LinkedIn: ${resumeData.linkedin}**. Ele está disponível para novos desafios e projetos!`;
   }
