@@ -1113,18 +1113,18 @@ export default function Portfolio() {
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="relative mt-8 md:mt-0"
+            className="relative order-first md:order-none"
           >
             <ArcReactorFrame>
-              <div className="w-56 h-56 md:w-80 md:h-80 rounded-full overflow-hidden border-4 border-cyan-400/40 p-2 bg-stone-950/90 shadow-2xl shadow-cyan-500/20 backdrop-blur-md relative z-10">
+              <div className="w-40 h-40 sm:w-56 sm:h-56 md:w-80 md:h-80 rounded-full overflow-hidden border-4 border-cyan-400/40 p-2 bg-stone-950/90 shadow-2xl shadow-cyan-500/20 backdrop-blur-md relative z-10">
                 <div className="w-full h-full rounded-full overflow-hidden relative">
                   <Image 
-                    src="/ygor.jpg" 
+                    src="/ygor-perfil.jpg" 
                     alt="Ygor Teixeira" 
                     fill
                     priority
                     quality={100}
-                    sizes="(max-width: 768px) 256px, 320px"
+                    sizes="(max-width: 640px) 160px, (max-width: 768px) 224px, 320px"
                     className="object-cover transition-all duration-700 hover:scale-105"
                     referrerPolicy="no-referrer"
                   />
@@ -1132,7 +1132,7 @@ export default function Portfolio() {
                 </div>
               </div>
             </ArcReactorFrame>
-            <div className="absolute -bottom-4 -right-4 bg-stone-900/95 border border-cyan-500/30 p-3.5 rounded-xl backdrop-blur-md shadow-xl z-20">
+            <div className="hidden sm:block absolute -bottom-4 -right-4 bg-stone-900/95 border border-cyan-500/30 p-3.5 rounded-xl backdrop-blur-md shadow-xl z-20">
               <div className="flex items-center gap-3">
                 <Rocket className="text-cyan-400 w-5 h-5" />
                 <span className="text-[11px] font-mono font-bold uppercase tracking-widest text-white leading-tight">

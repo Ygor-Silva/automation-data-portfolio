@@ -56,7 +56,7 @@ export default function ResumeDownloadModal({
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `Curriculo_Ygor_Teixeira_Analista_BI_ITSM.pdf`;
+      a.download = `Curriculo_Ygor_Teixeira_Desenvolvedor_de_Sistemas.pdf`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
