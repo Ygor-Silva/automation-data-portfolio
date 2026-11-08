@@ -289,14 +289,14 @@ export function ArcReactorFrame({ children }: { children: React.ReactNode }) {
       <motion.div
         animate={{ rotate: 360 }}
         transition={{ repeat: Infinity, duration: 25, ease: 'linear' }}
-        className="absolute w-72 h-72 md:w-96 md:h-96 rounded-full border border-dashed border-cyan-400/30 pointer-events-none"
+        className="absolute w-52 h-52 sm:w-72 sm:h-72 md:w-96 md:h-96 rounded-full border border-dashed border-cyan-400/30 pointer-events-none"
       />
 
       {/* Counter-rotating Target Ring with Tick Marks */}
       <motion.div
         animate={{ rotate: -360 }}
         transition={{ repeat: Infinity, duration: 18, ease: 'linear' }}
-        className="absolute w-80 h-80 md:w-[410px] md:h-[410px] rounded-full border border-cyan-500/20 pointer-events-none flex items-center justify-between px-1"
+        className="absolute w-60 h-60 sm:w-80 sm:h-80 md:w-[410px] md:h-[410px] rounded-full border border-cyan-500/20 pointer-events-none flex items-center justify-between px-1"
       >
         <span className="text-[8px] font-mono text-cyan-400/70">00°</span>
         <span className="text-[8px] font-mono text-cyan-400/70">90°</span>
@@ -308,7 +308,7 @@ export function ArcReactorFrame({ children }: { children: React.ReactNode }) {
       <motion.div
         animate={{ scale: [1, 1.04, 1] }}
         transition={{ repeat: Infinity, duration: 4, ease: 'easeInOut' }}
-        className="absolute w-64 h-64 md:w-88 md:h-88 rounded-full border-2 border-cyan-400/40 shadow-[0_0_50px_rgba(6,182,212,0.25)] pointer-events-none"
+        className="absolute w-48 h-48 sm:w-64 sm:h-64 md:w-88 md:h-88 rounded-full border-2 border-cyan-400/40 shadow-[0_0_50px_rgba(6,182,212,0.25)] pointer-events-none"
       />
 
       {/* Target Reticle Crosshairs */}

@@ -29,10 +29,27 @@ export const metadata: Metadata = {
   twitter: { card: 'summary_large_image', images: ['/og.jpg'] },
 };
 
+// Dados estruturados (schema.org) para buscadores entenderem quem é o dono do site.
+const personJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: 'Ygor Teixeira',
+  jobTitle: 'Analista e Desenvolvedor de Sistemas',
+  url: 'https://ygor-teixeira-portfolio.vercel.app',
+  image: 'https://ygor-teixeira-portfolio.vercel.app/ygor-perfil.jpg',
+  address: { '@type': 'PostalAddress', addressLocality: 'Curitiba', addressRegion: 'PR', addressCountry: 'BR' },
+  sameAs: ['https://www.linkedin.com/in/ygor-silva-developer/', 'https://github.com/Ygor-Silva'],
+  knowsAbout: ['ERP Senior Sapiens', 'Oracle PL/SQL', 'Next.js', 'TypeScript', 'PostgreSQL', 'Supabase', 'Python', 'Power BI', 'Claude Code'],
+};
+
 export default function RootLayout({children}: {children: React.ReactNode}) {
   return (
     <html lang="pt-BR" className={`${inter.variable} ${jetbrainsMono.variable} scroll-smooth`}>
       <body suppressHydrationWarning className="font-sans antialiased">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
+        />
         {children}
         <Analytics />
       </body>
