@@ -21,6 +21,8 @@ interface Slide {
   text: string;
   metric: [string, string];
   chips: string[];
+  status: string;
+  live: boolean;
 }
 
 const getSlides = (lang: Lang): Slide[] => [
@@ -32,7 +34,9 @@ const getSlides = (lang: Lang): Slide[] => [
       ? 'Oracle → Python → Supabase. Cada área vê só o que pode, com a permissão aplicada no banco.'
       : 'Oracle → Python → Supabase. Each area sees only what it may, enforced in the database.',
     metric: ['49', lang === 'pt' ? 'migrations versionadas' : 'versioned migrations'],
-    chips: ['RLS', 'Python', 'E2E']
+    chips: ['RLS', 'Python', 'E2E'],
+    status: lang === 'pt' ? 'Em produção' : 'In production',
+    live: true
   },
   {
     image: '/projects/ferias-coberturas/tela-2.jpg',
@@ -42,7 +46,9 @@ const getSlides = (lang: Lang): Slide[] => [
       ? 'Cobertura sugerida por proximidade e trava de demissão integrada ao ERP via web service.'
       : 'Proximity-based coverage and a dismissal lock integrated with the ERP via web service.',
     metric: ['3', lang === 'pt' ? 'empresas atendidas' : 'companies served'],
-    chips: ['SOAP', lang === 'pt' ? 'Geocodificação' : 'Geocoding', 'LGPD']
+    chips: ['SOAP', lang === 'pt' ? 'Geocodificação' : 'Geocoding', 'LGPD'],
+    status: lang === 'pt' ? 'Em desenvolvimento' : 'In development',
+    live: false
   },
   {
     image: '/projects/rodaz/tela-2.jpg',
@@ -52,7 +58,9 @@ const getSlides = (lang: Lang): Slide[] => [
       ? 'Frotas white-label com isolamento por cliente, RBAC e CI/CD do commit ao deploy.'
       : 'White-label fleets with per-tenant isolation, RBAC and CI/CD from commit to deploy.',
     metric: ['109', lang === 'pt' ? 'testes automatizados' : 'automated tests'],
-    chips: ['Next.js 16', 'PostgreSQL', 'Docker']
+    chips: ['Next.js 16', 'PostgreSQL', 'Docker'],
+    status: lang === 'pt' ? 'Em homologação' : 'In staging (UAT)',
+    live: false
   }
 ];
 
@@ -125,7 +133,7 @@ export default function Showcase3D({ lang }: { lang: Lang }) {
         <Boxes className="w-6 h-6" />
       </div>
       <h2 className="text-3xl md:text-4xl font-black tracking-tight text-white uppercase font-mono">
-        {lang === 'pt' ? 'Sistemas em Produção' : 'Systems in Production'}
+        {lang === 'pt' ? 'Sistemas em Destaque' : 'Featured Systems'}
       </h2>
       <div className="h-px flex-1 bg-gradient-to-r from-cyan-400/40 via-cyan-400/10 to-transparent ml-4" />
     </div>
@@ -144,7 +152,7 @@ export default function Showcase3D({ lang }: { lang: Lang }) {
                   <Image src={s.image} alt={s.title} fill sizes="(max-width: 768px) 100vw, 33vw" className="object-cover object-top" />
                 </div>
                 <div className="p-5">
-                  <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-cyan-400">{s.kicker}</p>
+                  <p className="text-[10px] font-mono uppercase tracking-[0.2em] text-cyan-400">{s.kicker} · {s.status}</p>
                   <h3 className="mt-2 text-xl font-bold text-white">{s.title}</h3>
                   <p className="mt-2 text-sm text-stone-400">{s.text}</p>
                 </div>
@@ -159,7 +167,7 @@ export default function Showcase3D({ lang }: { lang: Lang }) {
   const s = slides[active];
 
   return (
-    <section id="showcase" ref={ref} className="relative h-[300vh] px-6 overflow-x-clip scroll-mt-24" aria-label={lang === 'pt' ? 'Sistemas em produção' : 'Systems in production'}>
+    <section id="showcase" ref={ref} className="relative h-[300vh] px-6 overflow-x-clip scroll-mt-24" aria-label={lang === 'pt' ? 'Sistemas em destaque' : 'Featured systems'}>
       <div className="sticky top-0 h-screen flex flex-col justify-center py-20 md:py-0">
         <div className="max-w-6xl mx-auto w-full">
           {heading}
@@ -168,7 +176,13 @@ export default function Showcase3D({ lang }: { lang: Lang }) {
             {/* Legenda do projeto atual */}
             <div className="order-2 lg:order-1 min-h-[190px]">
               <motion.div key={active} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.45, ease: 'easeOut' }}>
-                <p className="text-[11px] font-mono uppercase tracking-[0.22em] text-cyan-400">{s.kicker}</p>
+                <div className="flex flex-wrap items-center gap-3">
+                  <p className="text-[11px] font-mono uppercase tracking-[0.22em] text-cyan-400">{s.kicker}</p>
+                  <span className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-[10px] font-mono uppercase tracking-wider ${s.live ? 'border-emerald-400/40 text-emerald-300' : 'border-amber-400/40 text-amber-300'}`}>
+                    <span className={`h-1.5 w-1.5 rounded-full ${s.live ? 'bg-emerald-400' : 'bg-amber-400'}`} />
+                    {s.status}
+                  </span>
+                </div>
                 <h3 className="mt-3 text-3xl md:text-5xl font-black tracking-tight text-white">{s.title}</h3>
                 <p className="mt-4 text-stone-400 leading-relaxed max-w-md">{s.text}</p>
                 <div className="mt-6 flex items-end gap-3">

@@ -606,6 +606,7 @@ const getProjects = (lang: 'pt' | 'en') => [
   {
     category: lang === 'pt' ? "Sistemas" : "Systems",
     title: lang === 'pt' ? "Rodaz · SaaS de Gestão de Frotas" : "Rodaz · Fleet Management SaaS",
+    status: lang === 'pt' ? "Em homologação" : "In staging (UAT)",
     description: lang === 'pt'
       ? "Plataforma SaaS multi-tenant e white-label para frotas corporativas: veículos, condutores, documentos, reservas, inspeções e manutenção. Isolamento por cliente com RLS no PostgreSQL, RBAC com 6 papéis, auditoria por trigger e 109 testes automatizados (unitários + banco, incluindo IDOR/BOLA). CI no GitHub Actions, Docker e auditoria de segurança com nível de 90%."
       : "Multi-tenant, white-label SaaS for corporate fleets: vehicles, drivers, documents, bookings, inspections and maintenance. Per-tenant isolation with PostgreSQL RLS, 6-role RBAC, trigger-based auditing and 109 automated tests (unit + database, including IDOR/BOLA). CI on GitHub Actions, Docker and a security audit scored at 90%.",
@@ -615,6 +616,7 @@ const getProjects = (lang: 'pt' | 'en') => [
   {
     category: lang === 'pt' ? "Sistemas" : "Systems",
     title: lang === 'pt' ? "Portal Corporativo de Relatórios" : "Corporate Reporting Portal",
+    status: lang === 'pt' ? "Em produção" : "In production",
     description: lang === 'pt'
       ? "Login único para os relatórios gerenciais de RH, Financeiro, Operações e TI de um grupo de facilities. Workers Python leem o ERP Oracle (Senior) em modo somente leitura e publicam por fila no Supabase; a permissão por área, relatório e papel é aplicada no banco (RLS). Inclui painel de desligamentos por centro de custo, base de conhecimento com busca tolerante a erros e 49 migrations versionadas com testes E2E."
       : "Single sign-on hub for HR, Finance, Operations and IT reports in a facilities group. Python workers read the Oracle ERP (Senior) in read-only mode and publish through a queue to Supabase; permissions by area, report and role are enforced in the database (RLS). Includes a turnover dashboard by cost center, a typo-tolerant knowledge base and 49 versioned migrations covered by E2E tests.",
@@ -624,6 +626,7 @@ const getProjects = (lang: 'pt' | 'en') => [
   {
     category: lang === 'pt' ? "Sistemas" : "Systems",
     title: "Férias & Coberturas",
+    status: lang === 'pt' ? "Em desenvolvimento" : "In development",
     description: lang === 'pt'
       ? "Módulo de RH para três empresas: planejamento de férias, sugestão de cobertura por proximidade (geocodificação IBGE/ViaCEP), saldo de recesso calculado em Python e trava automática de demissão para quem está de férias ou cobrindo alguém, com aprovação via web service SOAP do ERP. LGPD por papel: o gestor não vê CID nem endereço."
       : "HR module for three companies: vacation planning, proximity-based coverage suggestions (IBGE/ViaCEP geocoding), Python-computed leave balances and an automatic dismissal lock for employees on vacation or covering someone, approved through the ERP's SOAP web service. Role-based LGPD: managers never see medical codes or addresses.",
@@ -633,6 +636,7 @@ const getProjects = (lang: 'pt' | 'en') => [
   {
     category: lang === 'pt' ? "Sistemas" : "Systems",
     title: lang === 'pt' ? "App de Campo (PWA)" : "Field App (PWA)",
+    status: lang === 'pt' ? "Em homologação" : "In staging (UAT)",
     description: lang === 'pt'
       ? "App mobile para gestores registrarem, no local, serviços e necessidades fora do contrato, com texto rico e até 5 fotos comprimidas no celular. Fila de integração com reenvio e sync bidirecional Oracle ↔ Supabase a cada 30 min; RLS em todas as tabelas e regras (autoria, janela de edição de 2 h) impostas no banco. Arquitetura em camadas com troca de provedor por interface."
       : "Mobile app for managers to log on-site services and out-of-contract needs, with rich text and up to 5 photos compressed on the device. Integration queue with retries and bidirectional Oracle ↔ Supabase sync every 30 min; RLS on every table and rules (authorship, 2-hour edit window) enforced in the database. Layered architecture with swappable providers.",
@@ -651,6 +655,7 @@ const getProjects = (lang: 'pt' | 'en') => [
   {
     category: lang === 'pt' ? "Automação" : "Automation",
     title: lang === 'pt' ? "Engenharia de Agentes com Claude Code" : "Agent Engineering with Claude Code",
+    status: lang === 'pt' ? "Em uso" : "In use",
     description: lang === 'pt'
       ? "Padrão reutilizável para desenvolver com IA sem perder qualidade: subagentes por complexidade (Haiku para busca, Sonnet para execução e validação, Opus para planejamento e revisão), skill de auditoria de segurança em 12 riscos com evidência real e skills de início e encerramento de projeto. Menos retrabalho e menos tokens."
       : "A reusable standard for AI-assisted development without losing quality: subagents by complexity (Haiku for search, Sonnet for execution and validation, Opus for planning and review), a 12-risk security audit skill backed by real evidence, and project kickoff/closing skills. Less rework, fewer tokens.",

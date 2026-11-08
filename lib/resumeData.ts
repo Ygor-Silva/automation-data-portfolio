@@ -32,29 +32,30 @@ export interface ResumeData {
 
 export const resumeData: ResumeData = {
   name: "YGOR TEIXEIRA",
-  title: "Analista & Desenvolvedor de Sistemas | ERP Senior, Full-Stack e IA",
+  title: "Analista e Desenvolvedor de Sistemas | ERP Senior · Full-Stack · Dados · IA",
   email: "ygor-1996@hotmail.com",
   location: "Curitiba, PR · Remoto",
   linkedin: "https://www.linkedin.com/in/ygor-silva-developer/",
   portfolio: "https://ygor-teixeira-portfolio.vercel.app",
-  profile: "Analista e Desenvolvedor de Sistemas que conecta o ERP Senior (Sapiens) ao dia a dia da operação. Desenvolvo regras em LSP e integrações REST/SOAP e construo sistemas web full-stack (Next.js, TypeScript, Supabase/PostgreSQL, Python) com segurança aplicada no banco (RLS, RBAC, LGPD) e testes automatizados. Trago base sólida em BI (Power BI, SQL/PL-SQL) e operação orientada a SLA, e uso IA (Claude Code) com padrão de qualidade e segurança.",
+  profile: "Analista e Desenvolvedor de Sistemas com experiência em ERP Senior (LSP, SGI, Web Services), desenvolvimento web full-stack e Business Intelligence. Construo sistemas integrados ao ERP Oracle com segurança aplicada no banco de dados (RLS, RBAC, LGPD) e testes automatizados, do levantamento de requisitos com a área de negócio até a publicação. Trago resultados em ambientes orientados a SLA e uso IA (Claude Code) no desenvolvimento com padrão de qualidade e revisão.",
   highlights: [
-    "SaaS multi-tenant de gestão de frotas com isolamento por cliente (RLS), RBAC com 6 papéis, 109 testes automatizados e auditoria de segurança com nível de 90%.",
-    "Portal corporativo de relatórios integrado ao ERP Oracle por workers Python, com permissão por papel aplicada no banco e 49 migrations versionadas.",
     "98% de cumprimento de SLA e redução de 20% em chamados recorrentes a partir da análise de dados históricos de incidentes (Hepta).",
-    "Dashboards em Power BI para monitoramento de SLAs e KPIs de 8 clientes estratégicos, com melhoria de 15% na velocidade de resolução de incidentes (Hepta)."
+    "Dashboards em Power BI para monitoramento de SLAs e KPIs de 8 clientes estratégicos, com melhoria de 15% na velocidade de resolução de incidentes (Hepta).",
+    "Portal corporativo de relatórios em produção, integrado ao ERP Oracle, com permissão por área e papel aplicada no banco e 49 migrations versionadas (Tecnolimp).",
+    "SaaS multi-tenant de gestão de frotas com 109 testes automatizados e CI/CD, em homologação (Tecnolimp)."
   ],
   experiences: [
     {
-      role: "Analista & Desenvolvedor de Sistemas (ERP Senior Sapiens)",
+      role: "Analista e Desenvolvedor de Sistemas (ERP Senior)",
       period: "Set/2026 – Atual",
       company: "Tecnolimp",
       bullets: [
-        "Sustentação e evolução do ERP Senior (Sapiens): regras de negócio em LSP, relatórios SGI e integrações REST/SOAP e Web Services.",
-        "Portal corporativo de relatórios (RH, Financeiro, Operações, TI): workers Python leem o Oracle e publicam por fila no Supabase; permissão por área, relatório e papel via RLS; testes E2E com Playwright.",
-        "Férias & Coberturas: planejamento, sugestão de cobertura por geocodificação, cálculo de saldo de recesso em Python e trava de demissão via web service SOAP do Senior.",
-        "SaaS multi-tenant de frotas (Next.js 16, PostgreSQL/RLS, GitHub Actions, Docker) e app PWA de registro em campo com sync bidirecional com o ERP.",
-        "Padronização do desenvolvimento com IA (Claude Code): subagentes por complexidade, skills e auditoria de segurança em 12 riscos."
+        "Sustentação e evolução do ERP Senior (Sapiens): regras de negócio em LSP, relatórios SGI e integrações via Web Services.",
+        "Portal Corporativo de Relatórios (em produção): login único para RH, Financeiro, Operacional e TI; workers em Python leem o Oracle em modo somente leitura e publicam por fila no Supabase (PostgreSQL); permissão por área, relatório e papel aplicada com Row Level Security; testes E2E com Playwright.",
+        "Férias e Coberturas (em desenvolvimento): módulo de RH para 3 empresas do grupo com planejamento de férias, sugestão de cobertura por geolocalização, cálculo de saldo de recesso em Python e trava de demissão integrada ao Senior via web service SOAP.",
+        "Rodaz (em homologação): SaaS multi-tenant de gestão de frotas em Next.js 16, TypeScript e PostgreSQL, com isolamento por cliente (RLS), RBAC com 6 papéis, 109 testes automatizados, GitHub Actions e Docker.",
+        "App de registro em campo (em homologação): PWA em Next.js e Supabase com fotos e fila de integração bidirecional com o Oracle.",
+        "Padronização do desenvolvimento assistido por IA com Claude Code: subagentes por complexidade, skills reutilizáveis e auditoria de segurança em 12 riscos."
       ]
     },
     {
@@ -125,6 +126,11 @@ export const resumeData: ResumeData = {
       course: "Full Stack Developer",
       institution: "EBAC – Escola Britânica de Artes Criativas e Tecnologia",
       period: "2022–2023"
+    },
+    {
+      course: "Google Data Analytics Professional Certificate",
+      institution: "Google",
+      period: "Certificação"
     }
   ],
   skills: [
@@ -134,7 +140,7 @@ export const resumeData: ResumeData = {
     },
     {
       category: "IA aplicada",
-      items: "Claude Code (subagentes, skills, MCP), Anthropic API, engenharia de prompts"
+      items: "Claude Code (subagentes, skills, MCP), agentes de IA, engenharia de prompts"
     },
     {
       category: "BI e Dados",

@@ -31,6 +31,7 @@ export interface ProjectItem {
   githubIcon?: any;
   image?: string;
   images?: string[];
+  status?: string;
 }
 
 interface ProjectFocusModalProps {
@@ -282,7 +283,7 @@ export default function ProjectFocusModal({
                   </span>
                   <span className="text-xs font-mono text-stone-500 flex items-center gap-1.5">
                     <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-                    {lang === 'pt' ? 'Produção / Homologado' : 'Production / Approved'}
+                    {project.status ?? (lang === 'pt' ? 'Produção / Homologado' : 'Production / Approved')}
                   </span>
                 </div>
 
