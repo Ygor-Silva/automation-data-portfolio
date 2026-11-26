@@ -407,10 +407,40 @@ const blueprintsMap: Record<string, ProjectBlueprint> = {
         engineeringRules: ["Rodapé mostra a última atualização com o ERP", "Erros visíveis e reprocessáveis"],
         slaOrLatency: "Oracle ↔ Supabase" }
     ]
+  },
+
+  // 9. Documentos de Faturamento
+  "Documentos de Faturamento": {
+    projectTitle: "Documentos de Faturamento",
+    systemName: "BILLING-DOCS-PACKAGER",
+    architectureType: "Fila → Worker Python → PDFs + Conferência → Pacote do Cliente",
+    nodes: [
+      { id: "fila", step: 1, name: "Pedido do Pacote", category: "source",
+        tech: ["Portal web", "Supabase", "RLS por papel"], protocol: "Fila por RPC",
+        summary: "A equipe escolhe o mês e o contrato e pede o pacote; anexos grandes sobem em partes e o tipo é conferido pelos bytes.",
+        engineeringRules: ["Só a Coordenação configura contratos e assinaturas", "Cada download fica registrado"],
+        slaOrLatency: "Sob demanda" },
+      { id: "worker", step: 2, name: "Serviço Python (leitura do ERP)", category: "processing",
+        tech: ["Python", "oracledb", "reportlab"], protocol: "Somente leitura no Oracle",
+        summary: "Lê a folha do contrato no ERP e gera os relatórios em PDF no layout de cada modelo, com logo e assinatura na posição certa.",
+        engineeringRules: ["Relatórios comparados com os do ERP antes de valer", "Oracle somente leitura"],
+        slaOrLatency: "5 relatórios por contrato" },
+      { id: "conf", step: 3, name: "Leitura e Conferência", category: "storage",
+        tech: ["pypdf", "CSV do banco", "Regras de conferência"], protocol: "Batch no mesmo pedido",
+        summary: "Lê os anexos e cruza com a folha: quem está no cálculo, no FGTS e no retorno do banco; aponta crédito não pago e documento vencido.",
+        engineeringRules: ["Divergência aparece na tela antes do envio", "Pacote incompleto sai marcado como incompleto"],
+        slaOrLatency: "Erros e avisos por contrato" },
+      { id: "pacote", step: 4, name: "Pacote para o Cliente", category: "output",
+        tech: ["zip", "Termo versionado (hash)"], protocol: "Download autenticado",
+        summary: "Junta tudo na ordem que o cliente pede; a assinatura só entra depois do aceite do termo, com versão e hash guardados.",
+        engineeringRules: ["Aceite revogável a qualquer momento", "Arquivo disponível por 24 h"],
+        slaOrLatency: "Auditoria de segurança: 89%" }
+    ]
   }
 };
 
 // Títulos em inglês apontam para o mesmo blueprint
+blueprintsMap["Billing Documents"] = blueprintsMap["Documentos de Faturamento"];
 blueprintsMap["Rodaz · Fleet Management SaaS"] = blueprintsMap["Rodaz · SaaS de Gestão de Frotas"];
 blueprintsMap["Corporate Reporting Portal"] = blueprintsMap["Portal Corporativo de Relatórios"];
 blueprintsMap["Field App (PWA)"] = blueprintsMap["App de Campo (PWA)"];
