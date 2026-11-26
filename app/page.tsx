@@ -52,11 +52,11 @@ import ProjectFocusModal, { ProjectItem } from '../components/ProjectFocusModal'
 import { CompanyMarquee } from '../components/CompanyMarquee';
 import ResumeDownloadModal from '../components/ResumeDownloadModal';
 import Showcase3D from '../components/Showcase3D';
+import MagneticDotField from '../components/MagneticDotField';
 import { 
   JarvisDataSpine, 
   Card3D, 
   ArcReactorFrame, 
-  PerspectiveCyberGrid 
 } from '../components/JarvisHUD';
 
 interface CustomStatsTooltipProps {
@@ -95,43 +95,14 @@ const CustomStatsTooltip = ({ active, payload, lang, totalProjects }: CustomStat
   return null;
 };
 
-const InteractiveBackground = () => {
-  const [mousePosition, setMousePosition] = React.useState({ x: 0, y: 0 });
-
-  React.useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      setMousePosition({ x: e.clientX, y: e.clientY });
-    };
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, []);
-
-  return (
-    <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-      <PerspectiveCyberGrid />
-      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-cyan-500/15 blur-[120px] rounded-full" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-violet-500/15 blur-[120px] rounded-full" />
-      
-      {/* Interactive mouse follow glow */}
-      <motion.div
-        className="absolute top-0 left-0 w-[500px] h-[500px] bg-cyan-400/10 rounded-full blur-[100px] mix-blend-screen"
-        animate={{
-          x: mousePosition.x - 250,
-          y: mousePosition.y - 250,
-        }}
-        transition={{ type: "tween", ease: "linear", duration: 0.1 }}
-      />
-      <motion.div
-        className="absolute top-0 left-0 w-[300px] h-[300px] bg-violet-400/10 rounded-full blur-[80px] mix-blend-screen"
-        animate={{
-          x: mousePosition.x - 150,
-          y: mousePosition.y - 150,
-        }}
-        transition={{ type: "tween", ease: "linear", duration: 0.3 }}
-      />
-    </div>
-  );
-};
+const InteractiveBackground = () => (
+  <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+    <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-cyan-500/15 blur-[120px] rounded-full" />
+    <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-violet-500/15 blur-[120px] rounded-full" />
+    {/* Campo magnético: grade de pontos que reage ao cursor e ao clique */}
+    <MagneticDotField />
+  </div>
+);
 
 const ScrollToTop = () => {
   const [isVisible, setIsVisible] = React.useState(false);
@@ -632,6 +603,16 @@ const getProjects = (lang: 'pt' | 'en') => [
       : "HR module for three companies: vacation planning, proximity-based coverage suggestions (IBGE/ViaCEP geocoding), Python-computed leave balances and an automatic dismissal lock for employees on vacation or covering someone, approved through the ERP's SOAP web service. Role-based LGPD: managers never see medical codes or addresses.",
     tags: ["Python", "pandas", "SOAP", "Oracle", "Supabase", "Geocodificação", "LGPD"],
     images: ["/projects/ferias-coberturas/capa.jpg", "/projects/ferias-coberturas/tela-1.jpg", "/projects/ferias-coberturas/tela-2.jpg", "/projects/ferias-coberturas/tela-3.jpg", "/projects/ferias-coberturas/tela-4.jpg", "/projects/ferias-coberturas/tela-5.jpg"]
+  },
+  {
+    category: lang === 'pt' ? "Sistemas" : "Systems",
+    title: lang === 'pt' ? "Documentos de Faturamento" : "Billing Documents",
+    status: lang === 'pt' ? "Em desenvolvimento" : "In development",
+    description: lang === 'pt'
+      ? "Monta o pacote mensal de documentos de cada contrato de terceirização. Um serviço em Python lê a folha no ERP Oracle, gera os relatórios em PDF (empregados, cálculo, vale-transporte, vale-alimentação, admitidos e demitidos), lê e confere os anexos enviados (nota fiscal, certidões, cartão-ponto, retorno do banco) e entrega um zip na ordem que cada cliente pede. A assinatura só entra nos PDFs depois do aceite de um termo versionado, com hash. Auditoria de segurança com nível de 89%."
+      : "Builds each outsourcing contract's monthly document package. A Python service reads payroll from the Oracle ERP, generates the PDF reports (employees, payroll, transit and meal vouchers, hires and terminations), reads and checks the uploaded attachments (invoice, certificates, timesheets, bank return file) and delivers a zip in the order each client requires. Signatures only go into the PDFs after a versioned, hashed terms acceptance. Security audit scored at 89%.",
+    tags: ["Python", "Oracle", "reportlab", "pypdf", "Supabase", "PostgreSQL (RLS)", "Playwright"],
+    images: ["/projects/faturamento/capa.jpg", "/projects/faturamento/tela-1.jpg", "/projects/faturamento/tela-2.jpg", "/projects/faturamento/tela-3.jpg", "/projects/faturamento/tela-4.jpg"]
   },
   {
     category: lang === 'pt' ? "Sistemas" : "Systems",
