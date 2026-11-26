@@ -98,7 +98,6 @@ const CustomStatsTooltip = ({ active, payload, lang, totalProjects }: CustomStat
 const InteractiveBackground = () => (
   <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
     <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-cyan-500/15 blur-[120px] rounded-full" />
-    <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-violet-500/15 blur-[120px] rounded-full" />
     {/* Campo magnético: grade de pontos que reage ao cursor e ao clique */}
     <MagneticDotField />
   </div>
