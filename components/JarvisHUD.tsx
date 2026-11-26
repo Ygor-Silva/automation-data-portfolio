@@ -201,7 +201,6 @@ export function Card3D({ children, className = '', id, glowColor = 'cyan' }: Car
   const cardRef = useRef<HTMLDivElement>(null);
   const [rotateX, setRotateX] = useState(0);
   const [rotateY, setRotateY] = useState(0);
-  const [glarePos, setGlarePos] = useState({ x: 50, y: 50, opacity: 0 });
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!cardRef.current) return;
@@ -217,17 +216,11 @@ export function Card3D({ children, className = '', id, glowColor = 'cyan' }: Car
 
     setRotateX(rotX);
     setRotateY(rotY);
-    setGlarePos({
-      x: (x / rect.width) * 100,
-      y: (y / rect.height) * 100,
-      opacity: 0.18,
-    });
   };
 
   const handleMouseLeave = () => {
     setRotateX(0);
     setRotateY(0);
-    setGlarePos(prev => ({ ...prev, opacity: 0 }));
   };
 
   const glowBorder = {
@@ -256,14 +249,6 @@ export function Card3D({ children, className = '', id, glowColor = 'cyan' }: Car
         }}
         className={`preserve-3d relative w-full h-full rounded-2xl border border-stone-800/90 bg-stone-950/70 backdrop-blur-md transition-shadow duration-300 ${glowBorder}`}
       >
-        {/* Holographic Glare Layer */}
-        <div 
-          className="pointer-events-none absolute inset-0 rounded-2xl transition-opacity duration-300 z-20"
-          style={{
-            background: `radial-gradient(circle at ${glarePos.x}% ${glarePos.y}%, rgba(34, 211, 238, ${glarePos.opacity}) 0%, transparent 60%)`,
-          }}
-        />
-
         {/* Tactical HUD Corner Reticles */}
         <div className="pointer-events-none absolute top-2 left-2 w-3 h-3 border-t-2 border-l-2 border-cyan-400/40 group-hover:border-cyan-400 transition-colors z-20" />
         <div className="pointer-events-none absolute top-2 right-2 w-3 h-3 border-t-2 border-r-2 border-cyan-400/40 group-hover:border-cyan-400 transition-colors z-20" />
